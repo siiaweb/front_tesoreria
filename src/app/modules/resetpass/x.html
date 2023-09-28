@@ -1,0 +1,25 @@
+<h2 mat-dialog-title>Cambiar Password</h2>
+<mat-dialog-content class="mat-typography">
+
+<!-- <input [(ngModel)]="test"> -->
+
+<mat-form-field class="example-full-width">
+    <mat-label>No.</mat-label>
+    <input matInput [(ngModel)]="data.id" readonly>
+</mat-form-field><br><br>
+
+<mat-form-field class="example-full-width">
+    <mat-label>Nuevo Password</mat-label>
+    <input matInput placeholder="Nuevo password" [(ngModel)]="data.password" type="password" autocomplete="off">
+</mat-form-field>
+
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-button [mat-dialog-close]="true" (click)="ActPass(data)">Actualizar Password</button>
+</mat-dialog-actions>
+
+
+<!-- Copyright 2023 Google LLC. All Rights Reserved.
+    Use of this source code is governed by an MIT-style license that
+    can be found in the LICENSE file at https://angular.io/license -->

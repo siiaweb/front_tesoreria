@@ -1,0 +1,25 @@
+<div mat-dialog-title>
+    <div class="row float-right">
+        <div class="col">
+            <a href="#" click="close()">X</a>
+        </div>   
+    </div>
+    
+    <div class="row">
+        <h5 >Ingrese sus datos</h5>
+    </div>
+</div>
+
+<div mat-dialog-content>
+    <label class="label">Usuario</label>
+    <input type="text" class="form-control" [(ngModel)]="recupera.usua_usuario" name="usua_usuario"  placeholder="Ingrese su usuario" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
+<br>
+    <label class="label">Email</label>
+    <input type="email" class="form-control" [(ngModel)]="recupera.usua_email" name="usua_email"placeholder="Ex. pat@example.com" autocomplete="off">
+</div>
+<br><br>
+<div class="row">
+    <button mat-raised-button (click)="close()" id="cerrar">Cancelar</button>
+    <button mat-raised-button color="primary" (click)="enviarPass()">Recuperar password</button>
+</div>
+

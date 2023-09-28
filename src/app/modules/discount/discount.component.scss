@@ -1,0 +1,202 @@
+.selectWrapper {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #bbb;
+    border-radius: 2px;
+    background:#FFFFFF url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2211%22%20height%3D%2211%22%20viewBox%3D%220%200%2011%2011%22%3E%3Cpath%20d%3D%22M4.33%208.5L0%201L8.66%201z%22%20fill%3D%22%2300AEA9%22%2F%3E%3C%2Fsvg%3E') right 13px center no-repeat;
+}
+
+.selectWrapper select {
+        padding: 12px 40px 12px 20px;
+        font-size: 18px;
+        line-height: 18px;
+        width: 100%;
+        border: none;
+        box-shadow: none;
+        background: transparent;
+        background-image: none;
+        -webkit-appearance: none;
+        outline: none;
+        cursor: pointer;
+        -moz-appearance: none;
+        text-indent: 0.01px;
+        text-overflow: ellipsis;
+}
+
+.alert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.alert-dark {
+  background-color: #d6d8d9;;
+  border-color: #c6c8ca;
+  color: #1b1e21;
+}
+
+.table {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  .table th,
+  .table td {
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: 1px solid #eceeef;
+  }
+
+  .table thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #eceeef;
+  }
+  
+  .table tbody + tbody {
+    border-top: 2px solid #eceeef;
+  }
+  
+  .table .table {
+    background-color: #fff;
+  }
+  
+  .table-sm th,
+  .table-sm td {
+    padding: 0.3rem;
+  }
+  
+  .table-bordered {
+    border: 1px solid #eceeef;
+  }
+  
+  .table-bordered th,
+  .table-bordered td {
+    border: 1px solid #eceeef;
+  }
+  
+  .table-bordered thead th,
+  .table-bordered thead td {
+    border-bottom-width: 2px;
+  }
+  
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  
+  .table-hover tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.075);
+  }
+  
+  .table-active,
+  .table-active > th,
+  .table-active > td {
+    background-color: rgba(0, 0, 0, 0.075);
+  }
+  
+  .table-hover .table-active:hover {
+    background-color: rgba(0, 0, 0, 0.075);
+  }
+  
+  .table-hover .table-active:hover > td,
+  .table-hover .table-active:hover > th {
+    background-color: rgba(0, 0, 0, 0.075);
+  }
+  
+  .table-success,
+  .table-success > th,
+  .table-success > td {
+    background-color: #dff0d8;
+  }
+  
+  .table-hover .table-success:hover {
+    background-color: #d0e9c6;
+  }
+  
+  .table-hover .table-success:hover > td,
+  .table-hover .table-success:hover > th {
+    background-color: #d0e9c6;
+  }
+  
+  .table-info,
+  .table-info > th,
+  .table-info > td {
+    background-color: #d9edf7;
+  }
+  
+  .table-hover .table-info:hover {
+    background-color: #c4e3f3;
+  }
+  
+  .table-hover .table-info:hover > td,
+  .table-hover .table-info:hover > th {
+    background-color: #c4e3f3;
+  }
+  
+  .table-warning,
+  .table-warning > th,
+  .table-warning > td {
+    background-color: #fcf8e3;
+  }
+  
+  .table-hover .table-warning:hover {
+    background-color: #faf2cc;
+  }
+  
+  .table-hover .table-warning:hover > td,
+  .table-hover .table-warning:hover > th {
+    background-color: #faf2cc;
+  }
+  
+  .table-danger,
+  .table-danger > th,
+  .table-danger > td {
+    background-color: #f2dede;
+  }
+  
+  .table-hover .table-danger:hover {
+    background-color: #ebcccc;
+  }
+  
+  .table-hover .table-danger:hover > td,
+  .table-hover .table-danger:hover > th {
+    background-color: #ebcccc;
+  }
+  
+  .thead-inverse th {
+    color: #fff;
+    background-color: #292b2c;
+  }
+  
+  .thead-default th {
+    color: #464a4c;
+    background-color: #eceeef;
+  }
+  
+  .table-inverse {
+    color: #fff;
+    background-color: #292b2c;
+  }
+  
+  .table-inverse th,
+  .table-inverse td,
+  .table-inverse thead th {
+    border-color: #fff;
+  }
+  
+  .table-inverse.table-bordered {
+    border: 0;
+  }
+  
+  .table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+  }
+  
+  .table-responsive.table-bordered {
+    border: 0;
+  }

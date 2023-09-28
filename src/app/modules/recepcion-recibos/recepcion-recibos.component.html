@@ -1,0 +1,88 @@
+<block-ui>
+
+<link rel="stylesheet" href="../../../assets/css/login.css">
+
+<form [formGroup]="forma" (keydown.enter)="$event.preventDefault()">
+    <div style="text-align: center;">
+        <input type="text" 
+            class="form-control" 
+            style="width: 30%"
+            maxlength="150" 
+            formControlName="IDRecibo"
+            autocomplete="off" 
+            [class.is-invalid]="IDReciboNovalido" 
+            placeholder="Tecle un número de recibo"
+            oninput="this.value = this.value.toUpperCase()">
+        &nbsp;&nbsp;&nbsp;
+        <button class="btn btn-blue" (click)="buscaRecibo()" [disabled]="!forma.valid">Buscar</button>
+        <br>
+        <small *ngIf="IDReciboNovalido" class="text-danger">
+            Ingrese un número de recibo
+        </small>
+    </div>
+</form>
+
+<ng-container *ngIf="tvreciboalumno?.length > 0">
+    <p><strong>Nombre: </strong>{{this.nombre}}</p> 
+    <span fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="space-between center">
+        <p><strong>F. Pago: </strong>{{this.fecha | date: 'dd/MM/yyyy h:mm a'}}</p> 
+        <p><button class="btn btn-outline btn-sm" (click)="printInvoice(FolPAgo, FolReferencia, FolDescto);" >Imprimir Recibo</button>
+      </span>
+    
+    <p><strong>Unidad: </strong>{{this.ures}}</p> 
+    <div [formGroup]="formb">
+    <table class="table table-hover table-sm">
+        <thead>
+            <tr>
+                <th>Concepto</th>
+                <th>Cantidad</th>
+                <th>P. Unit.</th>
+                <th>Importe</th>
+                <th>Descuento</th>
+                <th>Total</th>
+                <th>Observaciones</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let recibo of tvreciboalumno; let i = index">
+                    <td>{{ recibo.concepto }}</td>
+                    <td>{{ recibo.cantidad }}</td>
+                    <td>{{ recibo.punit | currency:"MXN":"symbol" }}</td>
+                    <td>{{ recibo.importe | currency:"MXN":"symbol" }}</td>
+                    <td>{{ recibo.descuento }}%</td>
+                    <td>{{ recibo.monto_total | currency:"MXN":"symbol" }}</td>
+                    <ng-container *ngIf="recibo.comentarios === null">
+                        <td>
+                            <input type="text" 
+                            #i
+                            class="form-control" 
+                            style="width: 70%"
+                            maxlength="100" 
+                            formControlName="pago_comentarios"
+                            name="pago_comentarios{{i}}"
+                            autocomplete="off" 
+                            placeholder="Tecle una observacion"
+                            oninput="this.value = this.value.toUpperCase()"
+                            value="{{recibo.comentarios}}">
+                        </td>
+                        <td>
+                            <button class="btn btn-blue btn-sm" (click)="Guardar(i.value, recibo.concepto, recibo.folio, recibo.vdet_regid);" >Guardar</button>
+                        </td>
+                    </ng-container>
+                    <ng-container *ngIf="recibo.comentarios != null">
+                        <td>{{recibo.comentarios}}</td>
+                        <td></td>
+                    </ng-container>
+            </tr>
+            <tr>
+                <td>
+                    
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+</ng-container>
+<br><br>
+</block-ui>

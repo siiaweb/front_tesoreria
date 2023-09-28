@@ -1,0 +1,105 @@
+<!--
+<mat-nav-list>
+
+  <ng-container *ngFor="let rol of roles">
+
+      <ng-container *ngIf="rol.rolu_modulo_pred === null">
+        <a  mat-list-item routerLinkActive="list-item-active" routerLink="/{{rol.rolu_modulo_route}}">
+          <mat-icon>pages</mat-icon> {{rol.rolu_modulo_descrip}}
+        </a>
+      </ng-container>
+      <ng-container *ngIf="rol.rolu_modulo_pred !== null">
+        <ng-container *ngIf="rol.rolu_modulo_route === null">
+
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>payment</mat-icon>{{rol.rolu_modulo_descrip}}
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <a mat-list-item routerLinkActive="list-item-active" routerLink="/posts"><mat-icon>payment</mat-icon> {{rol.rolu_modulo_descrip}}</a>
+          </mat-expansion-panel>
+
+        </ng-container>
+
+      </ng-container>
+
+  </ng-container>
+
+</mat-nav-list>
+-->
+
+
+<mat-nav-list>
+  
+
+    <ng-container>
+      <a mat-list-item routerLinkActive="list-item-active" routerLink="/dashboard">
+          <mat-icon>pages</mat-icon> Dashboard
+      </a>
+      <mat-divider></mat-divider>
+    </ng-container>
+
+    <ng-container *ngIf="tipoRol != '70' && tipoRol != '90'">
+      <h2 matSubheader><strong>Pagos en línea</strong></h2>
+      <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>money</mat-icon>Pagos
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <a mat-list-item routerLinkActive="list-item-active" routerLink="/posts"><mat-icon>payment</mat-icon> Pagar Servicio</a>
+          <a mat-list-item routerLinkActive="list-item-active" routerLink="/shoppingcart"><mat-icon>shopping_cart</mat-icon> Carrito de compras</a>
+          <a mat-list-item routerLinkActive="list-item-active" routerLink="/descuentos"><mat-icon>confirmation_number</mat-icon> Descuentos</a>
+          <a mat-list-item routerLinkActive="list-item-active" routerLink="/recibos"><mat-icon>receipt</mat-icon> Recibos</a>
+      </mat-expansion-panel>
+      <mat-divider></mat-divider>
+  </ng-container>
+
+
+  <!--TABLERO DEL ADMINISTRADOR-->
+  <ng-container *ngIf="tipoRol === '70'">
+    <a mat-list-item routerLinkActive="list-item-active" routerLink="/banners"><mat-icon>photo_size_select_large</mat-icon> Banners</a>
+    
+    <mat-divider></mat-divider>
+
+    <a mat-list-item routerLinkActive="list-item-active" routerLink="/listausuario"><mat-icon>supervised_user_circle</mat-icon> Lista de usuarios</a>
+
+    <mat-divider></mat-divider>
+
+    <mat-divider></mat-divider>
+
+    <a mat-list-item routerLinkActive="list-item-active" routerLink="/resetpass"><mat-icon> vpn_key</mat-icon> Cambiar Password</a>
+
+    <mat-divider></mat-divider>
+
+    <a mat-list-item routerLinkActive="list-item-active" routerLink="/pagossiia"><mat-icon>attach_money</mat-icon> Ingresos desde portal</a>
+
+    <mat-divider></mat-divider>
+
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>note</mat-icon>Publicaciones
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <a mat-list-item routerLinkActive="list-item-active" routerLink="/team"><mat-icon>note_add</mat-icon> Equipo</a>
+        <a mat-list-item routerLinkActive="list-item-active" routerLink="/faqs"><mat-icon>note_add</mat-icon> FAQs</a>
+        <a mat-list-item routerLinkActive="list-item-active" routerLink="/noticias"><mat-icon>note_add</mat-icon> Noticias</a>
+        <a mat-list-item routerLinkActive="list-item-active" routerLink="/services"><mat-icon>note_add</mat-icon> Servicios</a>
+    </mat-expansion-panel>
+
+    <mat-divider></mat-divider>
+</ng-container>
+
+<!--TABLERO ESCOLARES-->
+<ng-container *ngIf="tipoRol === '90'">
+
+    <a mat-list-item routerLinkActive="list-item-active" routerLink="/recepcionrecibos"><mat-icon>receipt</mat-icon> Recepción de recibos</a>
+    <a mat-list-item routerLinkActive="list-item-active" routerLink="/consultapagorecibido"><mat-icon>receipt</mat-icon> Consulta de pagos recibidos</a>
+
+    <mat-divider></mat-divider>
+
+</ng-container>
+
+</mat-nav-list>

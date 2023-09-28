@@ -1,0 +1,43 @@
+<block-ui>
+<link rel="stylesheet" href="../../../assets/css/login.css">
+
+<mat-toolbar color="grey">
+  <div fxFlex fxLayout="row" fxLayoutAlign="end center">
+    <!--
+    <h4>{{ this.tipoUsuario }} | {{ this.uresUsuario }}</h4>
+    -->
+    <button mat-icon-button routerLink="/shoppingcart">
+      <mat-icon matBadge="{{ arrayLength }}" matBadgeColor="warn"> shopping_cart</mat-icon>
+    </button>
+  </div>
+</mat-toolbar>
+
+<form class="row" [formGroup]="forma">
+  <div class="row" style="display: flex;">
+    <div class="selectWrapper col-sm-10" >
+      <select formControlName="servicios" (change)="buttonEnabled($event.target.value);textSelect($event);suma()">
+          <option value="" selected disabled> - Seleccione un servicio a pagar - </option>
+          <option *ngFor="let cp of catalogoPagoTipoUser" [value]='cp.concepto +","+cp.punit+","+cp.paquete'>{{ cp.descripcion }} ({{ cp.punit | currency:"MXN":"symbol" }})</option>
+      </select>
+    </div> 
+  </div>
+
+  <div class="alert alert-info">
+    <strong>Descripción</strong><br>
+    <h3>{{ this.text_Select }}</h3><br>
+    <strong>Precio Unitario</strong><br>
+    <input class="form-control" formControlName="p_unitario" (blur)="sumaTecleada($event.target.value)" [readonly]="readOnlyInput"><br>
+    <strong>Cantidad</strong><br>
+    <small *ngIf="cantidadNovalido" class="text-danger">
+      Ingrese una cantidad
+    </small>
+    <input class="form-control" formControlName="cantidad" type="number" max="999" min="1" value="1" [class.is-invalid]="cantidadNovalido" (click)="suma()" (blur)="suma()"><br>
+    <strong>Monto a Pagar</strong><br>
+    <h4>{{ this.monto_Select | currency:"MXN":"symbol" }}</h4>
+  </div>
+  <div class="col-sm-4">
+    <button class="btn btn-blue btn-sm" [disabled]="!forma.valid" (click)="add()">Añadir al carrito</button>
+  </div>
+<br><br>
+</form>
+</block-ui>

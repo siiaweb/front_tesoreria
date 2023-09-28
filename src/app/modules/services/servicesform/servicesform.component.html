@@ -1,0 +1,64 @@
+<block-ui>
+    <link rel="stylesheet" href="../../../../assets/css/login.css">
+    
+    <section class="d-flex align-items-center justify-content-center" style="height: 100vh;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="signup">
+                        <div class="col-md-12">
+                            <form class="row" [formGroup]="forma" (ngSubmit)="guardar()">
+                                <div class="col-lg-12">
+                                    <h2>Servicios</h2>
+                                </div>
+                                <div class="col-lg-12">
+                                    <input formControlName="teq_estatus" type="hidden">
+                                    <input formControlName="teq_ruta_img" type="hidden">
+                                    <small *ngIf="servicioNovalido" class="text-danger">
+                                        Ingrese un Servicio
+                                    </small>
+                                    <input style="width: 95%;" type="text" class="form-control" formControlName="tser_servicio" maxlength="200" placeholder="Servicio" autocomplete="off" [class.is-invalid]="servicioNovalido">
+                                </div>
+                                <div class="col-lg-12">
+                                    <small *ngIf="descripcionNovalido" class="text-danger">
+                                        Ingrese un Texto
+                                    </small>
+                                    <div class="form-group">
+                                          <angular-editor formControlName="tser_descripcion" [config]="config"></angular-editor>
+                                      </div>
+                                </div>
+                                <br>
+                                <div class="col-sm-6" *ngIf="uploadImage">
+                                    <button class="btn btn-blue btn-sm" *ngIf="!isHiddenNew" [disabled]="!forma.valid">Crear Servicio</button>
+                                    <button type="button" class="btn btn-blue btn-sm" *ngIf="!isHiddenUpdate" role="button" (click)='update(id);'>Actualizar Servicio</button>
+                                    <button type="button" class="btn btn-secondary btn-sm" routerLink="/services">Regresar</button>
+                                </div>
+    
+                                <div *ngIf="!uploadImage">
+                                    <div style="text-align:-webkit-center; margin-top: 20px;">
+                                        <input 
+                                        style="display: none;" 
+                                        type="file" 
+                                        class="custom-file-input" 
+                                        (change)="onFileSelected($event)" 
+                                        accept="image/jpeg"
+                                        #fileInput>
+                                        <button class="btn btn-success ml-2" type="button" (click)="fileInput.click()">Buscar Imagen</button> 
+                                        <mat-progress-bar [value]="this.progress"></mat-progress-bar>  
+                                        <span id="file-label">{{this.mensaje}}</span>  
+                                    </div>
+                                    <br>
+                                    <button id="uploadButton" class="btn btn-primary" type="button" (click)="onUpload()" [disabled]="ToggleButton">Subir Imagen</button> 
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <button type="button" class="btn btn-secondary btn-sm" routerLink="/services">Regresar</button>
+                                </div>
+    
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <br><br>
+    </block-ui>

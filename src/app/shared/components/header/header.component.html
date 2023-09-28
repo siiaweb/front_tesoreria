@@ -1,0 +1,52 @@
+<mat-toolbar color="dark">
+    <mat-toolbar-row>
+        <button mat-icon-button (click)="toggleSideBar()">
+            <mat-icon>menu</mat-icon>
+        </button>
+
+        <span fxLayout="row" fxLayoutGap="20px"> <img src="assets/images/logo.png" style="width: 18%;"> Portal Tesoreria </span>
+
+        <div fxFlex fxLayout="row" fxLayoutAlign="flex-end">
+            <ul fxLayout="row" fxLayoutGap="20px">
+                <!--
+                <li>
+                    <button mat-icon-button>
+                        <mat-icon>comment</mat-icon>
+                        <span class="badge badge-danger badge-counter">7</span>
+                    </button>
+                </li>
+                <li>
+                    <button mat-icon-button>
+                        <mat-icon>email</mat-icon>
+                        <span class="badge badge-danger badge-counter">3+</span>
+                    </button>
+                </li>
+                <li>
+                    <button mat-icon-button routerLink="/shoppingcart">
+                        <mat-icon matBadge="8" matBadgeColor="warn">shopping_cart</mat-icon>
+                    </button>
+                </li>
+                -->
+                <li>
+                    {{ this.nombre }}
+                </li>
+                <li>
+                    <button mat-button [matMenuTriggerFor]="menu">
+                        <mat-icon>person_outline</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item routerLink="/settings">
+                            <mat-icon>settings</mat-icon>
+                            Ajustes
+                        </button>
+                        <button mat-menu-item (click)="cerrarSesion()">
+                            <mat-icon>exit_to_app</mat-icon>
+                            Cerrar Sesión
+                        </button>
+                    </mat-menu>
+
+                </li>
+            </ul>
+        </div>
+    </mat-toolbar-row>
+</mat-toolbar>

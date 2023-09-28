@@ -1,0 +1,43 @@
+<block-ui>
+<link rel="stylesheet" href="../../../assets/css/login.css">
+
+<table class="table table-hover table-sm">
+    <thead>
+        <tr>
+            <th>Folio</th>
+            <th>Ref. Pago</th>
+            <th>Descripción del pago</th>
+            <th>Fecha</th>
+            <th>Estatus</th>
+            <th>Monto</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let recibo of recibos | paginate: { itemsPerPage: 12, currentPage: p }">
+            <td>{{ recibo.pago_folpago }}</td>
+            <td>{{ recibo.pago_referencia }}</td>
+            <td>{{ recibo.pago_concepto }}</td>
+            <td>{{ recibo.pago_fpago | date:'dd/MM/yyyy' }}</td>
+            <td *ngIf="recibo.pago_estatus == 'A' " style="color: rgb(113, 177, 132);"><strong>PAGADO</strong></td><td *ngIf="recibo.pago_estatus == 'P' " style="color: rgb(122, 129, 109);">SIN PAGAR</td>
+            <td style="text-align: center;">{{ recibo.pago_montoapagar | currency:"MXN":"symbol" }}</td>
+            <td *ngIf="recibo.pago_estatus == 'A' "><button class="btn btn-blue btn-sm" (click)="printInvoice(recibo.pago_folpago, recibo.pago_referencia,recibo.pago_foldescto);" >Recibo</button></td><td *ngIf="recibo.pago_estatus == 'P' "> - </td>
+        </tr>
+        <tr>
+            <td>
+                
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<div style="text-align: center;">
+    <pagination-controls 
+        (pageChange)="p = $event"
+        responsive="true"
+        previousLabel="Anterior"
+        nextLabel="Siguiente">
+    </pagination-controls>
+</div>
+<br><br>
+</block-ui>

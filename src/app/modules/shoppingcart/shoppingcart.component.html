@@ -1,0 +1,94 @@
+<block-ui>
+<link rel="stylesheet" href="../../../assets/css/login.css">
+
+<!--
+<script src="https://evopaymentsmexico.gateway.mastercard.com/checkout/version/51/checkout.js"
+data-error="errorCallback"
+data-cancel="cancelCallback"
+data-complete="completeCallback">
+</script>
+
+-->
+<form class="row" [formGroup]="forma" (ngSubmit)="Pagar()" (keydown.enter)="$event.preventDefault()">
+    <div class="alert alert-dark" role="alert">
+        
+        <h3>Mi carrito de compras</h3>
+
+    <ng-container *ngIf="ecomServices?.length > 0">
+        <table class="table table-hover table-sm">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Cantidad</th>
+                    <th>Descripcion</th>
+                    <th>P. Unit.</th>
+                    <th>Importe</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let es of ecomServices">
+                    <td style="width: 10%;"><button class="btn btn-primary btn-sm" (click)="deleteItem(es.dpago_idingreso);deleteArray(es.dpago_idingreso)">X</button></td>
+                    <td style="text-align: center; width: 10%;">{{ es.dpago_cantidad }}</td>
+                    <td>{{ es.Descrip }}</td>
+                    <td style="text-align: center;">{{ es.dpago_punit | currency:"MXN":"symbol" }}</td>
+                    <td style="text-align: center;">{{ es.Mount | currency:"MXN":"symbol" }}</td>
+                </tr>
+                <tr style="text-align: right;">
+                    <th colspan="4">Total:</th>
+                    <td style="text-align: center;">
+                        <strong>{{ this.total | currency:"MXN":"symbol" }}</strong>
+                        <input type="hidden" formControlName="pago_referencia" [(ngModel)]="this.ID">
+                         <input type="hidden" formControlName="pago_montoapagar" value="">
+                        <input type="hidden" formControlName="pago_usuaid" value="">
+                        <input type="hidden" formControlName="pago_estatus" value="P">
+                    </td>
+                </tr>
+                <tr style="text-align: left;">
+                    <th colspan="4">
+                        <small *ngIf="metodoPagoNovalido" class="text-danger">
+                            Selecciona un metodo de pago
+                        </small>
+                        <select formControlName="metodoPago" class="form-control" [class.is-invalid]="metodoPagoNovalido">
+                            <option value="" selected disabled> - Seleccione un metodo de pago - </option>
+                            <option value="TC">Tarjeta de Crédito</option>
+                            <option value="TC">Tarjeta de Débito</option>
+                        </select>
+                    </th>
+                </tr>
+            </tbody>
+        </table>
+        Agrege una descripción para que pueda diferenciar este pago en el apartado de Recibos
+        <br>
+        <small *ngIf="conceptoNovalido" class="text-danger">
+            Ingrese una descripción
+        </small>
+        <input type="text" 
+                class="form-control" 
+                style="width: 70%"
+                maxlength="150" 
+                formControlName="pago_concepto" 
+                autocomplete="off" 
+                [class.is-invalid]="conceptoNovalido" 
+                placeholder="Descripción"
+                oninput="this.value = this.value.toUpperCase()">
+        <br>
+        <strong>Antes de efectuar su pago, favor de verificar con su banco si tiene habilitado en su tarjeta la opción de pago en línea o contar con el servicio 3D Secure</strong>
+    </ng-container>
+    <!--
+    <ng-container *ngIf="ecomServices?.length == 0">
+        <div style="text-align: center;">
+            <h4>El carrito esta vacio</h4>
+        </div>
+    </ng-container>
+    -->
+</div>
+
+    <ng-container *ngIf="ecomServices?.length > 0">
+        <div style="text-align: right">
+            <button class="btn btn-blue" [disabled]="!forma.valid">Pagar</button>
+            <button class="btn btn-primary" routerLink="/posts">Regresar</button>
+        </div>
+    </ng-container>
+</form>
+<br><br>
+</block-ui>

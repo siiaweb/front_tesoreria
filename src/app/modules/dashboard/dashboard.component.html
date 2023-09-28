@@ -1,0 +1,19 @@
+
+    <h3>Bienvenido: </h3>
+    <h2><strong>{{ this.nombre }}</strong></h2>
+    <span fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="space-between center" *ngFor="let tu of tusuario">
+      <h4>{{ tu.tipo_descrip }}</h4>
+      <h4>{{today | date:'fullDate':'':'es-MX'}}</h4>
+    </span>
+
+<hr>
+
+<ng-container *ngIf="descuentos?.length > 0">
+<div class="card" style="background-color: #d9d9d9;">
+    <div class="container">
+      <h3><b>Descuentos</b></h3> 
+        <a routerLink="/descuentos"> <p>Usted tiene ({{ this.count }}) descuento(s)</p> 
+        </a>
+    </div>
+  </div>
+</ng-container>

@@ -1,0 +1,38 @@
+<link rel="stylesheet" href="../../../../assets/css/login.css">
+
+<section class="d-flex align-items-center justify-content-center" style="height: 100vh;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="signup">
+                    <div class="col-md-12">
+                        <form class="row">
+                            <div class="col-lg-12">
+                                <h2>Banners</h2>
+                            </div>
+
+                            <div style="text-align:-webkit-center; margin-top: 20px;">
+                                <input 
+                                style="display: none;" 
+                                type="file" 
+                                class="custom-file-input" 
+                                (change)="onFileSelected($event)" 
+                                accept="image/jpeg"
+                                #fileInput>
+                                <button class="btn btn-success ml-2" type="button" (click)="fileInput.click()">Buscar Imagen</button> 
+                                <mat-progress-bar [value]="this.progress"></mat-progress-bar>  
+                                <span id="file-label">{{this.mensaje}}</span>  
+                            </div>
+                            <br>
+                            <button id="uploadButton" class="btn btn-primary" type="button" (click)="onUpload()" [disabled]="ToggleButton">Subir Imagen</button> 
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <button type="button" class="btn btn-secondary btn-sm" routerLink="/banners">Regresar</button>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<br><br>

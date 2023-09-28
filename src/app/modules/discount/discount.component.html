@@ -1,0 +1,91 @@
+<block-ui>
+<link rel="stylesheet" href="../../../assets/css/login.css">
+
+<form class="row" [formGroup]="forma" (ngSubmit)="Pagar()">
+<div class="alert alert-dark" role="alert">
+    <div class="row" style="display: flex;">
+        <div class="selectWrapper col-sm-10" >
+        <select formControlName="descuentos" (change)="valuesSelect($event.target.value);">
+            <option value="" selected disabled> - Seleccione un descuento - </option>
+            <option *ngFor='let descuento of descuentos' value='{{ descuento.vdes_foldescto }}'>{{ descuento.vdes_descdescrip }}</option>
+        </select>
+        </div> 
+    </div>
+
+    <ng-container *ngIf="descuentos?.length > 0">
+        <table class="table table-hover table-sm">
+            <thead>
+                <tr>
+                    <th>Cantidad</th>
+                    <th>Descripcion</th>
+                    <th>P. Unit.</th>
+                    <th>Importe</th>
+                    <th>%</th>
+                    <th>Descto</th>
+                    <th>Pagar</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let dd of descuentosdet">
+                    <td style="text-align: center; width: 10%;">{{ dd.vdes_cantidad }}</td>
+                    <td style="text-align: left; width: 50%;">{{ dd.vdes_concepto }}</td>
+                    <td style="text-align: center;">{{ dd.vdes_punit  | currency:"MXN":"symbol" }}</td>
+                    <td style="text-align: center;">{{ dd.vdes_importe  | currency:"MXN":"symbol" }}</td>
+                    <td style="text-align: center; width: 10%;">{{ dd.vdes_porc }}%</td>
+                    <td style="text-align: center;">{{ dd.vdes_monto_descto  | currency:"MXN":"symbol" }}</td>
+                    <td style="text-align: center;">{{ dd.vdes_a_pagar  | currency:"MXN":"symbol" }}</td>
+                </tr>
+                <tr style="text-align: right;">
+                    <th colspan="6">Total:</th>
+                    <td style="text-align: center;">
+                        <strong>{{ this.total | currency:"MXN":"symbol" }}</strong>
+                        <input type="hidden" formControlName="pago_foldescto" value="">
+                        <input type="hidden" formControlName="pago_referencia" [(ngModel)]="this.ID">
+                        <input type="hidden" formControlName="pago_montoapagar" value="">
+                        <input type="hidden" formControlName="pago_usuaid" value="">
+                        <input type="hidden" formControlName="pago_estatus" value="P">
+                    </td>
+                </tr>
+                <tr style="text-align: left;">
+                    <th colspan="6">
+                        <small *ngIf="metodoPagoNovalido" class="text-danger">
+                            Selecciona un metodo de pago
+                        </small>
+                        <select formControlName="metodoPago" class="form-control" [class.is-invalid]="metodoPagoNovalido">
+                            <option value="" selected disabled> - Seleccione un metodo de pago - </option>
+                            <option value="TC">Tarjeta de Crédito</option>
+                            <option value="TC">Tarjeta de Dédito</option>
+                        </select>
+                    </th>
+                </tr>
+            </tbody>
+        </table>
+        Agrege una descripción para que pueda diferenciar este pago en el apartado de Recibos
+        <br>
+        <small *ngIf="conceptoNovalido" class="text-danger">
+            Ingrese una descripción
+        </small>
+        <input type="text" 
+                class="form-control" 
+                style="width: 70%"
+                maxlength="150" 
+                formControlName="pago_concepto" 
+                autocomplete="off" 
+                [class.is-invalid]="conceptoNovalido" 
+                placeholder="Descripción"
+                oninput="this.value = this.value.toUpperCase()">
+    </ng-container>
+</div>
+
+    <ng-container *ngIf="descuentos?.length > 0">
+        <div style="text-align: right">
+            <button class="btn btn-blue" [disabled]="!forma.valid">Pagar</button>
+        </div>
+        <!--
+        <p><strong>session_id:</strong> {{ session_id }}</p>
+        <p><strong>successIndicator:</strong> {{ successIndicator }}</p>
+        -->
+    </ng-container>
+<br><br>
+</form>
+</block-ui>

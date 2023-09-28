@@ -1,0 +1,44 @@
+<block-ui>
+    <link rel="stylesheet" href="../../../../assets/css/login.css">
+    
+    <section class="d-flex align-items-center justify-content-center" style="height: 100vh;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="signup">
+                        <div class="col-md-12">
+                            <form class="row" [formGroup]="forma" (ngSubmit)="guardar()">
+                                <div class="col-lg-12">
+                                    <h2>Preguntas Frecuentes</h2>
+                                </div>
+                                <div class="col-lg-12">
+                                    <input formControlName="faqs_estatus" type="hidden">
+                                    <small *ngIf="preguntaNovalido" class="text-danger">
+                                        Ingrese una Pregunta
+                                    </small>
+                                    <input style="width: 95%;" type="text" class="form-control" formControlName="faqs_pregunta" maxlength="1000" placeholder="Titulo" autocomplete="off" [class.is-invalid]="preguntaNovalido">
+                                </div>
+                                <div class="col-lg-12">
+                                    <small *ngIf="respuestaNovalido" class="text-danger">
+                                        Ingrese una Respuesta
+                                    </small>
+                                    <div class="form-group">
+                                          <angular-editor formControlName="faqs_respuesta" [config]="config"></angular-editor>
+                                      </div>
+                                </div>
+                                <br>
+                                <div class="col-sm-6">
+                                    <button class="btn btn-blue btn-sm" *ngIf="!isHiddenNew" [disabled]="!forma.valid">Crear FAQs</button>
+                                    <button type="button" class="btn btn-blue btn-sm" *ngIf="!isHiddenUpdate" role="button" (click)='update(id);'>Actualizar FAQs</button>
+                                    <button type="button" class="btn btn-secondary btn-sm" routerLink="/faqs">Regresar</button>
+                                </div>
+    
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <br><br>
+    </block-ui>

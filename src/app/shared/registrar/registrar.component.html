@@ -1,0 +1,126 @@
+<block-ui>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+<link rel="stylesheet" href="../../../assets/css/login.css">
+
+<section class="d-flex align-items-center justify-content-center" style="height: 100vh;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-11 mx-auto">
+                <div class="signup">
+                    <div class="row">
+                        <div class="col-md-6 signup-greeting overlay" style="background-image: url(assets/images/background/signup.jpg);">
+                            <img src="assets/images/logo.png" alt="logo">
+                          <h4>Bienvenido!</h4>
+                          <div class="justify-content-space-around" style="text-align:justify">
+                            <p>Para tener acceso a los servicios en línea de la Tesorería de la UJED, es necesario generar usuario y contraseña. 
+                             <br>Para <b> <u>Alumnos</u></b>  es necesario que conozcan su número de matrícula (asignada en servicios escolares), unidad académica y carrera. 
+                            <br>Para <b> <u>Empleados</u></b> es necesario conozcan su número de matrícula y la unidad académica o administrativa a la qur pertenecen. 
+                            <br>Para <u><b>URES</b> (unidades académicas)</u> y <b>escuelas incorporadas</b>, es necesario  que conozcan su número de persona (esta se proporciona en la Tesorería en la coordinación de ingresos
+                            <br>6188271257  Ext. 3930)
+                            <br>Para <u>público en general</u>, sólo es necesario el nombre. 
+                            Dudas: ( 6188271257 Ext. 3930 )</p>
+                            
+                        </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="signup-form">
+                                <form class="row" [formGroup]="forma" (ngSubmit)="guardar()">
+                                    <div class="col-lg-12">
+                                        <h4>Registro</h4>
+                                        <p class="float-sm-right">¿Ya tienes una cuenta?
+                                            <a routerLink="">Inicia Sesión</a>
+                                        </p>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <small *ngIf="tipoUsuarioNovalido" class="text-danger">
+                                            Selecciona un tipo de usuario
+                                        </small>
+                                        <select formControlName="usua_tipo_usuario" class="form-control" (change)="Hidden($event.target.value);" [class.is-invalid]="tipoUsuarioNovalido">
+                                            <option selected disabled value="">- Selecciona un tipo de usuario -</option>
+                                            <option *ngFor="let t of ttipouser" value="{{ t.tipo_userid }}">{{ t.tipo_descrip }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-12" *ngIf="!isHidden">
+                                        <small *ngIf="uresNovalido" class="text-danger">
+                                            Selecciona una ures
+                                        </small>
+                                        <select formControlName="usua_ures" class="form-control" (change)="Programas($event.target.value);" [class.is-invalid]="uresNovalido">
+                                            <option selected disabled value="">- Selecciona una ures-</option>
+                                            <option *ngFor="let u of ures" value="{{ u.ures_ures }}">{{ u.ures_uresdesc }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-12" *ngIf="!isHidden">
+                                        <select formControlName="usua_prog" class="form-control">
+                                            <option selected disabled value="">- Selecciona un programa -</option>
+                                            <option *ngFor="let p of programas" value="{{ p.prog_prog }}">{{ p.prog_progdesc }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-12" *ngIf="!isHidden">
+                                        <select formControlName="usua_nivel" class="form-control">
+                                            <option selected disabled value="">- Selecciona un nivel academico -</option>
+                                            <option *ngFor="let tn of tnivelures" value="{{ tn.nive_nivel }}">{{ tn.nive_descrip }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <small *ngIf="userNovalido" class="text-danger">
+                                            Ingrese un Usuario
+                                        </small>
+                                        <input type="text" class="form-control" formControlName="usua_usuario" maxlength="20" placeholder="Usuario" autocomplete="off" oninput="this.value = this.value.toUpperCase()" [class.is-invalid]="userNovalido">
+                                    </div>
+                                    <div class="col-lg-12" *ngIf="!isHiddenMatricula">
+                                        <small *ngIf="matriculaNovalido" class="text-danger">
+                                            Ingrese una matirucla o numero de persona
+                                        </small>
+                                        <input  type="text" 
+                                                class="form-control" 
+                                                formControlName="usua_persona" 
+                                                maxlength="8" 
+                                                placeholder="Matricula o No. Persona" 
+                                                autocomplete="off" 
+                                                oninput="this.value = this.value.toUpperCase()" 
+                                                [class.is-invalid]="matriculaNovalido"
+                                                (blur)="buscaNombre()">
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <small *ngIf="nombreNovalido" class="text-danger">
+                                            Ingrese un Nombre
+                                        </small>
+                                        <input type="text" class="form-control" formControlName="usua_nombre" maxlength="100" placeholder="Nombre completo" autocomplete="off" oninput="this.value = this.value.toUpperCase()" [class.is-invalid]="nombreNovalido">
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <small *ngIf="telefonoNovalido" class="text-danger">
+                                            Ingrese un numero de telefono
+                                        </small>
+                                        <input type="text" class="form-control" formControlName="usua_tel" maxlength="10" placeholder="Telefono (Solo numeros ej. 6181234567)" autocomplete="off" [class.is-invalid]="telefonoNovalido">
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <small *ngIf="emailNovalido" class="text-danger">
+                                            Ingrese un correo electornico
+                                        </small>
+                                        <input type="email" class="form-control" formControlName="usua_email" maxlength="50" placeholder="Email" autocomplete="off" [class.is-invalid]="emailNovalido">
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <small *ngIf="passwordNovalido" class="text-danger">
+                                            Ingrese un password
+                                        </small>
+                                        <input type="password" class="form-control" formControlName="usua_paswd" maxlength="50" placeholder="Password" autocomplete="off" [class.is-invalid]="passwordNovalido">
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <input type="password" class="form-control" formControlName="repassword" maxlength="50" placeholder="Confirmar Password" autocomplete="off" [class.is-invalid]="repasswordNovalido">
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <button class="btn btn-primary btn-sm" [disabled]="!forma.valid">Registrar</button>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <button class="btn btn-secondary btn-sm" routerLink="">Regresar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</block-ui>

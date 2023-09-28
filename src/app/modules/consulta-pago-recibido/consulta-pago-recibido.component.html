@@ -1,0 +1,67 @@
+<block-ui>
+    <div fxLayout fxLayoutAlign="center center">
+        <mat-form-field fxFlex="40%">
+          <input matInput type="text" (keyup)="doFilter($event.target.value)" placeholder="Filtro">
+        </mat-form-field>
+    </div>
+      
+    <table mat-table [dataSource]="this.dataSource" matSort class="mat-elevation-z8 table-responsive table-sm table-bordered table-hover">
+    
+        <ng-container matColumnDef="reci_folio">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> No. </th>
+            <td mat-cell *matCellDef="let element"> {{element.reci_folio}} </td>
+        </ng-container>
+        <ng-container matColumnDef="reci_fecha">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha </th>
+            <td mat-cell *matCellDef="let element"> {{element.reci_fecha | date: 'dd/MM/yyyy h:mm a'}} </td>
+        </ng-container>
+        <ng-container matColumnDef="reci_alumno">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Alumno </th>
+            <td mat-cell *matCellDef="let element"> {{element.reci_alumno}} </td>
+        </ng-container>
+        <ng-container matColumnDef="reci_ures">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> URES </th>
+            <td mat-cell *matCellDef="let element"> {{element.reci_ures}} </td>
+        </ng-container>
+        <ng-container matColumnDef="reci_concepto">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Concepto </th>
+            <td mat-cell *matCellDef="let element"> {{element.reci_concepto}} </td>
+        </ng-container>
+        <ng-container matColumnDef="reci_cantidad">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Cantidad </th>
+            <td mat-cell *matCellDef="let element"> {{element.reci_cantidad}} </td>
+        </ng-container>
+        <ng-container matColumnDef="reci_punit">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> P. Unit. </th>
+            <td mat-cell *matCellDef="let element"> {{element.reci_punit | currency:"MXN":"symbol"}} </td>
+        </ng-container>
+        <ng-container matColumnDef="reci_importe">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Importe </th>
+            <td mat-cell *matCellDef="let element"> {{element.reci_importe | currency:"MXN":"symbol"}} </td>
+        </ng-container>
+        <ng-container matColumnDef="reci_descuento">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Dscto. </th>
+            <td mat-cell *matCellDef="let element"> {{element.reci_descuento | currency:"MXN":"symbol"}} </td>
+        </ng-container>
+        <ng-container matColumnDef="reci_total">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Total </th>
+            <td mat-cell *matCellDef="let element"> {{element.reci_total | currency:"MXN":"symbol"}} </td>
+        </ng-container>
+        <ng-container matColumnDef="reci_frecepcion">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> F. Recep. </th>
+            <td mat-cell *matCellDef="let element"> {{element.reci_frecepcion | date: 'dd/MM/yyyy h:mm a'}} </td>
+        </ng-container>
+        <ng-container matColumnDef="reci_comentarios">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Comentarios </th>
+            <td mat-cell *matCellDef="let element"> {{element.reci_comentarios}} </td>
+        </ng-container>
+    
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    
+    </table>
+    
+    <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 15, 20, 25, 30]">
+    </mat-paginator>
+    <br><br>
+    </block-ui>

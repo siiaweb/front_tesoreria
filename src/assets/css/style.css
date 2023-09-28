@@ -1,0 +1,39 @@
+.bg-gradient-dark {
+    background-image: linear-gradient(180deg,#060606 10%,#224abe 100%);
+}
+
+.mat-toolbar.mat-dark{
+    background: #343a40;
+    color: #fff
+}
+
+.mat-toolbar.mat-grey{
+    background: #e7e7e7;
+    color: #000
+}
+
+.badge-counter {
+    position: absolute;
+    transform: scale(.7);
+    transform-origin: top right;
+    right: 0px;
+    margin-top: 0px;
+}
+
+.badge-danger {
+    color: #171616;
+    background-color: #e74a3b;
+}
+
+.badge {
+    display: inline-block;
+    padding: 7px;
+    font-size: 90%;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .35rem;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}

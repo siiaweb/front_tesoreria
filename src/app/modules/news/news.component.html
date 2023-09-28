@@ -1,0 +1,60 @@
+<link rel="stylesheet" href="../../../assets/css/login.css">
+
+
+<button type="button" class="btn btn-blue" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo" [routerLink]="['/noticiasform',0,'N']">Crear Noticia</button>
+<br><br>
+
+<ng-container *ngFor="let tn of tnoticias | paginate: { itemsPerPage: 4, currentPage: p }">
+<p>
+<mat-toolbar color="grey" style="height: 100px;">
+
+        <h3>{{ tn.tnot_titulo.substring(0,50) }}</h3>
+     
+        <div fxFlex fxLayout="row" fxLayoutAlign="flex-end">
+            <span fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="flex-end"> <img src="https://tesoreria.ujed.mx/PIMAGENES/{{ tn.tnot_ruta_img }}" style="height: 35px;"> </span>
+            <ul fxLayout="row" fxLayoutGap="20px">
+                <li>
+                    <button mat-button [matMenuTriggerFor]="news">
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #news="matMenu">
+                        <button mat-menu-item [routerLink]="['/noticiasform',tn.tnot_id,'U']">
+                            <mat-icon>edit</mat-icon>
+                            Editar Registro
+                        </button>
+                        <button mat-menu-item (click)="delete(tn.tnot_id,tn.tnot_titulo.substring(0,50))">
+                            <mat-icon>delete_forever</mat-icon>
+                            Eliminar Registro
+                        </button>
+                        <button mat-menu-item [routerLink]="['/noticiasform',tn.tnot_id,'I']">
+                            <mat-icon>image</mat-icon>
+                            Subir Imagen
+                        </button>
+                    </mat-menu>
+
+                </li>
+            </ul>
+        </div>
+    </mat-toolbar>
+    <mat-toolbar color="grey" style="height: 25px;">
+        <div fxLayout="row" fxLayoutGap="200px" fxLayoutAlign="center center">
+            <p style="width: 3px;"><strong>Por: </strong>{{ tn.tnot_autor }}</p>
+            <p style="width: 3px;"><strong>Fecha: </strong>{{ tn.tnot_fecha }}</p>
+        </div>
+    </mat-toolbar>
+</p>
+    <span class="example-spacer"></span>
+</ng-container>
+
+<div style="text-align: center;">
+    <pagination-controls 
+        (pageChange)="p = $event"
+        responsive="true"
+        previousLabel="Anterior"
+        nextLabel="Siguiente">
+    </pagination-controls>
+</div>
+
+
+
+

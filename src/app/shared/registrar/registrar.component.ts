@@ -173,7 +173,7 @@ export class RegistrarComponent implements OnInit {
       usua_ures: ['', Validators.required],
       usua_prog: [''],
       usua_usuario: ['', [Validators.required,Validators.maxLength(20)]],
-      usua_persona: ['', [Validators.required,Validators.maxLength(8)]],
+      usua_persona: ['', [Validators.required,Validators.maxLength(10)]],
       usua_nombre: ['', [Validators.required,Validators.maxLength(100)]],
       usua_tel: ['', [Validators.required,Validators.maxLength(10),Validators.pattern(/^[0-9]\d*$/)]],
       usua_email: ['', [Validators.required,Validators.email,Validators.maxLength(50)]],

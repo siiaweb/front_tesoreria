@@ -68,4 +68,19 @@ export class ReceiptComponent implements OnInit {
     }
   }
 
+  generarCartaNoAdeudo(id, ref){
+    console.log(id);
+    this._ps.getCartaNoAdeudo(id, ref).subscribe(resp =>{
+      let blob = new Blob([resp], {type: resp.type});
+      let url = window.URL.createObjectURL(blob);
+      window.open(url, "_blank");
+    },error => {
+      this.blockUI.stop();
+      console.log(error);
+      Swal.fire({
+        title: 'AVISO!!', text: "Error al cargar carta, inténtelo de nuevo", icon: 'error'
+      });
+    });
+  }
+
 }

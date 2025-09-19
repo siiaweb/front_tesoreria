@@ -110,4 +110,8 @@ export class PagoServiciosService {
     );
   }
 
+  getCartaNoAdeudo(foliopago:string, ref:string): Observable<any> {
+    return this.http.get<any>(`${environment.rutaAPI}/cartaNA/${foliopago}/${ref}/L`, {responseType: 'blob' as 'json'}); 
+  }
+
 }

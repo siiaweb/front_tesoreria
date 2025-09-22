@@ -22,7 +22,7 @@
             <td *ngIf="recibo.estatus == 'A' " style="color: rgb(113, 177, 132);"><strong>PAGADO</strong></td><td *ngIf="recibo.estatus == 'P' " style="color: rgb(122, 129, 109);">SIN PAGAR</td>
             <td style="text-align: center;">{{ recibo.total | currency:"MXN":"symbol" }}</td>
             <td *ngIf="recibo.estatus == 'A' "><button class="btn btn-blue btn-sm" (click)="printInvoice(recibo.foliopago, recibo.referencia,recibo.foliodescto);" >Recibo</button></td><td *ngIf="recibo.estatus == 'P' "> - </td>
-            <td *ngIf="recibo.estatus == 'A' && recibo.idconcepto == 1612"><button type="button" mat-raised-button class="button-pdf" (click)="generarCartaNoAdeudo(recibo.foliopago, recibo.referencia);"><mat-icon matSuffix>picture_as_pdf</mat-icon></button></td>
+            <td *ngIf="recibo.fautoriza!=null && recibo.estatus == 'A' && recibo.idconcepto == 1612"><button type="button" mat-raised-button class="button-pdf" (click)="generarCartaNoAdeudo(recibo.foliopago, recibo.referencia);"><mat-icon matSuffix>picture_as_pdf</mat-icon></button></td>
         </tr>
         <tr>
             <td>

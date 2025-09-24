@@ -22,7 +22,7 @@ export class PagossiiaComponent implements OnInit {
 
   displayedColumns: string[] = ['vmae_foliopago','vmae_fecha','vmae_usuario','vmae_nombre_usuario','vmae_ures',
                                 'vmae_program','vmae_tipouser','vmae_descripcion','vmae_referencia',
-                                'vmae_est_descrip','vmae_foldescto','vmae_importe','vmae_estatus'];
+                                'vmae_est_descrip','vmae_foldescto','vmae_importe','vmae_estatus','vmae_carta'];
   public dataSource = new MatTableDataSource<Tvpagossiia>();
 
   private subscription: Subscription;
@@ -86,6 +86,21 @@ export class PagossiiaComponent implements OnInit {
           icon: 'error'});
       });
     }
+  }
+
+  generarCartaNoAdeudo(id, ref){
+    console.log(id);
+    this._ps.getCartaNoAdeudo(id, ref).subscribe(resp =>{
+      let blob = new Blob([resp], {type: resp.type});
+      let url = window.URL.createObjectURL(blob);
+      window.open(url, "_blank");
+    },error => {
+      this.blockUI.stop();
+      console.log(error);
+      Swal.fire({
+        title: 'AVISO!!', text: "Error al cargar carta, inténtelo de nuevo", icon: 'error'
+      });
+    });
   }
 
 }

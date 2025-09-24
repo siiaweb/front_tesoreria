@@ -12,5 +12,6 @@ export class Tvpagossiia {
     vmae_est_descrip: string;
     vmae_foldescto: string;
     vmae_importe: string;
-
+    vmae_carta: string;
+    vmae_fautoriza: Date;
 }

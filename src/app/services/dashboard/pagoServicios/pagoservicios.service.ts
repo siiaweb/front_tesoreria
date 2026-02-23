@@ -13,7 +13,6 @@ import { HttpHeaders } from '@angular/common/http';
 export class PagoServiciosService {
 
     public urlEndPoint = `${environment.rutaAPI}`;
-    public alumnos = `${environment.rutaAlumno}`;
 
     getHeadersPOST(): HttpHeaders {
       const headers = new HttpHeaders({

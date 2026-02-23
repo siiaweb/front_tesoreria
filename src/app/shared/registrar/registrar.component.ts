@@ -185,49 +185,49 @@ export class RegistrarComponent implements OnInit {
 
   }
 
-  guardar(){
-    /*
-    console.log(this.forma);
-    var hash2 = sha256.update('Message to hash');
-    console.log(sha256('este es un ejemplo'));
-    */
-    if (this.forma.invalid){
-      return Object.values( this.forma.controls ).forEach( control =>{
-        control.markAsTouched();
-      })
-    }else{
-      //console.log(this.forma.value);
-      this._reg.create(this.forma.value).subscribe(usr => {
-        this.router.navigate(['']);
-          Swal.fire('Nuevo usuario', `Usuario ${usr.usua_usuario} creado con éxito!`, 'success');
-          //this.cargarUsers();
-      },
-      error => {
-        console.log(error);
-        
-        var splitted = error.error.message.split("["); 
-        var splitted2 = splitted[2].split("]"); 
-        var constraint = splitted2[0].split("."); 
-        this._error.getError(constraint[1]).subscribe(err => {
-          console.log(err);
-          Swal.fire({
-            title: 'ERROR!!!',
-            text: err[0].cerr_mensaje,
-            icon: 'error'});
-        })
-
-        /*
-        console.log(error);
-        Swal.fire({
-          title: 'ERROR!!!',
-          text: error.error.message,
-          icon: 'error'});
-        */
-      });
-      
-    }
-    
+guardar() {
+  if (this.forma.invalid) {
+    Object.values(this.forma.controls).forEach(control => {
+      control.markAsTouched();
+    });
+    return;
   }
+
+  this._reg.create(this.forma.value).subscribe(
+    usr => {
+      this.router.navigate(['']);
+      Swal.fire(
+        'Nuevo usuario',
+        `Usuario ${usr.usua_usuario} creado con éxito!`,
+        'success'
+      );
+      this.forma.reset();
+    },
+    error => {
+      console.log(error);
+
+      // Caso específico: usuario ya existe
+      if (error.error && typeof error.error === 'string' && error.error.includes('usuario ya existe')) {
+        Swal.fire({
+          title: 'ERROR',
+          text: 'El nombre de usuario ya existe. Intenta con otro nombre.',
+          icon: 'error'
+        });
+        return;
+      }
+
+      // Caso genérico
+      Swal.fire({
+        title: 'ERROR',
+        text: 'Error inesperado',
+        icon: 'error'
+      });
+
+    }
+
+  );
+}
+
 
   buscaNombre(){
     if(this.forma.get('usua_tipo_usuario').value === ""){

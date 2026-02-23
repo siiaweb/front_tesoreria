@@ -13,6 +13,7 @@ import { HttpHeaders } from '@angular/common/http';
 export class PagoServiciosService {
 
     public urlEndPoint = `${environment.rutaAPI}`;
+    public alumnos = `${environment.rutaAlumno}`;
 
     getHeadersPOST(): HttpHeaders {
       const headers = new HttpHeaders({
@@ -111,7 +112,7 @@ export class PagoServiciosService {
   }
 
   getCartaNoAdeudo(foliopago:string, ref:string): Observable<any> {
-    return this.http.get<any>(`${environment.rutaAPI}/cartaNA/${foliopago}/${ref}/L`, {responseType: 'blob' as 'json'}); 
+    return this.http.get<any>(`${environment.rutaAlumno}/dvalumno/cartaNA/${foliopago}/${ref}/L`, {responseType: 'blob' as 'json'}); 
   }
 
 }

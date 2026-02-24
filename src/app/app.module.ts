@@ -14,7 +14,6 @@ import { ServicesModule } from './services/services.module';
 import { ShoppingcartComponent } from './modules/shoppingcart/shoppingcart.component';
 import { DiscountComponent } from './modules/discount/discount.component';
 import { AngularEditorModule } from '@kolkov/angular-editor';
-import { AngularFileUploaderModule } from "angular-file-uploader";
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatMenuModule,
          MatIconModule,
@@ -80,7 +79,6 @@ import { ResetpassComponent } from './modules/resetpass/resetpass.component';
     BlockUIModule.forRoot(),
     NgxPaginationModule,
     AngularEditorModule,
-    AngularFileUploaderModule,
     MatProgressBarModule,
     MatMenuModule,
     MatIconModule,

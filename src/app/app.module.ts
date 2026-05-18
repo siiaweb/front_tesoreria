@@ -46,6 +46,9 @@ import { ConsultaPagoRecibidoComponent } from './modules/consulta-pago-recibido/
 import { DialogBodyComponent } from "./shared/dialog-body/dialog-body.component";
 import { ResetpassComponent } from './modules/resetpass/resetpass.component';
 
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -86,7 +89,8 @@ import { ResetpassComponent } from './modules/resetpass/resetpass.component';
     MatButtonModule,
     FlexLayoutModule,
     MatTableModule,
-    MatDialogModule
+    MatDialogModule,
+    NgbModule
   ],
   providers: [ { provide: LOCALE_ID, useValue: 'es-MX' }, {provide: LocationStrategy, useClass: HashLocationStrategy} ],
   bootstrap: [AppComponent],

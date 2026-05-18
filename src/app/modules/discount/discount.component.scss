@@ -200,3 +200,47 @@
   .table-responsive.table-bordered {
     border: 0;
   }
+
+
+
+  /* forzar visibilidad cuando se abre */
+.evo-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 99999 !important; /* subir mucho el z-index */
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+}
+
+/* clase que activa el overlay */
+.evo-overlay.open {
+  display: flex !important;
+}
+
+/* modal box */
+.evo-modal {
+  background: #fff;
+  border-radius: 8px;
+  width: 95%;
+  max-width: 980px;
+  max-height: 90vh;      /* evitar que se salga de la pantalla */
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  position: relative;
+  padding: 0;
+}
+
+/* contenedor del embed con scroll interno si hace falta */
+#evo-embed-container {
+  width: 100%;
+  height: 100%;
+  min-height: 560px;     /* asegurar altura mínima */
+  max-height: calc(90vh - 40px);
+  overflow: auto;
+}
+
+/* close button */
+.evo-close { z-index: 100000; }

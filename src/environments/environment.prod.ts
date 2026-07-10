@@ -5,5 +5,5 @@ export const environment = {
   //rutaPortal: 'http://192.168.10.38:8080/portalTesoreria/',
 
   rutaAPI: 'https://tesoreria.ujed.mx/api',
-  rutaAlumno:'https://www.sipu.ujed.mx/api/api/alumnos'
+  rutaAlumno:'https://sistemas.ujed.mx/SIIA'
 };

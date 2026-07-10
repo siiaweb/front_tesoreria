@@ -11,7 +11,7 @@ export const environment = {
   //rutaAPI: 'http://192.168.10.38:8090/api'
   //rutaAPI: 'https://tesoreria.ujed.mx/api'
   rutaAPI: 'http://localhost:8090/api',
-  rutaAlumno:'http://localhost:8091/api/alumnos'
+  rutaAlumno:'http://localhost:8085/SIIAWEB'
 };
 
 /*

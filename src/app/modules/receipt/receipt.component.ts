@@ -72,8 +72,8 @@ export class ReceiptComponent implements OnInit {
     console.log(id);
     this._ps.getCartaNoAdeudo(id, ref).subscribe(resp =>{
       let blob = new Blob([resp], {type: resp.type});
-      let url = window.URL.createObjectURL(blob);
-      window.open(url, "_blank");
+      const fileURL = URL.createObjectURL(blob);
+      window.open(fileURL);
     },error => {
       this.blockUI.stop();
       console.log(error);

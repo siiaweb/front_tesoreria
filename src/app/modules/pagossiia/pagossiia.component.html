@@ -76,9 +76,9 @@
     <ng-container matColumnDef="vmae_carta">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Carta No Adeudo </th>
         <td mat-cell *matCellDef="let element">
-            <button mat-button *ngIf="element.vmae_carta == 'S' && element.vmae_estatus == 'A' && element.vmae_fautoriza != null" (click)="generarCartaNoAdeudo(element.vmae_foliopago, element.vmae_referencia);">
+            <a target="_blank" *ngIf="element.vmae_carta == 'S' && element.vmae_estatus == 'A' && element.vmae_fautoriza != null" [attr.href]="'https://sistemas.ujed.mx/SIIA/cartaNA?foliopago='+element.vmae_foliopago+'&ref='+element.vmae_referencia+'&forma=L'">
                 <mat-icon>picture_as_pdf</mat-icon>
-            </button>
+            </a>
         </td>
     </ng-container>
 

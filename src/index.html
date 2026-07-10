@@ -15,10 +15,18 @@
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-  <script src="https://evopaymentsmexico.gateway.mastercard.com/checkout/version/61/checkout.js"
-    data-error="errorCallback"
-    data-cancel="cancelCallback"
+  <!--
+  <script src="https://evopaymentsmexico.gateway.mastercard.com/static/checkout/checkout.min.js" 
+    data-error="errorCallback" 
+    data-cancel="cancelCallback" 
     data-complete="completeCallback">
+  </script>
+  -->
+
+    <script src="https://evopaymentsmexico.gateway.mastercard.com/static/checkout/checkout.min.js"
+        data-error="errorCallback"
+        data-cancel="cancelCallback"
+        data-complete="completeCallback">
   </script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
@@ -30,20 +38,22 @@
 
       <app-root></app-root>
 
-
       <script>
 
         function errorCallback(error) {
                           console.log(JSON.stringify(error));
+                          console.log('errorCallback version 100');
                           //alert(JSON.stringify(error));
                           Swal.fire({icon: 'error',title: 'ERROR!!!',text: JSON.stringify(error),showConfirmButton: false,timer: 6000});
                     }
         
         function cancelCallback() {
+              console.log('cancelCallback version 100');
               console.log('Payment cancelled');
         }
         
         function completeCallback(resultIndicator, sessionVersion) {
+            console.log('completeCallback version 100');
             console.log("resultIndicator: " +resultIndicator);
             console.log("sessionVersion:" +sessionVersion);
             //console.log("successIndicator:" +$("#successIndicator").val());   
@@ -72,8 +82,6 @@
         }        
         </script>
 
-
-
-
 </body>
+
 </html>

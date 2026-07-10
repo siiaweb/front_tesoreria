@@ -9,8 +9,12 @@ import { Observable } from 'rxjs/Rx';
 import { promise } from 'protractor';
 import{TdpagosOnline} from 'src/app/services/dashboard/pagoServicios/tdpagosonline';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
+import { Console } from 'console';
+import { NgZone } from '@angular/core';
 
-declare const Checkout,showLightbox:any
+
+
+declare var Checkout: any;
 
 @Component({
   selector: 'app-shoppingcart',
@@ -19,10 +23,10 @@ declare const Checkout,showLightbox:any
 })
 export class ShoppingcartComponent implements OnInit {
 
-  @BlockUI() blockUI: NgBlockUI;
+  @BlockUI() blockUI!: NgBlockUI;
 
   public pagodet: TdpagosOnline = new TdpagosOnline();
-  valores:  String;
+  valores!: String;
   det: any[] = [];
   importe=0;
   /*
@@ -38,6 +42,7 @@ export class ShoppingcartComponent implements OnInit {
   }
   */
 
+  /*
   public cancelCallbackScript() {
     let body = <HTMLDivElement> document.body;
     let script = document.createElement('script');
@@ -72,7 +77,9 @@ export class ShoppingcartComponent implements OnInit {
     script.defer = true;
     body.appendChild(script);
   }
+  */
 
+  /*
   public Checkout() {
     let body = <HTMLDivElement> document.body;
     let script = document.createElement('script');
@@ -80,7 +87,7 @@ export class ShoppingcartComponent implements OnInit {
     script.innerHTML = "Checkout.configure({"+
       //"merchant: 'TEST1143891',"+
       "merchant: '1143891',"+
-        "order: {description: 'Pago de servicios',amount: '"+this.forma.get('pago_montoapagar').value+"',currency: 'MXN',id: '"+this.ID+"'},"+
+        "order: {description: 'Pago de servicios',amount: '"+this.forma.get('pago_montoapagar')!.value+"',currency: 'MXN',id: '"+this.ID+"'},"+
         "interaction: {merchant: {name: 'UJED',address: {line1: 'Calle Constitución 404, Zona Centro, 34100 Durango, Dgo.'}},"+
             "displayControl : {billingAddress : 'HIDE'},},"+
 		    "session: {id:  '"+this.session_id+"'},"+
@@ -89,20 +96,22 @@ export class ShoppingcartComponent implements OnInit {
     script.defer = true;
     body.appendChild(script);
   }
+  */
+  
 
-  forma: FormGroup;
+  forma!: FormGroup;
 
-  private subscription: Subscription;
+  private subscription!: Subscription;
 
-  ecomServices: any[];
+  ecomServices!: any[];
 
-  session_id:string;
-  successIndicator:string;
-  ID:string;
+  session_id!: string;
+  successIndicator!: string;
+  ID!: string;
   total = 0;
 
   constructor( private _evo: EvoService, private _ps: PagoServiciosService, private fb: FormBuilder,
-               public router: Router ) { }
+               public router: Router, private ngZone: NgZone ) { }
 
   ngOnInit() {
 
@@ -112,17 +121,17 @@ export class ShoppingcartComponent implements OnInit {
         //console.log(data);
         })	
 
-    this.cancelCallbackScript();
-    this.errorCallbackScript();
+    //this.cancelCallbackScript();
+    //this.errorCallbackScript();
 
-    this.ecomServices = JSON.parse(sessionStorage.getItem('shoppingCart'));
+    this.ecomServices = JSON.parse(sessionStorage.getItem('shoppingCart')!);
   
     this.totalPrice();
     
     this.crearFormulario();
   
     //console.log(sessionStorage.getItem('shoppingCart'));
-    var items = JSON.parse(sessionStorage.getItem('shoppingCart'));
+    var items = JSON.parse(sessionStorage.getItem('shoppingCart')!);
     for (var i=0;i<items.length;i++){
       //console.log(items[i]);
       //this.det.push(items[i].dpago_idingreso+'_'+items[i].Descrip+'_'+items[i].dpago_cantidad+'_'+items[i].dpago_punit+'_null');
@@ -132,11 +141,11 @@ export class ShoppingcartComponent implements OnInit {
   }
 
   get conceptoNovalido(){
-    return this.forma.get('pago_concepto').invalid && this.forma.get('pago_concepto').touched
+    return this.forma.get('pago_concepto')!.invalid && this.forma.get('pago_concepto')!.touched
   }
 
   get metodoPagoNovalido(){
-    return this.forma.get('metodoPago').invalid && this.forma.get('metodoPago').touched
+    return this.forma.get('metodoPago')!.invalid && this.forma.get('metodoPago')!.touched
   }
 
   crearFormulario(){
@@ -166,15 +175,15 @@ export class ShoppingcartComponent implements OnInit {
     return this.total;
   }
 
-  deleteItem(dpago_idingreso){
+  deleteItem(dpago_idingreso: any){
     //console.log("ID: "+dpago_idingreso);
-    var items = JSON.parse(sessionStorage.getItem('shoppingCart'));
+    var items = JSON.parse(sessionStorage.getItem('shoppingCart')!);
    //console.log(items);
     for (var i=0;i<items.length;i++){
       if (items[i].dpago_idingreso == dpago_idingreso){
         items.splice(i,1);
         sessionStorage["shoppingCart"] = JSON.stringify(items);
-        this.ecomServices = JSON.parse(sessionStorage.getItem('shoppingCart'));
+        this.ecomServices = JSON.parse(sessionStorage.getItem('shoppingCart')!);
       }
     }
     //console.log(items);
@@ -185,7 +194,7 @@ export class ShoppingcartComponent implements OnInit {
   this.crearFormulario();
   }
 
-  deleteArray(dpago_idingreso){
+  deleteArray(dpago_idingreso: any){
     for (var i=0;i<this.det.length;i++){
       var splitted = this.det[i].split('-'); 
       if(splitted[0]==dpago_idingreso){
@@ -193,9 +202,44 @@ export class ShoppingcartComponent implements OnInit {
       }
       }
   }
- 
 
-  Pagar(){
+
+  // Limpieza segura en Angular (poner justo antes de configurar Checkout)
+  clearHostedCheckoutSessionStorage() {
+    const keys = ['HostedCheckout_sessionId','HostedCheckout_embedContainer','HostedCheckout_merchantState'];
+    keys.forEach(k => {
+      if (sessionStorage.getItem(k) !== null) {
+        console.log('Borrando sessionStorage key:', k);
+        sessionStorage.removeItem(k);
+      }
+    });
+  }
+
+
+  // Mostrar overlay con clase 'open' y forzar change detection
+  private showEvoOverlay(): void {
+    const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
+    if (!overlay) { console.error('Overlay no encontrado'); return; }
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // forzar reflow para evitar problemas de stacking
+    void overlay.offsetHeight;
+  }
+
+  // Cerrar
+  public closeEvoModal(event?: Event): void {
+    if (event) event.stopPropagation();
+    const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
+    if (overlay) overlay.classList.remove('open');
+    const container = document.getElementById('evo-embed-container');
+    if (container) container.innerHTML = '';
+    document.body.style.overflow = '';
+    this.clearHostedCheckoutSessionStorage();
+  }
+
+
+
+  async Pagar(){
     this.blockUI.start();
     //console.log(this.forma);
     if (this.forma.invalid){
@@ -213,17 +257,51 @@ export class ShoppingcartComponent implements OnInit {
           //this._evo.getEvo(this.ID,master.pago_montoapagar).subscribe(
             this._evo.getEvo(this.ID,this.total).subscribe(
             (variables) => {
+              console.log(variables);
               this.session_id = variables.session_id;
               this.successIndicator = variables.successIndicator;
-              this.router.navigate(['/dashboard']);
-                     
-              return new Promise(resolve => {
-                this.Checkout();
-                Checkout.showLightbox();
-                resolve(
-                  sessionStorage.MasterID = master.pago_referencia.toString()
-                );
-              })
+              //this.router.navigate(['/dashboard']);
+
+
+              this.clearHostedCheckoutSessionStorage();
+
+              const ck = (window as any).Checkout;
+              if (!ck) {
+                console.error('Checkout no disponible en window');
+              } else {
+                ck.configure({ session: { id: this.session_id } });
+                console.log('Checkout configurado con:', this.session_id);
+
+                // 1) mostrar overlay primero
+                this.showEvoOverlay();
+
+                // 2) esperar un tick para que Angular pinte el overlay y el contenedor
+                setTimeout(() => {
+                  try {
+                    // pasar height: '100%' no siempre funciona; el contenedor controla la altura
+                    const res = ck.showEmbeddedPage('#evo-embed-container');
+                    if (res && typeof res.then === 'function') {
+                      res.then(() => console.log('showEmbeddedPage completado')).catch((e:any) => {
+                        console.error('Error showEmbeddedPage:', e);
+                        
+                        this.closeEvoModal();
+                      });
+                    }
+                    
+                  } catch (e) {
+                    console.error('Error invocando showEmbeddedPage:', e);
+                    this.closeEvoModal();
+                  }
+                }, 200); // 200ms es suficiente si el overlay ya está visible
+              }
+
+
+
+
+
+            sessionStorage.MasterID = master.pago_referencia.toString();
+
+
             }
           )
 

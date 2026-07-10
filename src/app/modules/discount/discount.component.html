@@ -1,4 +1,4 @@
-<block-ui>
+
 <link rel="stylesheet" href="../../../assets/css/login.css">
 
 <form class="row" [formGroup]="forma" (ngSubmit)="Pagar()">
@@ -88,4 +88,11 @@
     </ng-container>
 <br><br>
 </form>
-</block-ui>
+
+<div id="evo-embed-overlay" class="evo-overlay" (click)="closeEvoModal($event)">
+  <div class="evo-modal" (click)="$event.stopPropagation()">
+    <button class="evo-close" (click)="closeEvoModal($event)">✕</button>
+    <!-- Aquí el SDK incrustará el checkout -->
+    <div id="evo-embed-container" style="width:100%; height:700px;"></div>
+  </div>
+</div>

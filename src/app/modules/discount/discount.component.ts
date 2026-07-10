@@ -10,7 +10,7 @@ import { EvoService } from '../../services/dashboard/evo.service';
 import { Tvdescuentos } from './tvdescuentos';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 
-declare const Checkout,showLightbox:any
+declare const Checkout:any
 
 @Component({
   selector: 'app-discount',
@@ -19,7 +19,7 @@ declare const Checkout,showLightbox:any
 })
 export class DiscountComponent implements OnInit {
 
-  @BlockUI() blockUI: NgBlockUI;
+  @BlockUI() blockUI!: NgBlockUI;
 
   det: any[] = [];
   
@@ -30,7 +30,7 @@ export class DiscountComponent implements OnInit {
     script.innerHTML = "Checkout.configure({"+
       //"merchant: 'TEST1143891',"+
       "merchant: '1143891',"+
-        "order: {description: 'Pago de servicios',amount: '"+this.forma.get('pago_montoapagar').value+"',currency: 'MXN',id: '"+this.ID+"'},"+
+        "order: {description: 'Pago de servicios',amount: '"+this.forma.get('pago_montoapagar')!.value+"',currency: 'MXN',id: '"+this.ID+"'},"+
         "interaction: {merchant: {name: 'UJED',address: {line1: 'Calle Constitución 404, Zona Centro, 34100 Durango, Dgo.'}},"+
             "displayControl : {billingAddress : 'HIDE'},},"+
 		    "session: {id:  '"+this.session_id+"'},"+
@@ -40,18 +40,18 @@ export class DiscountComponent implements OnInit {
     body.appendChild(script);
   }
   
-  private subscription: Subscription;
+  private subscription!: Subscription;
 
-  descuentos: Descuentos[];
-  descuentosdet: Descuentos[];
+  descuentos!: Descuentos[];
+  descuentosdet!: Descuentos[];
 
-  session_id:string;
-  successIndicator:string;
-  ID:string;
+  session_id!:string;
+  successIndicator!:string;
+  ID!:string;
 
   public items: any = "";
 
-  forma: FormGroup;
+  forma!: FormGroup;
 
   total = 0;
 
@@ -78,9 +78,9 @@ export class DiscountComponent implements OnInit {
 
   }
 
-  valuesSelect(values){
+  valuesSelect(values: any){
     //console.log(values);
-    this.forma.get('pago_foldescto').setValue(values);
+    this.forma.get('pago_foldescto')!.setValue(values);
     this._ds.getDescuentoDet(values).subscribe(
       (descuentosdet) => {
         this.descuentosdet = descuentosdet
@@ -108,20 +108,20 @@ export class DiscountComponent implements OnInit {
     for(let data of datosdet){
       this.total += parseFloat(data.vdes_a_pagar);
     }
-    this.forma.get('pago_montoapagar').setValue(this.total);
+    this.forma.get('pago_montoapagar')!.setValue(this.total);
     return this.total;
   }
 
   get conceptoNovalido(){
-    return this.forma.get('pago_concepto').invalid && this.forma.get('pago_concepto').touched
+    return this.forma.get('pago_concepto')!.invalid && this.forma.get('pago_concepto')!.touched
   }
 
   get metodoPagoNovalido(){
-    return this.forma.get('metodoPago').invalid && this.forma.get('metodoPago').touched
+    return this.forma.get('metodoPago')!.invalid && this.forma.get('metodoPago')!.touched
   }
 
   getdescuentosNovalido(){
-    return this.forma.get('descuentos').invalid && this.forma.get('descuentos').touched
+    return this.forma.get('descuentos')!.invalid && this.forma.get('descuentos')!.touched
   }
 
   crearFormulario(){
@@ -137,6 +137,40 @@ export class DiscountComponent implements OnInit {
       pago_estatus: ['P']
     });
   }
+
+
+    // Limpieza segura en Angular (poner justo antes de configurar Checkout)
+  clearHostedCheckoutSessionStorage() {
+    const keys = ['HostedCheckout_sessionId','HostedCheckout_embedContainer','HostedCheckout_merchantState'];
+    keys.forEach(k => {
+      if (sessionStorage.getItem(k) !== null) {
+        console.log('Borrando sessionStorage key:', k);
+        sessionStorage.removeItem(k);
+      }
+    });
+  }
+
+  // Mostrar overlay con clase 'open' y forzar change detection
+  private showEvoOverlay(): void {
+    const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
+    if (!overlay) { console.error('Overlay no encontrado'); return; }
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // forzar reflow para evitar problemas de stacking
+    void overlay.offsetHeight;
+  }
+
+  // Cerrar
+  public closeEvoModal(event?: Event): void {
+    if (event) event.stopPropagation();
+    const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
+    if (overlay) overlay.classList.remove('open');
+    const container = document.getElementById('evo-embed-container');
+    if (container) container.innerHTML = '';
+    document.body.style.overflow = '';
+    this.clearHostedCheckoutSessionStorage();
+  }
+
 
   Pagar(){
     this.blockUI.start();
@@ -157,17 +191,43 @@ export class DiscountComponent implements OnInit {
             (variables) => {
               this.session_id = variables.session_id;
               this.successIndicator = variables.successIndicator;
-              this.router.navigate(['dashboard']);
+              //this.router.navigate(['dashboard']);
                     
               
-              return new Promise(resolve => {
-                this.Checkout();
-                Checkout.showLightbox();
-                resolve(
-                  sessionStorage.MasterID = master.pago_referencia.toString()
+              this.clearHostedCheckoutSessionStorage();
 
-                );
-              })
+              const ck = (window as any).Checkout;
+              if (!ck) {
+                console.error('Checkout no disponible en window');
+              } else {
+                ck.configure({ session: { id: this.session_id } });
+                console.log('Checkout configurado con:', this.session_id);
+
+                // 1) mostrar overlay primero
+                this.showEvoOverlay();
+
+                // 2) esperar un tick para que Angular pinte el overlay y el contenedor
+                setTimeout(() => {
+                  try {
+                    // pasar height: '100%' no siempre funciona; el contenedor controla la altura
+                    const res = ck.showEmbeddedPage('#evo-embed-container');
+                    if (res && typeof res.then === 'function') {
+                      res.then(() => console.log('showEmbeddedPage completado')).catch((e:any) => {
+                        console.error('Error showEmbeddedPage:', e);
+
+                        this.closeEvoModal();
+                      });
+                    }
+                    
+                  } catch (e) {
+                    console.error('Error invocando showEmbeddedPage:', e);
+                    this.closeEvoModal();
+                  }
+                }, 200); // 200ms es suficiente si el overlay ya está visible
+              }
+
+              sessionStorage.MasterID = master.pago_referencia.toString()
+
             }
           )
 

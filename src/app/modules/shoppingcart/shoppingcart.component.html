@@ -1,14 +1,6 @@
-<block-ui>
+
 <link rel="stylesheet" href="../../../assets/css/login.css">
 
-<!--
-<script src="https://evopaymentsmexico.gateway.mastercard.com/checkout/version/51/checkout.js"
-data-error="errorCallback"
-data-cancel="cancelCallback"
-data-complete="completeCallback">
-</script>
-
--->
 <form class="row" [formGroup]="forma" (ngSubmit)="Pagar()" (keydown.enter)="$event.preventDefault()">
     <div class="alert alert-dark" role="alert">
         
@@ -91,4 +83,11 @@ data-complete="completeCallback">
     </ng-container>
 </form>
 <br><br>
-</block-ui>
+
+<div id="evo-embed-overlay" class="evo-overlay" (click)="closeEvoModal($event)">
+  <div class="evo-modal" (click)="$event.stopPropagation()">
+    <button class="evo-close" (click)="closeEvoModal($event)">✕</button>
+    <!-- Aquí el SDK incrustará el checkout -->
+    <div id="evo-embed-container" style="width:100%; height:700px;"></div>
+  </div>
+</div>

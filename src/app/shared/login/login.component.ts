@@ -1,15 +1,11 @@
-import { Component,Inject, OnInit, ɵEMPTY_ARRAY } from '@angular/core';
+import { Component,OnInit } from '@angular/core';
 import { Login } from './login';
 import { Subscription } from 'rxjs';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import swal from 'sweetalert2';
-import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { LoginService } from '../../services/login.service';
-import { isNullOrUndefined, isUndefined } from 'util';
-import { isEmpty } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import {MatDialog,MatDialogConfig} from '@angular/material/dialog';
-import {MatDialogModule} from '@angular/material/dialog';
 import { DialogBodyComponent } from '../dialog-body/dialog-body.component';
 
 @Component({
@@ -33,6 +29,7 @@ export class LoginComponent implements OnInit {
   }
   
   login() {
+ //   this.log.password='tesoreria2025';
     this.subscription = this._log.getLogin(this.log)
       .subscribe((data: any) => {
         //console.log(data);

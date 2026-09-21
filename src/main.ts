@@ -8,6 +8,9 @@ import { environment } from './environments/environment';
 if (environment.production) {
   enableProdMode();
 }
+(window as any).APP_CONFIG = {
+  apiUrl: environment.rutaAPI,
+};
 
 platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.error(err));

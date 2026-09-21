@@ -1,87 +1,116 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Portal Tesorería</title>
-  <base href="/">
+  <head>
+    <meta charset="utf-8" />
+    <title>Portal Tesorería</title>
+    <base href="/" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" href="./assets/images/favicon.png" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="./assets/images/favicon.png" type="image/x-icon" />
 
-  <link href="assets/css/style.css" rel="stylesheet"/>
+    <link href="assets/css/style.css" rel="stylesheet" />
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <script>
+      window.errorCallback = function (error) {
+        console.error("EVO ERROR:", error);
+      };
 
-  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      window.cancelCallback = function () {
+        console.warn("EVO CANCELADO");
+      };
 
-  <!--
-  <script src="https://evopaymentsmexico.gateway.mastercard.com/static/checkout/checkout.min.js" 
-    data-error="errorCallback" 
-    data-cancel="cancelCallback" 
-    data-complete="completeCallback">
-  </script>
-  -->
+      window.completeCallback = function (resultIndicator, sessionVersion) {
+        console.log("EVO COMPLETADO:", resultIndicator, sessionVersion);
+        const ID = sessionStorage.getItem("MasterID");
+        const apiUrl = window.APP_CONFIG?.apiUrl;
+        console.log(ID);
 
-    <script src="https://evopaymentsmexico.gateway.mastercard.com/static/checkout/checkout.min.js"
-        data-error="errorCallback"
-        data-cancel="cancelCallback"
-        data-complete="completeCallback">
-  </script>
+        $.ajax({
+          url: `${apiUrl}/trespbanco/${ID}`,
+          contentType: "application/json; charset=UTF-8",
+          type: "POST", //type is any HTTP method
+         // data: { trespbanco: ID }, //Data as js object
+          success: function () {
+            sessionStorage.removeItem("MasterID");
+          },
+        });
+      };
+      window.addEventListener("load", function () {
+        console.log("Checkout cargado:", typeof window.Checkout);
+      });
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+      function errorCallback(error) {
+        console.log(JSON.stringify(error));
+        console.log("errorCallback version 100");
+        alert(JSON.stringify(error));
+        Swal.fire({
+          icon: "error",
+          title: "ERROR!!!",
+          text: JSON.stringify(error),
+          showConfirmButton: false,
+          timer: 6000,
+        });
+      }
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      // function cancelCallback(error) {
+      //   alert("errorr");
+      //   console.log("cancelCallback.error version 100", error);
+      //   console.log("Payment cancelled");
+      // }
 
-</head>
-<body>
+      // function completeCallback(resultIndicator, sessionVersion) {
+      //   console.log("completeCallback version 100");
+      //   console.log("resultIndicator: " + resultIndicator);
+      //   console.log("sessionVersion:" + sessionVersion);
+      //   //console.log("successIndicator:" +$("#successIndicator").val());
+      //   Swal.fire({
+      //     icon: "success",
+      //     title: "Pago exitoso!!!",
+      //     text: "Puedes descargar tu recibo de pago en la sección de recibos",
+      //     showConfirmButton: false,
+      //     timer: 4000,
+      //   });
+      //   updateMaster();
+      // }
 
-      <app-root></app-root>
+      // function updateMaster() {
+      //   //this.http.put('http://localhost:8090/api/tpagosonline/{id}'+sessionStorage.getItem('MasterID'));
 
-      <script>
+      //   var ID = sessionStorage.getItem("MasterID");
+      //   console.log(ID);
+      //   $.ajax({
+      //     url: "https://tesoreria.ujed.mx/api/trespbanco/" + ID,
+      //     type: "POST", //type is any HTTP method
+      //     data: { trespbanco: ID }, //Data as js object
+      //     success: function () {
+      //       sessionStorage.removeItem("MasterID");
+      //     },
+      //   });
+      // }
+    </script>
+    <script
+      src="https://evopaymentsmexico.gateway.mastercard.com/static/checkout/checkout.min.js"
+      data-error="errorCallback"
+      data-cancel="cancelCallback"
+      data-complete="completeCallback"
+    ></script>
 
-        function errorCallback(error) {
-                          console.log(JSON.stringify(error));
-                          console.log('errorCallback version 100');
-                          //alert(JSON.stringify(error));
-                          Swal.fire({icon: 'error',title: 'ERROR!!!',text: JSON.stringify(error),showConfirmButton: false,timer: 6000});
-                    }
-        
-        function cancelCallback() {
-              console.log('cancelCallback version 100');
-              console.log('Payment cancelled');
-        }
-        
-        function completeCallback(resultIndicator, sessionVersion) {
-            console.log('completeCallback version 100');
-            console.log("resultIndicator: " +resultIndicator);
-            console.log("sessionVersion:" +sessionVersion);
-            //console.log("successIndicator:" +$("#successIndicator").val());   
-            Swal.fire({icon: 'success',title: 'Pago exitoso!!!',text: 'Puedes descargar tu recibo de pago en la sección de recibos',showConfirmButton: false,timer: 4000});
-            updateMaster();
-        }
-        
-        function updateMaster(){
-          //this.http.put('http://localhost:8090/api/tpagosonline/{id}'+sessionStorage.getItem('MasterID'));
-
-          var ID = sessionStorage.getItem('MasterID');
-          console.log(ID);
-          $.ajax({
-                    //url: 'http://localhost:8090/api/tpagosonline/'+ID, 
-                    //url: 'http://192.168.1.190:8090/api/tpagosonline/'+ID, 
-                    //url: 'http://192.168.10.38:8090/api/tpagosonline/'+ID, 
-                    //url: 'http://localhost:8090/api/trespbanco/'+ID, 
-                    url: 'https://tesoreria.ujed.mx/api/trespbanco/'+ID, 
-                    type: 'POST',   //type is any HTTP method
-                    data: {'trespbanco':ID},      //Data as js object
-                    success: function () {
-                      sessionStorage.removeItem('MasterID');
-                    }
-                })
-                ;
-        }        
-        </script>
-
-</body>
-
+    <app-root></app-root>
+  </body>
 </html>

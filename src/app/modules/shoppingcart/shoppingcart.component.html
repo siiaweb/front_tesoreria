@@ -19,7 +19,12 @@
             </thead>
             <tbody>
                 <tr *ngFor="let es of ecomServices">
-                    <td style="width: 10%;"><button class="btn btn-primary btn-sm" (click)="deleteItem(es.dpago_idingreso);deleteArray(es.dpago_idingreso)">X</button></td>
+                    <td style="width: 10%;">
+                        <button type="button" 
+                        class="btn btn-primary btn-sm" 
+                        (click)="deleteItem(es.dpago_idingreso);
+                        deleteArray(es.dpago_idingreso)"
+                        >X</button></td>
                     <td style="text-align: center; width: 10%;">{{ es.dpago_cantidad }}</td>
                     <td>{{ es.Descrip }}</td>
                     <td style="text-align: center;">{{ es.dpago_punit | currency:"MXN":"symbol" }}</td>

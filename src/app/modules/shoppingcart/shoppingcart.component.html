@@ -4,7 +4,7 @@
 <form class="row" [formGroup]="forma" (ngSubmit)="Pagar()" (keydown.enter)="$event.preventDefault()">
     <div class="alert alert-dark" role="alert">
         
-        <h3>Mi carrito de compras</h3>
+        <h3 class="encabezado">Mi carrito de compras</h3>
 
     <ng-container *ngIf="ecomServices?.length > 0">
         <table class="table table-hover table-sm">

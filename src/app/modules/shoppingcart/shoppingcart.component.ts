@@ -4,10 +4,10 @@ import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pag
 import { Subscription } from 'rxjs';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import Swal from 'sweetalert2';
-import {Router, ActivatedRoute} from '@angular/router';
-import { Observable } from 'rxjs/Rx'; 
+import { Router, ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs/Rx';
 import { promise } from 'protractor';
-import{TdpagosOnline} from 'src/app/services/dashboard/pagoServicios/tdpagosonline';
+import { TdpagosOnline } from 'src/app/services/dashboard/pagoServicios/tdpagosonline';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { Console } from 'console';
 import { NgZone } from '@angular/core';
@@ -28,7 +28,7 @@ export class ShoppingcartComponent implements OnInit {
   public pagodet: TdpagosOnline = new TdpagosOnline();
   valores!: String;
   det: any[] = [];
-  importe=0;
+  importe = 0;
   /*
   public loadScript() {
     let body = <HTMLDivElement> document.body;
@@ -90,14 +90,14 @@ export class ShoppingcartComponent implements OnInit {
         "order: {description: 'Pago de servicios',amount: '"+this.forma.get('pago_montoapagar')!.value+"',currency: 'MXN',id: '"+this.ID+"'},"+
         "interaction: {merchant: {name: 'UJED',address: {line1: 'Calle Constitución 404, Zona Centro, 34100 Durango, Dgo.'}},"+
             "displayControl : {billingAddress : 'HIDE'},},"+
-		    "session: {id:  '"+this.session_id+"'},"+
+        "session: {id:  '"+this.session_id+"'},"+
       "});";
     script.async = false;
     script.defer = true;
     body.appendChild(script);
   }
   */
-  
+
 
   forma!: FormGroup;
 
@@ -110,8 +110,8 @@ export class ShoppingcartComponent implements OnInit {
   ID!: string;
   total = 0;
 
-  constructor( private _evo: EvoService, private _ps: PagoServiciosService, private fb: FormBuilder,
-               public router: Router, private ngZone: NgZone ) { }
+  constructor(private _evo: EvoService, private _ps: PagoServiciosService, private fb: FormBuilder,
+    public router: Router, private ngZone: NgZone) { }
 
   ngOnInit() {
 
@@ -119,39 +119,35 @@ export class ShoppingcartComponent implements OnInit {
       .subscribe((data: any) => {
         this.ID = data;
         //console.log(data);
-        })	
+      })
 
     //this.cancelCallbackScript();
     //this.errorCallbackScript();
 
     this.ecomServices = JSON.parse(sessionStorage.getItem('shoppingCart')!);
-  
+
     this.totalPrice();
-    
+
     this.crearFormulario();
-  
+
     //console.log(sessionStorage.getItem('shoppingCart'));
-    var items = JSON.parse(sessionStorage.getItem('shoppingCart')!);
-    for (var i=0;i<items.length;i++){
-      //console.log(items[i]);
-      //this.det.push(items[i].dpago_idingreso+'_'+items[i].Descrip+'_'+items[i].dpago_cantidad+'_'+items[i].dpago_punit+'_null');
-      this.det.push(items[i].dpago_idingreso+'_'+items[i].dpago_cantidad+'_'+items[i].dpago_punit+'_null');
-    }
-    
+    // var items = JSON.parse(sessionStorage.getItem('shoppingCart')!);
+
+
   }
 
-  get conceptoNovalido(){
+  get conceptoNovalido() {
     return this.forma.get('pago_concepto')!.invalid && this.forma.get('pago_concepto')!.touched
   }
 
-  get metodoPagoNovalido(){
+  get metodoPagoNovalido() {
     return this.forma.get('metodoPago')!.invalid && this.forma.get('metodoPago')!.touched
   }
 
-  crearFormulario(){
-  
+  crearFormulario() {
+
     this.forma = this.fb.group({
-      pago_concepto: ['', [Validators.required,Validators.maxLength(150)]],
+      pago_concepto: ['', [Validators.required, Validators.maxLength(150)]],
       metodoPago: ['', Validators.required],
       pago_referencia: [this.ID],
       pago_montoapagar: [this.total],
@@ -159,54 +155,53 @@ export class ShoppingcartComponent implements OnInit {
       pago_estatus: ['P']
     });
 
-  } 
+  }
 
   ngOnDestroy() {
-		if (this.subscription !== undefined) {
-			this.subscription.unsubscribe();
-		}
+    if (this.subscription !== undefined) {
+      this.subscription.unsubscribe();
+    }
   }
 
   totalPrice() {
     this.total = 0;
-    for(let data of this.ecomServices){
+    for (let data of this.ecomServices) {
       this.total += parseFloat(data.Mount);
     }
     return this.total;
   }
 
-  deleteItem(dpago_idingreso: any){
+  deleteItem(dpago_idingreso: any) {
     //console.log("ID: "+dpago_idingreso);
-    var items = JSON.parse(sessionStorage.getItem('shoppingCart')!);
-   //console.log(items);
-    for (var i=0;i<items.length;i++){
-      if (items[i].dpago_idingreso == dpago_idingreso){
-        items.splice(i,1);
-        sessionStorage["shoppingCart"] = JSON.stringify(items);
-        this.ecomServices = JSON.parse(sessionStorage.getItem('shoppingCart')!);
+    //const storage= sessionStorage.getItem('shoppingCart');
+    // let items = storage?JSON.parse(storage):[];
+    let items = this.ecomServices;
+    console.log('item', items);
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].dpago_idingreso == dpago_idingreso) {
+        items.splice(i, 1);
+
+
       }
     }
-    //console.log(items);
-    //console.log(this.det);
-
-    //console.log(this.det);
-  this.totalPrice();
-  this.crearFormulario();
+    sessionStorage["shoppingCart"] = JSON.stringify(items);
+    this.totalPrice();
+    this.crearFormulario();
   }
 
-  deleteArray(dpago_idingreso: any){
-    for (var i=0;i<this.det.length;i++){
-      var splitted = this.det[i].split('-'); 
-      if(splitted[0]==dpago_idingreso){
-        this.det.splice(i,1);
+  deleteArray(dpago_idingreso: any) {
+    for (var i = 0; i < this.det.length; i++) {
+      var splitted = this.det[i].split('-');
+      if (splitted[0] == dpago_idingreso) {
+        this.det.splice(i, 1);
       }
-      }
+    }
   }
 
 
   // Limpieza segura en Angular (poner justo antes de configurar Checkout)
   clearHostedCheckoutSessionStorage() {
-    const keys = ['HostedCheckout_sessionId','HostedCheckout_embedContainer','HostedCheckout_merchantState'];
+    const keys = ['HostedCheckout_sessionId', 'HostedCheckout_embedContainer', 'HostedCheckout_merchantState'];
     keys.forEach(k => {
       if (sessionStorage.getItem(k) !== null) {
         console.log('Borrando sessionStorage key:', k);
@@ -239,23 +234,34 @@ export class ShoppingcartComponent implements OnInit {
 
 
 
-  async Pagar(){
+  async Pagar() {
     this.blockUI.start();
     //console.log(this.forma);
-    if (this.forma.invalid){
-      return Object.values( this.forma.controls ).forEach( control =>{
+    if (this.forma.invalid) {
+      return Object.values(this.forma.controls).forEach(control => {
         control.markAsTouched();
         this.blockUI.stop();
       })
-    }else{
+    } else {
+      /**/
+      const items = this.ecomServices;
+      this.det = [];
+      for (var i = 0; i < items.length; i++) {
+        //console.log(items[i]);
+        //this.det.push(items[i].dpago_idingreso+'_'+items[i].Descrip+'_'+items[i].dpago_cantidad+'_'+items[i].dpago_punit+'_null');
+        this.det.push(items[i].dpago_idingreso + '_' + items[i].dpago_cantidad + '_' + items[i].dpago_punit + '_null');
+      }
+      /**/
+
+
       this._ps.create(this.forma.value).subscribe(master => {
 
-         this._ps.createDetalle(master.pago_folpago.toString(),this.det).subscribe(detalle =>{
+        this._ps.createDetalle(master.pago_folpago.toString(), this.det).subscribe(detalle => {
           this.blockUI.stop();
-          Swal.fire({icon: 'success',title: 'Datos Guardados',text: 'Se te redireccionara al portal de pago',showConfirmButton: false,timer: 3000});
+          Swal.fire({ icon: 'success', title: 'Datos Guardados', text: 'Se te redireccionara al portal de pago', showConfirmButton: false, timer: 3000 });
           sessionStorage.removeItem('shoppingCart');
           //this._evo.getEvo(this.ID,master.pago_montoapagar).subscribe(
-            this._evo.getEvo(this.ID,this.total).subscribe(
+          this._evo.getEvo(this.ID, this.total).subscribe(
             (variables) => {
               console.log(variables);
               this.session_id = variables.session_id;
@@ -281,13 +287,13 @@ export class ShoppingcartComponent implements OnInit {
                     // pasar height: '100%' no siempre funciona; el contenedor controla la altura
                     const res = ck.showEmbeddedPage('#evo-embed-container');
                     if (res && typeof res.then === 'function') {
-                      res.then(() => console.log('showEmbeddedPage completado')).catch((e:any) => {
+                      res.then(() => console.log('showEmbeddedPage completado')).catch((e: any) => {
                         console.error('Error showEmbeddedPage:', e);
-                        
+
                         this.closeEvoModal();
                       });
                     }
-                    
+
                   } catch (e) {
                     console.error('Error invocando showEmbeddedPage:', e);
                     this.closeEvoModal();
@@ -299,33 +305,35 @@ export class ShoppingcartComponent implements OnInit {
 
 
 
-            sessionStorage.MasterID = master.pago_referencia.toString();
+              sessionStorage.MasterID = master.pago_referencia.toString();
 
 
             }
           )
 
-         },
-         error => {
-           console.log(error);
-           this.blockUI.stop();
-           Swal.fire({
-             title: 'ERROR!!!',
-             text: error.error.message,
-             icon: 'error'});
-         });
+        },
+          error => {
+            console.log(error);
+            this.blockUI.stop();
+            Swal.fire({
+              title: 'ERROR!!!',
+              text: error.error.message,
+              icon: 'error'
+            });
+          });
 
       },
-      error => {
-        console.log(error);
-        this.blockUI.stop();
-        Swal.fire({
-          title: 'ERROR!!!',
-          text: error.error.message,
-          icon: 'error'});
-      })
+        error => {
+          console.log(error);
+          this.blockUI.stop();
+          Swal.fire({
+            title: 'ERROR!!!',
+            text: error.error.message,
+            icon: 'error'
+          });
+        })
     }
-   
+
   }
 
 

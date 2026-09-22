@@ -4,7 +4,7 @@
 <form class="row" [formGroup]="forma" (ngSubmit)="Pagar()" (keydown.enter)="$event.preventDefault()">
     <div class="alert alert-dark" role="alert">
         
-        <h3>Mi carrito de compras</h3>
+        <h3 class="encabezado">Mi carrito de compras</h3>
 
     <ng-container *ngIf="ecomServices?.length > 0">
         <table class="table table-hover table-sm">
@@ -19,7 +19,12 @@
             </thead>
             <tbody>
                 <tr *ngFor="let es of ecomServices">
-                    <td style="width: 10%;"><button class="btn btn-primary btn-sm" (click)="deleteItem(es.dpago_idingreso);deleteArray(es.dpago_idingreso)">X</button></td>
+                    <td style="width: 10%;">
+                        <button type="button" 
+                        class="btn btn-primary btn-sm" 
+                        (click)="deleteItem(es.dpago_idingreso);
+                        deleteArray(es.dpago_idingreso)"
+                        >X</button></td>
                     <td style="text-align: center; width: 10%;">{{ es.dpago_cantidad }}</td>
                     <td>{{ es.Descrip }}</td>
                     <td style="text-align: center;">{{ es.dpago_punit | currency:"MXN":"symbol" }}</td>

@@ -1,38 +1,5 @@
-<!--
-<mat-nav-list>
-
-  <ng-container *ngFor="let rol of roles">
-
-      <ng-container *ngIf="rol.rolu_modulo_pred === null">
-        <a  mat-list-item routerLinkActive="list-item-active" routerLink="/{{rol.rolu_modulo_route}}">
-          <mat-icon>pages</mat-icon> {{rol.rolu_modulo_descrip}}
-        </a>
-      </ng-container>
-      <ng-container *ngIf="rol.rolu_modulo_pred !== null">
-        <ng-container *ngIf="rol.rolu_modulo_route === null">
-
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                <mat-icon>payment</mat-icon>{{rol.rolu_modulo_descrip}}
-              </mat-panel-title>
-            </mat-expansion-panel-header>
-            <a mat-list-item routerLinkActive="list-item-active" routerLink="/posts"><mat-icon>payment</mat-icon> {{rol.rolu_modulo_descrip}}</a>
-          </mat-expansion-panel>
-
-        </ng-container>
-
-      </ng-container>
-
-  </ng-container>
-
-</mat-nav-list>
--->
-
 
 <mat-nav-list>
-  
-
     <ng-container>
       <a mat-list-item routerLinkActive="list-item-active" routerLink="/dashboard">
           <mat-icon>pages</mat-icon> Dashboard

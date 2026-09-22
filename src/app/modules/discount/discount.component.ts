@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { DescuentosService } from '../../services/dashboard/descuentos/descuentos.service'; 
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
 import { Subscription } from 'rxjs';
 import { Descuentos } from '../../services/dashboard/descuentos/descuentos';
-import {Router, ActivatedRoute} from '@angular/router';
+import {Router} from '@angular/router';
 import { EvoService } from '../../services/dashboard/evo.service';
-import { Tvdescuentos } from './tvdescuentos';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 
 declare const Checkout:any
@@ -28,8 +27,8 @@ export class DiscountComponent implements OnInit {
     let script = document.createElement('script');
     script.type = 'text/javascript';
     script.innerHTML = "Checkout.configure({"+
-      //"merchant: 'TEST1143891',"+
       "merchant: '1143891',"+
+      //"merchant: '1143891',"+
         "order: {description: 'Pago de servicios',amount: '"+this.forma.get('pago_montoapagar')!.value+"',currency: 'MXN',id: '"+this.ID+"'},"+
         "interaction: {merchant: {name: 'UJED',address: {line1: 'Calle Constitución 404, Zona Centro, 34100 Durango, Dgo.'}},"+
             "displayControl : {billingAddress : 'HIDE'},},"+
@@ -187,8 +186,8 @@ export class DiscountComponent implements OnInit {
           this.blockUI.stop();
           Swal.fire({icon: 'success',title: 'Datos Guardados',text: 'Se te redireccionara al portal de pago',showConfirmButton: false,timer: 3000});
           sessionStorage.removeItem('shoppingCart');
-          this._evo.getEvo(this.ID,this.total).subscribe(
-            (variables) => {
+          this._evo.getEvo(this.total,null).subscribe(
+            (variables:any) => {
               this.session_id = variables.session_id;
               this.successIndicator = variables.successIndicator;
               //this.router.navigate(['dashboard']);

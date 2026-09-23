@@ -241,6 +241,7 @@ export class PostsComponent implements OnInit {
 
   eliminarFila(i:number){
     this.arreglo.removeAt(i);
+    this.sumarTotal();
   }
 
   limparDetalle(){

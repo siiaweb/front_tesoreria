@@ -1,5 +1,4 @@
 export class Descuentos {
-    
     vdes_id: number;
     vdes_foldescto: String;
     vdes_nombre: String;
@@ -13,5 +12,5 @@ export class Descuentos {
     vdes_monto_descto: String;
     vdes_a_pagar: string;
     vdes_regid: number;
-     
+    vdes_descdescrip: string;
 }

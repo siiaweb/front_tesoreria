@@ -33,6 +33,7 @@ import { MatSortModule } from '@angular/material/sort';
 // Rutas
 import { PAGES_ROUTES } from './default.routes';
 import { DialogOverviewExampleDialog } from '../resetpass/resetpass.component';
+import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -75,7 +76,8 @@ import { DialogOverviewExampleDialog } from '../resetpass/resetpass.component';
     NgxPaginationModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSortModule
+    MatSortModule,
+    NgbTypeaheadModule,
   ],
   providers: [
     

@@ -1,11 +1,210 @@
 <block-ui>
+  <form [formGroup]="forma">
+    <h2>Pago de servicios</h2>
+
+    <div class="payment-component">
+      <div class="payment-grid">
+        <!-- MAESTRO -->
+        <div name="panel-concepto">
+          <!-- DESCUENTOS -->
+          <div class="card" style="margin-bottom: 10px !important;" *ngIf="descuentos">
+            <div class="card-header">
+              <h2 class="card-title">
+                <i class="bi bi-currency-dollar"></i>
+                <span>Descuentos</span>
+              </h2>
+              <p class="card-subtitle">Tienes {{descuentos?.length}} {{descuentos?.length != 1 ? 'descuentos disponibles':'descuento disponible'}}.</p>
+            </div>
+
+            <div class="autocomplete-group">
+              <div class="input-relative">
+                <input 
+                  class="form-input" 
+                  formControlName="dsctodescrip"
+                  readonly
+                  style="cursor: pointer;"
+                  (click)="openDescuento()"
+                  (blur)="onBlurDescuentos()">
+                  <span class="input-left-span">{{ openDescto === false ? '▼' : '▲' }}</span>
+              </div>
+              <div class="autocomplete-dropdown" *ngIf="openDescto === true">
+                <div 
+                  class="dropdown-item" 
+                  *ngFor="let item of descuentos"
+                  (click)="seleccionarDescuento(item)">
+                  <div>
+                    <div class="item-title">{{ item.vdes_descdescrip }}</div>
+                    <div class="item-code">Clave: {{ item.vdes_foldescto }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BUSQUEDA PAGO SERVICIOS -->
+          <div class="card" *ngIf="!forma.get('descuento').value">
+            <div class="card-header">
+              <h2 class="card-title">
+                <i class="bi bi-search"></i>
+                <span>Busqueda de servicios</span>
+              </h2>
+              <p class="card-subtitle">Selecciona de la lista los articulos que deseas pagar.</p>
+            </div>
+
+            <!-- AUTOCOMPLETADO -->
+            <div class="autocomplete-group">
+              <div class="input-relative">
+                <input type="text" 
+                    class="form-input" 
+                    placeholder="Ej. Examen, Titulo, Constancias..."
+                    (click)="openServicios = true"
+                    (input)="buscarServicio($event)"
+                    (keydown)="onKeyDown($event)"
+                    (blur)="onBlur()"
+                    formControlName="servicio">
+                    <button type="button" *ngIf="forma.get('servicio')?.value" class="clear-btn" (click)="deseleccionarServicio()">
+                      <i class="bi bi-x"></i>
+                    </button>
+              </div>
+              <div class="autocomplete-dropdown" *ngIf="openServicios === true">
+                <div 
+                  #dropdownService
+                  class="dropdown-item" 
+                  *ngFor="let item of filteredCatalogoServicios; let i = index"
+                  [class.active]="i === selectedIndexServicios"
+                  (mouseenter)="setSelectedIndex(i)" 
+                  (click)="seleccionarServicio(item)">
+                  <div>
+                    <div class="item-title">{{item.descripcion}}</div>
+                  </div>
+                  <span class="item-price">{{item.punit|currency:"MXN":"symbol"}}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- VISUALIZAR SERVICIO SELECCIONADO -->
+            <div class="selected-card" *ngIf="forma.get('dpago_idingreso').value">
+              <div class="preview-header">
+                <div>
+                  <span class="badge" *ngIf="forma.get('cambiaPrecio').value === 'S'">Editable</span>
+                  <h4 class="preview-title">{{forma.get('servicio')?.value}}</h4>
+                  <p class="preview-code">ID: {{forma.get('dpago_idingreso')?.value}}</p>
+                </div>
+                <span class="preview-price" *ngIf="forma.get('cambiaPrecio').value === 'N'">${{forma.get('punit')?.value}}</span>
+                <div class="input-relative" *ngIf="forma.get('cambiaPrecio').value === 'S'" style="width: 40% !important;">
+                  <input 
+                    type="text" 
+                    class="form-input" 
+                    style="text-align: right;"
+                    formControlName="punit"
+                    [ngClass]="{'form-input-invalid': forma.get('punit')?.invalid && forma.get('punit')?.touched}"
+                    (blur)="formatearPrecio()">
+                    <span class="input-moneda">$</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- AJUSTAR CANTIDADES Y BOTON DE AGREGAR A DETALLE -->
+            <div style="margin: 0; padding: 0; width: 100%; align-items: start;" *ngIf="forma.get('dpago_idingreso').value">
+              <label class="form-label">Cantidad</label>
+            </div>
+            <div class="action-grid" *ngIf="forma.get('dpago_idingreso').value">
+              <div class="qty-control">
+                <div class="qty-picker">
+                  <button type="button" (click)="ajustarCantidad(-1)">-</button>
+                  <input type="number" formControlName="cantidad" readonly>
+                  <button type="button" (click)="ajustarCantidad(1)">+</button>
+                </div>
+              </div>
+              <div style="display:flex; justify-content: flex-end;">
+                <button
+                  type="button" 
+                  class="boton boton-primary"
+                  style="max-width: 350px !important;"
+                  [disabled]="!forma.get('dpago_idingreso').value" 
+                  (click)="agregarDetalle()">
+                  <i class="bi bi-plus"></i> Añadir
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- DETALLE -->
+        <div name="panel-detalle" style="margin-top: 10px !important;" *ngIf="arreglo?.length > 0">
+          <div class="card checkout-card">
+
+            <!-- TITULO DETALLE -->
+            <div class="table-header">
+              <h3 class="card-title">
+                <i class="bi bi-list"></i>
+                <span>Conceptos a pagar</span>
+              </h3>
+              <span class="count-pill"> {{forma.get('numservicios')?.value}} {{forma.get('numservicios')?.value !== 1 ? 'artículo':'artículos'}}</span>
+            </div>
+
+            <!-- TABLA -->
+            <form [formGroup]="formDet">
+              <div class="table-responsive">
+                <table class="concepts-table">
+                  <thead>
+                    <tr>
+                      <th>Concepto</th>
+                      <th class="text-center">Cantidad</th>
+                      <th class="text-right">Precio unitario</th>
+                      <th class="text-right" *ngIf="forma.get('descuento').value">Descuento</th>
+                      <th class="text-right">Subtotal</th>
+                      <th class="text-center" *ngIf="!forma.get('descuento').value"></th>
+                    </tr>
+                  </thead>
+                  <tbody formArrayName="detalle">
+                    <tr *ngFor="let item of arreglo.controls; let i = index" [formGroupName]="i">
+                      <td>
+                        <span class="item-code">{{ item.get('idingreso')?.value }}</span>
+                        <div class="item-name">{{ item.get('concepto')?.value }}</div>
+                      </td>
+                      <td class="text-center font-bold">{{ item.get('cantidad')?.value }}</td>
+                      <td class="text-right font-bold">{{ item.get('punit')?.value|currency:"MXN":"symbol"}}</td>
+                      <td class="text-right font-bold" *ngIf="forma.get('descuento').value">{{item.get('descto')?.value}}%</td>
+                      <td class="text-right font-bold">{{item.get('subtotal')?.value|currency:"MXN":"symbol"}}</td>
+                      <td class="text-center" *ngIf="!forma.get('descuento').value">
+                        <button type="button" class="btn btn-danger" (click)="eliminarFila(i)">
+                          <i class="bi bi-trash3-fill"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </form>
+
+            <div class="checkout-footer">
+              <div class="summary-row summary-total">
+                <span>TOTAL A PAGAR</span>
+                <span class="total-amount">{{forma.get('total').value|currency:"MXN":"symbol"}}</span>
+              </div>
+    
+              <button 
+                class="boton boton-success boton-pay" 
+                [disabled]="arreglo?.length === 0">
+                <span>PROCESAR PAGO DE ({{forma.get('total').value|currency:"MXN":"symbol"}})</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </form>
+</block-ui>
+
+<!-- <block-ui>
 <link rel="stylesheet" href="../../../assets/css/login.css">
 
 <mat-toolbar color="grey">
   <div fxFlex fxLayout="row" fxLayoutAlign="end center">
-    <!--
-    <h4>{{ this.tipoUsuario }} | {{ this.uresUsuario }}</h4>
-    -->
     <button mat-icon-button routerLink="/shoppingcart">
       <mat-icon matBadge="{{ arrayLength }}" matBadgeColor="warn"> shopping_cart</mat-icon>
     </button>
@@ -40,4 +239,4 @@
   </div>
 <br><br>
 </form>
-</block-ui>
+</block-ui> -->

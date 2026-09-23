@@ -16,7 +16,7 @@
             </thead>
             <tbody>
                 <tr *ngFor="let es of ecomServices">
-                    <td style="width: 10%;"><button class="btn btn-primary btn-sm" (click)="deleteItem(es.dpago_idingreso);deleteArray(es.dpago_idingreso)">X</button></td>
+                    <td style="width: 10%;"><button type="button" class="btn btn-primary btn-sm" (click)="deleteItem(es.dpago_idingreso);deleteArray(es.dpago_idingreso)">X</button></td>
                     <td style="text-align: center; width: 10%;">{{ es.dpago_cantidad }}</td>
                     <td>{{ es.Descrip }}</td>
                     <td style="text-align: center;">{{ es.dpago_punit | currency:"MXN":"symbol" }}</td>
@@ -69,8 +69,8 @@
 
     <ng-container *ngIf="ecomServices?.length > 0">
         <div style="text-align: right">
-            <button class="btn btn-blue" [disabled]="!forma.valid">*Pagar</button>
-            <button class="btn btn-primary" routerLink="/posts">Regresar</button>
+            <button class="btn btn-blue" [disabled]="!forma.valid">Pagar</button>
+            <button type="button" class="btn btn-primary" routerLink="/posts">Regresar</button>
         </div>
     </ng-container>
 </form>
@@ -78,7 +78,7 @@
 
 <div id="evo-embed-overlay" class="evo-overlay">
   <div class="evo-modal" (click)="$event.stopPropagation()">
-    <button class="evo-close" (click)="closeEvoModal($event)">✕</button>
+    <button type="button" class="evo-close" (click)="closeEvoModal($event)">✕</button>
     <!-- Aquí el SDK incrustará el checkout -->
     <div id="evo-embed-container" style="width:100%; height:700px;"></div>
   </div>

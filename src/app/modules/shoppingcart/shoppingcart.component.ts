@@ -15,6 +15,9 @@ export interface Carrito {
   dpago_cantidad: number;
   dpago_idingreso: string;
   dpago_punit: number;
+  descto?:number;
+  dto_pagar?:number;
+  regidescto?:number;
 }
 
 export interface PagoOnline {

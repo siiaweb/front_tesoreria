@@ -46,6 +46,7 @@ export class LoginComponent implements OnInit {
           sessionStorage.usuID = data[0].usua_id.toString();
           sessionStorage.Ures = data[0].usua_ures.toString();
           sessionStorage.Persona = data[0].usua_persona.toString();
+          sessionStorage.Nombre = data[0].usua_nombre.toString();
           this.router.navigate(['/dashboard']);
         } else{
           swal.fire({

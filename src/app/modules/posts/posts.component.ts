@@ -1,17 +1,17 @@
-import { Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, OnInit, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { CatalogoPagoService } from '../../services/dashboard/catalogoPago.service';
 import { CatalogoPago } from '../../services/dashboard/catalogoPago';
 import { CatalogoPagoTipoUser } from '../../services/dashboard/catalogoPagoTipoUser';
-import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
+import { FormGroup, Validators, FormBuilder, FormArray } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { ListaUsuariosService } from '../../services/dashboard/listausuarios/listausuarios.service';
-import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
-import { Observable, OperatorFunction, Subject, merge } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { DescuentosService } from 'src/app/services/dashboard/descuentos/descuentos.service';
 import { Descuentos } from 'src/app/services/dashboard/descuentos/descuentos';
 import { erroresFormulario } from '../componentes-genericos/manejo-errores-forma/errores';
+import { DetPagoOnlineDTO, PagoOnline } from './interfaces/catalogos.post';
+import { EvoService } from '../../services/dashboard/evo.service';
+import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
 
 @Component({
   selector: 'app-posts',
@@ -62,16 +62,23 @@ export class PostsComponent implements OnInit {
 
   @ViewChildren('dropdownService') dropdownItems!: QueryList<ElementRef>;
 
+  session_id!: string;
+  successIndicator!: string;
+
   constructor( 
     private _cp: CatalogoPagoService, 
     private fb: FormBuilder, 
     private _lus: ListaUsuariosService,
-    private _ds: DescuentosService ) { }
+    private _ds: DescuentosService,
+    private _evo: EvoService, 
+    private _ps: PagoServiciosService,) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.blockUI.start('Cargando datos...');
     this.crearFormulario();
     this.getDescuentos();
     this.getCatalogoServicios(sessionStorage.getItem('Tipo').toString());
+    this.forma.controls['referencia'].setValue(await this.getReferencia());
   }
 
   openDescuento(){
@@ -140,7 +147,7 @@ export class PostsComponent implements OnInit {
   }
 
   limpiarCamposServicio(){
-    this.forma.get('dpago_idingreso').setValue('');
+    this.forma.get('idingreso').setValue('');
     this.forma.get('punit').setValue('');
     this.forma.get('cambiaPrecio').setValue('N');
     this.forma.get('cantidad').setValue(1);
@@ -150,7 +157,7 @@ export class PostsComponent implements OnInit {
     this.limpiarCamposServicio();
     this.selectedIndexServicios = -1;
     this.forma.get('servicio').setValue(event.descripcion);
-    this.forma.get('dpago_idingreso').setValue(event.concepto);
+    this.forma.get('idingreso').setValue(event.concepto);
     this.forma.get('punit').setValue(parseFloat(event.punit).toLocaleString('es-MX',{minimumFractionDigits: 2, maximumFractionDigits: 2}));
     this.forma.get('paquete').setValue(event.paquete);
     if(parseFloat(event.punit) === 1) this.forma.get('cambiaPrecio').setValue('S');
@@ -260,7 +267,7 @@ export class PostsComponent implements OnInit {
       });
     }else{
       const element = this.fb.group({...this.detalle});
-      let id = this.forma.get('dpago_idingreso').value;
+      let id = this.forma.get('idingreso').value;
       let encontrada = this.Detalles.find(a => a.get('idingreso').value === id);
       let cant = parseInt(this.forma.get('cantidad').value);
       let punit = parseFloat(this.forma.get('punit').value.toString().replace(/,/g, ''));
@@ -299,67 +306,134 @@ export class PostsComponent implements OnInit {
     this.forma.get('total').setValue(total);
   }
 
-
-  // textSelect($event) {
-  //   this.text_Select = $event.target.options[$event.target.options.selectedIndex].text;
-  //   var splitted = $event.target.value.split(","); 
-  //   this.id_Select = splitted[0];
-  //   this.monto_Select = splitted[1];
-  //   this.precioUnit = splitted[1];
-  //   this.forma.get('p_unitario').setValue(splitted[1]);
-  //   if(splitted[1] === '1'){
-  //     this.readOnlyInput = false;
-  //   }else{
-  //     this.readOnlyInput = true;
-  //   }
-  // }
-
   get cantidadNovalido(){
     return this.forma.get('cantidad').invalid && this.forma.get('cantidad').touched
   }
 
   crearFormulario(){
     this.forma = this.fb.group({
-      dpago_idingreso: ['', Validators.required],
+      idingreso: ['', Validators.required],
       servicio: '',
       cantidad: [1, [Validators.required,Validators.max(999),Validators.min(1)]],
       punit: ['', [Validators.required,Validators.max(99999),Validators.min(0.01)]],
       cambiaPrecio: 'N',
+      user: sessionStorage.getItem('usuID'),
+      nombre: sessionStorage.getItem('Nombre'),
       paquete: '',
       numservicios: 0,
       descuento: '',
       dsctodescrip: '',
       total: '',
+      referencia: '',
+    });
+    this.blockUI.stop();
+  }
+
+  async Pagar() {
+    this.blockUI.start();
+    const detalle: Array<DetPagoOnlineDTO> = this.arreglo.getRawValue().map((e)=>{
+      return {
+          idingreso: e.idingreso,
+          cantidad: e.cantidad,
+          punit: e.punit,
+          regidescto: e.regiddescto||null,
+          descto: e.descto||null,
+          dtoPagar: e.dtopagar||null,
+      }
+    });
+
+    const entity = { 
+      usuaid: this.forma.get('user').value||null, 
+      montoapagar: this.forma.get('total').value,
+      referencia: this.forma.get('referencia').value,
+      concepto: "PAGO DE "+(this.forma.get('nombre').value||this.forma.get('user').value)+" REF: "+this.forma.get('referencia').value+" FOLIO: ",
+      user: this.forma.get('user').value||null,
+      detalle: detalle 
+    }
+
+    let total = this.forma.get('total').value;
+    this._evo.getEvo(total, entity).subscribe({
+      next: (response: any) => {
+        console.warn('response', response)
+        this.session_id = response.session_id;
+        this.successIndicator = response.successIndicator;
+        sessionStorage.MasterID = this.forma.get('referencia').value;
+        this.forma.reset();
+        this.limparDetalle();
+        this.getDescuentos();
+        this.getCatalogoServicios(sessionStorage.getItem('Tipo').toString());
+        this.clearHostedCheckoutSessionStorage();
+        const ck = (window as any).Checkout;
+        if (ck) {
+          ck.configure({
+            session: {
+              id: this.session_id
+            }
+
+          });
+          this.showEvoOverlay();
+                    setTimeout(() => {
+                try {
+                  // pasar height: '100%' no siempre funciona; el contenedor controla la altura
+                  const res = ck.showEmbeddedPage('#evo-embed-container');
+                  if (res && typeof res.then === 'function') {
+                    res.then(() => console.log('showEmbeddedPage completado')).catch((e: any) => {
+                      console.error('Error showEmbeddedPage:', e);
+
+                      this.closeEvoModal();
+                    });
+                  }
+                } catch (e) {
+                  console.error('Error invocando showEmbeddedPage:', e);
+                  this.closeEvoModal();
+                }
+              }, 200); // 200ms es suficiente si el overlay ya está visible
+        }
+      },
+      error: (e) => {
+        console.error('e', e)
+        Swal.fire({
+          title: 'ERROR!!!',
+          text: JSON.stringify(e),
+          icon: 'error'
+        });
+      },
+      complete: () => {
+
+      }
+    })
+  }
+
+  clearHostedCheckoutSessionStorage() {
+    const keys = ['HostedCheckout_sessionId', 'HostedCheckout_embedContainer', 'HostedCheckout_merchantState'];
+    keys.forEach(k => {
+      if (sessionStorage.getItem(k) !== null) {
+        console.log('Borrando sessionStorage key:', k);
+        sessionStorage.removeItem(k);
+      }
     });
   }
 
-  // add(){
-  //   this.blockUI.start();
-  //   if (sessionStorage .getItem('shoppingCart') === null) {
-  //     this.array = [];
-  //     this.array.push({"dpago_idingreso":this.id_Select, "Mount":this.monto_Select, "Descrip":this.text_Select,
-  //                      "dpago_cantidad":this.forma.get('cantidad').value, "dpago_punit":this.forma.get('p_unitario').value,});
-  //     sessionStorage.setItem('shoppingCart', JSON.stringify(this.array));
-  //     this.blockUI.stop();
-  //     Swal.fire('Agregado al carrito', `El articulo ${this.text_Select} fue agregado exitosamente`, 'success');
-  //   }else{
-  //     this.array = JSON.parse(sessionStorage .getItem('shoppingCart'));
-  //     this.array.push({"dpago_idingreso":this.id_Select, "Mount":this.monto_Select, "Descrip":this.text_Select,
-  //     "dpago_cantidad":this.forma.get('cantidad').value, "dpago_punit":this.forma.get('p_unitario').value,});
-  //     sessionStorage.setItem('shoppingCart', JSON.stringify(this.array));
-  //     this.blockUI.stop();
-  //     Swal.fire('Agregado al carrito', `El articulo ${this.text_Select} fue agregado exitosamente`, 'success');     
-  //   }
-  //   this.forma.get('cantidad').setValue('1');
-  //   this.arrayLength = this.array.length;
-  //   this.forma.get('servicio').setValue('');
-  //   this.id_Select = "";
-  //   this.text_Select = "";
-  //   this.monto_Select = 0;
-  //   this.precioUnit = 0;
-  //   this.ToggleButton = true;
-  //   this.forma.get('p_unitario').setValue('');
-  // }
+  // Mostrar overlay con clase 'open' y forzar change detection
+  private showEvoOverlay(): void {
+    const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
+    if (!overlay) { console.error('Overlay no encontrado'); return; }
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // forzar reflow para evitar problemas de stacking
+    void overlay.offsetHeight;
+  }
+
+  // Cerrar
+  public closeEvoModal(event?: Event): void {
+    if (event) event.stopPropagation();
+    const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
+    if (overlay) overlay.classList.remove('open');
+    const container = document.getElementById('evo-embed-container');
+    if (container) container.innerHTML = '';
+    document.body.style.overflow = '';
+    this.clearHostedCheckoutSessionStorage();
+  }
 
   getCatalogoServicios(tipo:string){
     this._cp.getCatalogoPagoTipoUser(tipo).subscribe(
@@ -375,5 +449,10 @@ export class PostsComponent implements OnInit {
         this.descuentos = descuentos
       }
     )
+  }
+
+  async getReferencia():Promise<string>{
+    const ref = await this._ps.getTsqpagosonline().toPromise();
+    return ref as string;
   }
 }

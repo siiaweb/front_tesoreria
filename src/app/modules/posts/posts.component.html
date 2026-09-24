@@ -83,12 +83,12 @@
             </div>
 
             <!-- VISUALIZAR SERVICIO SELECCIONADO -->
-            <div class="selected-card" *ngIf="forma.get('dpago_idingreso').value">
+            <div class="selected-card" *ngIf="forma.get('idingreso').value">
               <div class="preview-header">
                 <div>
                   <span class="badge" *ngIf="forma.get('cambiaPrecio').value === 'S'">Editable</span>
                   <h4 class="preview-title">{{forma.get('servicio')?.value}}</h4>
-                  <p class="preview-code">ID: {{forma.get('dpago_idingreso')?.value}}</p>
+                  <p class="preview-code">ID: {{forma.get('idingreso')?.value}}</p>
                 </div>
                 <span class="preview-price" *ngIf="forma.get('cambiaPrecio').value === 'N'">${{forma.get('punit')?.value}}</span>
                 <div class="input-relative" *ngIf="forma.get('cambiaPrecio').value === 'S'" style="width: 40% !important;">
@@ -105,10 +105,10 @@
             </div>
 
             <!-- AJUSTAR CANTIDADES Y BOTON DE AGREGAR A DETALLE -->
-            <div style="margin: 0; padding: 0; width: 100%; align-items: start;" *ngIf="forma.get('dpago_idingreso').value">
+            <div style="margin: 0; padding: 0; width: 100%; align-items: start;" *ngIf="forma.get('idingreso').value">
               <label class="form-label">Cantidad</label>
             </div>
-            <div class="action-grid" *ngIf="forma.get('dpago_idingreso').value">
+            <div class="action-grid" *ngIf="forma.get('idingreso').value">
               <div class="qty-control">
                 <div class="qty-picker">
                   <button type="button" (click)="ajustarCantidad(-1)">-</button>
@@ -121,7 +121,7 @@
                   type="button" 
                   class="boton boton-primary"
                   style="max-width: 350px !important;"
-                  [disabled]="!forma.get('dpago_idingreso').value" 
+                  [disabled]="!forma.get('idingreso').value" 
                   (click)="agregarDetalle()">
                   <i class="bi bi-plus"></i> Añadir
                 </button>
@@ -186,8 +186,10 @@
               </div>
     
               <button 
+                type="button"
                 class="boton boton-success boton-pay" 
-                [disabled]="arreglo?.length === 0">
+                [disabled]="arreglo?.length === 0"
+                (click)="Pagar()">
                 <span>PROCESAR PAGO DE ({{forma.get('total').value|currency:"MXN":"symbol"}})</span>
               </button>
             </div>
@@ -200,3 +202,10 @@
   </form>
 </block-ui>
 
+<div id="evo-embed-overlay" class="evo-overlay">
+  <div class="evo-modal" (click)="$event.stopPropagation()">
+    <button type="button" class="evo-close" (click)="closeEvoModal($event)">✕</button>
+    <!-- Aquí el SDK incrustará el checkout -->
+    <div id="evo-embed-container" style="width:100%; height:700px;"></div>
+  </div>
+</div>

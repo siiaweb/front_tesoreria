@@ -30,12 +30,7 @@ export class PagoServiciosService {
     );
   }
   getTsqpagosonline() {
-        return this.http.get(this.urlEndPoint + '/tsqpagosonline/').pipe(
-      map((response: any) => {
-        return response;
-        })
-    );
-
+    return this.http.get(this.urlEndPoint + '/tsqpagosonline/', {responseType: 'text'});
   }
 
   getRecibos() {
@@ -48,13 +43,13 @@ export class PagoServiciosService {
     );
   }
 
-  getRecibosPagosOnline(usuario:string) {
-        return this.http.get(`${this.urlEndPoint}/recibos/${usuario}`)
-        .pipe(
-          map((response: any) => response
-        )
-    );
-  }
+  // getRecibosPagosOnline(usuario:string) {
+  //       return this.http.get(`${this.urlEndPoint}/recibos/${usuario}`)
+  //       .pipe(
+  //         map((response: any) => response
+  //       )
+  //   );
+  // }
 
   printReceipt(id, ref_banco): any {
     const httpOptions = {

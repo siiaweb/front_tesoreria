@@ -22,7 +22,13 @@ export class PagoServiciosService {
     }
 
   constructor( private http: HttpClient ) { }
-
+ getRecibosPagosOnline(usuario:string) {
+        return this.http.get(`${this.urlEndPoint}/recibos/${usuario}`)
+        .pipe(
+          map((response: any) => response
+        )
+    );
+  }
   getTsqpagosonline() {
         return this.http.get(this.urlEndPoint + '/tsqpagosonline/').pipe(
       map((response: any) => {

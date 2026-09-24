@@ -40,7 +40,14 @@ export class PagoServiciosService {
         return response;
         })
     );
+  }
 
+  getRecibosPagosOnline(usuario:string) {
+        return this.http.get(`${this.urlEndPoint}/recibos/${usuario}`)
+        .pipe(
+          map((response: any) => response
+        )
+    );
   }
 
   printReceipt(id, ref_banco): any {
@@ -111,7 +118,7 @@ export class PagoServiciosService {
   }
 
   getCartaNoAdeudo(foliopago:string, ref:string): Observable<any> {
-    return this.http.get<any>(`${environment.rutaAlumno}/cartaNA?foliopago=${foliopago}&ref=${ref}&forma=L`, {responseType: 'blob' as 'json'}); 
+    return this.http.get<any>(`${environment.rutaAPI}/cartaNA?foliopago=${foliopago}&ref=${ref}&forma=L`, {responseType: 'blob' as 'json'}); 
   }
 
 }

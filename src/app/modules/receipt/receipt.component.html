@@ -1,49 +1,73 @@
 <block-ui>
-<link rel="stylesheet" href="../../../assets/css/login.css">
-
-<table class="table table-hover table-sm">
+  <table class="concepts-table">
+    <caption class="text-end">Listado de recibos</caption>
     <thead>
-        <tr>
-            <th>Folio</th>
-            <th>Ref. Pago</th>
-            <th>Descripción del pago</th>
-            <th>Fecha</th>
-            <th>Estatus</th>
-            <th>Monto</th>
-            <th></th>
-        </tr>
+      <tr>
+        <th>Folio</th>
+        <th>Ref. Pago</th>
+        <th>Descripción del pago</th>
+        <th>Fecha</th>
+        <th>Estatus</th>
+        <th>Monto</th>
+        <th>Recibo</th>
+      </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let recibo of recibos | paginate: { itemsPerPage: 12, currentPage: p }">
-            <td>{{ recibo.foliopago }}</td>
-            <td>{{ recibo.referencia }}</td>
-            <td>{{ recibo.descripcion }}</td>
-            <td>{{ recibo.fecha | date:'dd/MM/yyyy' }}</td>
-            <td *ngIf="recibo.estatus == 'A' " style="color: rgb(113, 177, 132);"><strong>PAGADO</strong></td><td *ngIf="recibo.estatus == 'P' " style="color: rgb(122, 129, 109);">SIN PAGAR</td>
-            <td style="text-align: center;">{{ recibo.total | currency:"MXN":"symbol" }}</td>
-            <td *ngIf="recibo.estatus == 'A' "><button class="btn btn-blue btn-sm" (click)="printInvoice(recibo.foliopago, recibo.referencia,recibo.foliodescto);" >Recibo</button></td><td *ngIf="recibo.estatus == 'P' "> - </td>
-            <td>
-                <a target="_blank" *ngIf="recibo.fautoriza!=null && recibo.estatus == 'A' && recibo.idconcepto == 1612" [attr.href]="'https://sistemas.ujed.mx/SIIA/cartaNA?foliopago='+recibo.foliopago+'&ref='+recibo.referencia+'&forma=L'">
-                    <mat-icon>picture_as_pdf</mat-icon>
-                </a>
-            </td>
-            <!-- <td *ngIf="recibo.fautoriza!=null && recibo.estatus == 'A' && recibo.idconcepto == 1612"><button type="button" mat-raised-button class="button-pdf" (click)="generarCartaNoAdeudo(recibo.foliopago, recibo.referencia);"><mat-icon matSuffix>picture_as_pdf</mat-icon></button></td> -->
-        </tr>
-        <tr>
-            <td>
-                
-            </td>
-        </tr>
+      <tr *ngFor="let recibo of recibos">
+        <td>{{ recibo.foliopago }}</td>
+        <td>
+          <b>{{ recibo.referencia }}</b>
+        </td>
+        <td>{{ recibo.descripcion }}</td>
+        <td>{{ recibo.fecha | date: "dd/MM/yyyy" }}</td>
+        <td *ngIf="recibo.estatus == 'A'" style="color: rgb(113, 177, 132)">
+          <strong>PAGADO</strong>
+        </td>
+        <td *ngIf="recibo.estatus == 'P'" style="color: rgb(122, 129, 109)">
+          SIN PAGAR
+        </td>
+        <td style="text-align: center">
+          {{ recibo.total | currency: "MXN" : "symbol" }}
+        </td>
+        <td>
+          <section class="seccion">
+            <button
+              *ngIf="recibo.estatus == 'A'"
+              class="custom-btn custom-btn-blue"
+              (click)="
+                printInvoice(
+                  recibo.foliopago,
+                  recibo.referencia,
+                  recibo.foliodescto
+                )
+              "
+            >
+              <mat-icon>receipt</mat-icon> Recibo
+            </button>
+             <!-- <button type="button" (click)="generarCartaNoAdeudo(recibo.foliopago,recibo.referencia)">
+      test
+            </button>  -->
+            <a
+              class="custom-btn custom-btn-red"
+              target="_blank"
+              *ngIf="
+                recibo.fautoriza != null &&
+                recibo.estatus == 'A' &&
+                recibo.hasCartaNoAdedudo
+              "
+              [attr.href]="
+                'https://sistemas.ujed.mx/SIIA/cartaNA?foliopago=' +
+                recibo.foliopago +
+                '&ref=' +
+                recibo.referencia +
+                '&forma=L'
+              "
+            >
+              <mat-icon>picture_as_pdf</mat-icon>Carta no adeudo
+            </a>
+          </section>
+        </td>
+      </tr>
     </tbody>
-</table>
-
-<div style="text-align: center;">
-    <pagination-controls 
-        (pageChange)="p = $event"
-        responsive="true"
-        previousLabel="Anterior"
-        nextLabel="Siguiente">
-    </pagination-controls>
-</div>
-<br><br>
+  </table>
 </block-ui>

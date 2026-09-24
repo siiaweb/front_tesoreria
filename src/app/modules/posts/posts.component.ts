@@ -445,8 +445,10 @@ export class PostsComponent implements OnInit {
   }
 
   getDescuentos(){
-    this._ds.getDescuento().subscribe((descuentos) => {
-        this.descuentos = descuentos
+    this._ds.getDescuento().subscribe((descuentos) => { 
+      if(descuentos.length != 0){
+          this.descuentos = descuentos
+        }  
       }
     )
   }

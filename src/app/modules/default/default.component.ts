@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 
 import { LoginService } from '../../services/login.service'
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-default',
@@ -10,7 +11,7 @@ import { LoginService } from '../../services/login.service'
 })
 export class DefaultComponent implements OnInit {
 
-  sideBarOpen = true;
+  sideBarOpen = false;
 
   constructor( public router: Router, private _log: LoginService ) { }
 

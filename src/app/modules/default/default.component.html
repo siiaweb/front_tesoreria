@@ -1,8 +1,8 @@
 <app-header (toggleSideBarForMe)="sideBarToggler()"></app-header>
 
-<mat-drawer-container>
-    <mat-drawer mode="side" [opened]="sideBarOpen">
-        <app-sidebar></app-sidebar>
+<mat-drawer-container autosize>
+    <mat-drawer mode="side" [opened]="sideBarOpen" [disableClose]="true">
+        <app-sidebar (navigated)="sideBarOpen = false"></app-sidebar>
     </mat-drawer>
     <mat-drawer-content>
         <router-outlet></router-outlet>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { DashboardService } from '../../../services/dashboard/dashboard.service';
 import { Roles } from '../../../services/dashboard/roles';
 
@@ -11,6 +11,7 @@ export class SidebarComponent implements OnInit {
 
   roles:Roles[];
   tipoRol: any;
+  @Output() navigated = new EventEmitter<void>();
 
   constructor( private _das: DashboardService ) { }
 
@@ -25,6 +26,10 @@ export class SidebarComponent implements OnInit {
       */
      this.tipoRol = sessionStorage.getItem('Tipo');
      //console.log(this.tipoRol);
+  }
+
+  onSelectOption() {
+    this.navigated.emit();
   }
 
 }

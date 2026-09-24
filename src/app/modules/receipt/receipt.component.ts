@@ -11,7 +11,7 @@ import { HttpClient, HttpEventType } from '@angular/common/http';
 })
 export class ReceiptComponent implements OnInit {
 
-  @BlockUI() blockUI: NgBlockUI;
+  @BlockUI() blockUI!: NgBlockUI;
 
   p: number = 1;
 
@@ -20,8 +20,13 @@ export class ReceiptComponent implements OnInit {
 
   ngOnInit() {
 
+    const usuario = sessionStorage.getItem('usuID');
 
-    this._ps.getRecibos().subscribe(
+    if (!usuario) {
+      console.error('No existe usuID en sessionStorage');
+      return;
+    }
+    this._ps.getRecibosPagosOnline(usuario).subscribe(
       (recibos) => {
         this.recibos = recibos
         //console.log(recibos);
@@ -30,10 +35,11 @@ export class ReceiptComponent implements OnInit {
 
   }
 
-  printInvoice(id,ref_banco,bandera) {
+  printInvoice(id: any,ref_banco: any,bandera: null) {
+    console.warn('params',id,ref_banco,bandera)
     this.blockUI.start('Descargando su recibo...');
     if (bandera==null){
-      this._ps.printReceipt(id,ref_banco).subscribe((response) => {
+      this._ps.printReceipt(id,ref_banco).subscribe((response: BlobPart) => {
 
             const file = new Blob([response], { type: 'application/pdf' });
             const fileURL = URL.createObjectURL(file);
@@ -41,7 +47,7 @@ export class ReceiptComponent implements OnInit {
             this.blockUI.stop();
         
       },
-      error => {
+        (      error: { message: any; }) => {
         console.log(error);
         this.blockUI.stop();
         Swal.fire({
@@ -50,14 +56,14 @@ export class ReceiptComponent implements OnInit {
           icon: 'error'});
       });
     }else{
-      this._ps.printReceiptDsto(id,ref_banco).subscribe((response) => {
+      this._ps.printReceiptDsto(id,ref_banco).subscribe((response: BlobPart) => {
   
         const file = new Blob([response], { type: 'application/pdf' });
         const fileURL = URL.createObjectURL(file);
         window.open(fileURL);
         this.blockUI.stop();
       },
-      error => {
+        (      error: { error: { message: any; }; }) => {
         this.blockUI.stop();
         console.log(error);
         Swal.fire({
@@ -68,7 +74,7 @@ export class ReceiptComponent implements OnInit {
     }
   }
 
-  generarCartaNoAdeudo(id, ref){
+  generarCartaNoAdeudo(id: string, ref: string){
     console.log(id);
     this._ps.getCartaNoAdeudo(id, ref).subscribe(resp =>{
       let blob = new Blob([resp], {type: resp.type});

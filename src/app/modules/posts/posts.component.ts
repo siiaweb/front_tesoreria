@@ -426,6 +426,7 @@ export class PostsComponent implements OnInit {
 
   // Cerrar
   public closeEvoModal(event?: Event): void {
+    this.blockUI.stop();
     if (event) event.stopPropagation();
     const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
     if (overlay) overlay.classList.remove('open');

@@ -131,6 +131,7 @@ export class PostsComponent implements OnInit {
     this.openServicios = true;
     if (filter === '') {
       this.deseleccionarServicio();
+      this.openServicios = true;
     }else{
       this.filteredCatalogoServicios = this.catalogoPagoTipoUser.filter(item =>
         item.descripcion.toUpperCase().includes(filter) ||
@@ -140,7 +141,6 @@ export class PostsComponent implements OnInit {
   }
 
   deseleccionarServicio(){
-    this.openServicios = false;
     this.forma.get('servicio').setValue('');
     this.limpiarCamposServicio();
     this.filteredCatalogoServicios = this.catalogoPagoTipoUser;
@@ -154,6 +154,7 @@ export class PostsComponent implements OnInit {
   }
 
   seleccionarServicio(event:CatalogoPagoTipoUser){
+    this.openServicios = false;
     this.limpiarCamposServicio();
     this.selectedIndexServicios = -1;
     this.forma.get('servicio').setValue(event.descripcion);
@@ -162,7 +163,6 @@ export class PostsComponent implements OnInit {
     this.forma.get('paquete').setValue(event.paquete);
     if(parseFloat(event.punit) === 1) this.forma.get('cambiaPrecio').setValue('S');
     this.filteredCatalogoServicios = [];
-    this.openServicios = false;
   }
 
   formatearPrecio(){
@@ -287,6 +287,7 @@ export class PostsComponent implements OnInit {
       this.sumarTotal();
       this.calcularServicios();
       this.deseleccionarServicio();
+      this.openServicios = false;
     }
   }
 

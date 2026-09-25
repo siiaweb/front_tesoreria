@@ -5,7 +5,9 @@ import {MatPaginator} from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Tvusuario } from '../../services/dashboard/listausuarios/tvusuario';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogModule,MatDialogRef,MatFormFieldModule,MatInputModule} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 /* import {MatDialog, MatDialogModule,MatFormFieldModule,MatInputModule,FormsModule,NgIf} from '@angular/material/dialog'; */
 import {MatButtonModule} from '@angular/material/button';
 import swal from 'sweetalert2';

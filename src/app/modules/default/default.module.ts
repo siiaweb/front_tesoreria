@@ -5,19 +5,20 @@ import { DashboardComponent } from 'src/app/modules/dashboard/dashboard.componen
 import { RouterModule } from '@angular/router';
 import { PostsComponent } from 'src/app/modules/posts/posts.component';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { MatSidenavModule, 
-         MatDividerModule, 
-         MatCardModule, 
-         MatPaginatorModule, 
-         MatTableModule,
-         //MatFormFieldModule,
-         MatSelectModule,
-         MatButtonModule,
-         MatBadgeModule,
-         MatIconModule,
-         MatToolbarModule,
-         MatMenuModule, 
-         MatDialogModule} from '@angular/material';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { 
+//MatFormFieldModule,
+MatSelectModule } from '@angular/material/select';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatTableModule } from '@angular/material/table';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReceiptComponent } from '../receipt/receipt.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';

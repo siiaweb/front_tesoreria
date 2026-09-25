@@ -15,12 +15,12 @@ import { ShoppingcartComponent } from './modules/shoppingcart/shoppingcart.compo
 import { DiscountComponent } from './modules/discount/discount.component';
 import { AngularEditorModule } from '@kolkov/angular-editor';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatMenuModule,
-         MatIconModule,
-         MatToolbarModule,
-         MatButtonModule,
-         MatDialogModule,
-         MatTableModule } from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTableModule } from '@angular/material/table';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import localeEsMx from '@angular/common/locales/es-MX';

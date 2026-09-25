@@ -57,7 +57,6 @@ export class ReceiptComponent implements OnInit {
       });
     }else{
       this._ps.printReceiptDsto(id,ref_banco).subscribe((response: BlobPart) => {
-  
         const file = new Blob([response], { type: 'application/pdf' });
         const fileURL = URL.createObjectURL(file);
         window.open(fileURL);

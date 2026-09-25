@@ -67,6 +67,24 @@
           timer: 6000,
         });
       }
+      
+      function getRecibo(id, ref){
+        $.ajax({
+          type: "GET",
+          url: "https://tesoreria.ujed.mx/api/print/"+id+"/"+ref,
+          xhrFields: {
+            responseType: 'blob'
+          },
+          success: function (data) {
+            var blob = new Blob([data], { type: 'application/pdf' });
+            var blobURL = window.URL.createObjectURL(blob);
+            window.open(blobURL, '_blank');
+          },
+          error: function () {
+            alert("Hubo un error al generar el PDF.");
+          }
+        });
+      }
 
       // function cancelCallback(error) {
       //   alert("errorr");

@@ -61,35 +61,37 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
 }
 
 .card {
-  background: $color-surface;
-  border: 1px solid $color-border;
-  border-radius: $radius-lg;
-  padding: 0.7rem;
-  box-shadow: $shadow-sm;
+  background: $color-surface !important;
+  border: 1px solid $color-border !important;
+  border-radius: $radius-lg !important;
+  padding: 5px !important;
+  box-shadow: $shadow-sm !important;
 }
 
 .card-header {
-  border-bottom: 1px solid $color-border;
-  padding-bottom: 0.75rem;
-  margin-bottom: 1rem;
-  background-color: $color-surface;
+  border-bottom: 1px solid $color-border !important;
+  padding: 0 !important;
+  margin-bottom: 5px !important;
+  background-color: $color-surface !important;
 }
 
 .card-title {
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: $color-text-main;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  font-family: $font-sans !important;
+  font-size: 0.875rem !important;
+  font-weight: 700 !important;
+  color: $color-text-main !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
   margin: 0 !important;
   i { color: $color-primary; }
 }
 
 .card-subtitle {
-  font-size: 0.75rem;
-  color: $color-text-light;
-  margin-top: 0.25rem;
+  font-size: 0.75rem !important;
+  color: $color-text-light !important;
+  margin-top: 0.25rem !important;
+  margin-bottom: 0 !important;
 }
 
 // --- CAMPOS DE BUSQUEDA Y AUTOCOMPLETADO ---
@@ -127,9 +129,52 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   .item-price { font-size: 0.75rem; font-weight: 800; color: $color-success; }
 }
 
-.dropdown-item:hover,
-.dropdown-item.active {
+.dropdown-item:hover{
   background: $color-bg-app;
+}
+
+::ng-deep .autocomplete-dropdown.mat-mdc-select-panel {
+  background: $color-surface !important;
+  border: 1px solid $color-border !important;
+  border-radius: $radius-md !important;
+  box-shadow: $shadow-xl !important;
+  max-height: 200px !important;
+  padding: 0 !important;
+  margin-top: 36px !important;
+}
+
+::ng-deep .dropdown-item.mat-mdc-option {
+  padding: 0.625rem 0.875rem !important;
+  border-bottom: 1px solid $color-border !important;
+  min-height: unset !important;
+  cursor: pointer !important;
+  transition: background 0.15s ease !important;
+
+  &:last-child {
+    border-bottom: none !important;
+  }
+
+  &:hover,
+  &.mdc-list-item--selected {
+    background: $color-bg-app !important;
+  }
+
+  .item-title {
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    color: $color-text-main !important;
+  }
+
+  .item-code {
+    font-size: 0.625rem !important;
+    color: $color-text-light !important;
+  }
+
+  .item-price {
+    font-size: 0.75rem !important;
+    font-weight: 800 !important;
+    color: $color-success !important;
+  }
 }
 
 .form-label {
@@ -160,6 +205,27 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   text-transform: uppercase;
 
   &:focus {
+    background: $color-surface;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  }
+}
+
+.form-input.mat-mdc-select {
+  width: 100%;
+  padding: 0.625rem 0.5rem;
+  font-size: 0.75rem;
+  background: $color-bg-app;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+
+  .mat-mdc-select-trigger {
+    text-transform: uppercase;
+  }
+
+  &.mat-mdc-select-focused {
     background: $color-surface;
     border-color: $color-primary;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);

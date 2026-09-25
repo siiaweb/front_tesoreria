@@ -6,6 +6,22 @@
       <div class="payment-grid">
         <!-- MAESTRO -->
         <div name="panel-concepto">
+
+          <mat-card class="card">
+            <mat-card-header class="card-header">
+              <mat-card-title class="card-title">
+                <i class="bi bi-currency-dollar"></i>
+                <span>Descuentos</span>
+              </mat-card-title>
+              <mat-card-subtitle class="card-subtitle">Tienes {{descuentos?.length}} {{descuentos?.length != 1 ? 'descuentos disponibles':'descuento disponible'}}.</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <mat-select class="form-input" formControlName="dsctodescrip" panelClass="autocomplete-dropdown" disableOptionCentering >
+                <mat-option panelClass="autocomplete-dropdown" *ngFor="let option of descuentos" [value]="option.vdes_foldescto">{{option.vdes_descdescrip}}</mat-option>
+              </mat-select>
+            </mat-card-content>
+          </mat-card>
+
           <!-- DESCUENTOS -->
           <div class="card" style="margin-bottom: 10px !important;" *ngIf="descuentos">
             <div class="card-header">
@@ -18,7 +34,11 @@
 
             <div class="autocomplete-group">
               <div class="input-relative">
-                <input 
+                <mat-select class="form-input" formControlName="dsctodescrip" yPosition="below">
+                  <mat-option panelClass="autocomplete-dropdown" *ngFor="let option of descuentos" [value]="option.vdes_foldescto">{{option.vdes_descdescrip}}</mat-option>
+                </mat-select>
+              </div>
+                <!-- <input 
                   class="form-input" 
                   formControlName="dsctodescrip"
                   readonly
@@ -37,7 +57,7 @@
                     <div class="item-code">Clave: {{ item.vdes_foldescto }}</div>
                   </div>
                 </div>
-              </div>
+              </div> -->
             </div>
           </div>
 

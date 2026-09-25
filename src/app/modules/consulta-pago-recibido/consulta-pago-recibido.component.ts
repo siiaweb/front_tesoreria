@@ -17,8 +17,8 @@ export class ConsultaPagoRecibidoComponent implements OnInit {
 
   @BlockUI() blockUI: NgBlockUI;
 
-  @ViewChild(MatPaginator,{static:false}) paginator: MatPaginator;
-  @ViewChild(MatSort,{static:false}) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   displayedColumns: string[] = ['reci_folio','reci_fecha','reci_alumno','reci_ures','reci_concepto',
   'reci_cantidad',  'reci_punit',  'reci_importe',  'reci_descuento',  'reci_total',

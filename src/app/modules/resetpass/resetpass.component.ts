@@ -25,8 +25,8 @@ export interface DialogData {
 
 export class ResetpassComponent implements OnInit, AfterViewInit {
 
-  @ViewChild(MatPaginator,{static:false}) paginator: MatPaginator;
-  @ViewChild(MatSort,{static:false}) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   displayedColumns: string[] = ['userid','persona','nombre','usuario','telefono','email','tipo_usuario','unidad_responsable','reset_pass'];
   public dataSource = new MatTableDataSource<Tvusuario>();

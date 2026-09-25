@@ -17,8 +17,8 @@ export class PagossiiaComponent implements OnInit {
 
   @BlockUI() blockUI: NgBlockUI;
 
-  @ViewChild(MatPaginator,{static:false}) paginator: MatPaginator;
-  @ViewChild(MatSort,{static:false}) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   displayedColumns: string[] = ['vmae_foliopago','vmae_fecha','vmae_usuario','vmae_nombre_usuario','vmae_ures',
                                 'vmae_program','vmae_tipouser','vmae_descripcion','vmae_referencia',

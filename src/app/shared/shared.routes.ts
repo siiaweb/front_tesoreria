@@ -11,4 +11,4 @@ const sharedRoutes: Routes = [
 ];
 
 //export const SHARED_ROUTES = RouterModule.forChild(sharedRoutes);
-export const SHARED_ROUTES = RouterModule.forRoot(sharedRoutes, {useHash: true});
+export const SHARED_ROUTES = RouterModule.forRoot(sharedRoutes, { useHash: true, relativeLinkResolution: 'legacy' });

@@ -37,51 +37,48 @@ import { DialogOverviewExampleDialog } from '../resetpass/resetpass.component';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
-  declarations: [
-    DefaultComponent,
-    DashboardComponent,
-    PostsComponent,
-    ReceiptComponent,
-    DialogOverviewExampleDialog     
-    //NewsComponent
-  ],
-  entryComponents: [DialogOverviewExampleDialog],
-  exports: [
-    DefaultComponent,
-    MatFormFieldModule,
-    MatInputModule,
-    MatPaginatorModule,
-    MatSortModule
-  ],
-  imports: [
-    CommonModule,
-    RouterModule,
-    SharedModule,
-    MatSidenavModule,
-    MatDividerModule,
-    FlexLayoutModule,
-    MatCardModule,
-    MatPaginatorModule,
-    MatTableModule,
-    MatSelectModule, 
-    MatButtonModule,
-    MatBadgeModule,
-    MatDialogModule ,
-    MatIconModule,
-    MatToolbarModule,
-    PAGES_ROUTES,
-    FormsModule, 
-    ReactiveFormsModule,
-    MatMenuModule,
-    BlockUIModule.forRoot(),
-    NgxPaginationModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSortModule,
-    NgbTypeaheadModule,
-  ],
-  providers: [
-    
-  ]
+    declarations: [
+        DefaultComponent,
+        DashboardComponent,
+        PostsComponent,
+        ReceiptComponent,
+        DialogOverviewExampleDialog
+        //NewsComponent
+    ],
+    exports: [
+        DefaultComponent,
+        MatFormFieldModule,
+        MatInputModule,
+        MatPaginatorModule,
+        MatSortModule
+    ],
+    imports: [
+        CommonModule,
+        RouterModule,
+        SharedModule,
+        MatSidenavModule,
+        MatDividerModule,
+        FlexLayoutModule,
+        MatCardModule,
+        MatPaginatorModule,
+        MatTableModule,
+        MatSelectModule,
+        MatButtonModule,
+        MatBadgeModule,
+        MatDialogModule,
+        MatIconModule,
+        MatToolbarModule,
+        PAGES_ROUTES,
+        FormsModule,
+        ReactiveFormsModule,
+        MatMenuModule,
+        BlockUIModule.forRoot(),
+        NgxPaginationModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSortModule,
+        NgbTypeaheadModule,
+    ],
+    providers: []
 })
 export class DefaultModule { }

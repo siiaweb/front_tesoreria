@@ -16,7 +16,8 @@ import { ErroresService } from '../../services/manejo_errores/errores.service';
 
 @Component({
   selector: 'app-registrar',
-  templateUrl: './registrar.component.html'
+  templateUrl: './registrar.component.html',
+  styleUrls: ['../../../assets/css/login.css']
 })
 export class RegistrarComponent implements OnInit {
 

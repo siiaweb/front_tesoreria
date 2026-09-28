@@ -7,7 +7,7 @@ import {Router, ActivatedRoute} from '@angular/router';
 @Component({
   selector: 'app-banners',
   templateUrl: './banners.component.html',
-  styleUrls: ['./banners.component.scss']
+  styleUrls: ['./banners.component.scss','../../../assets/css/login.css']
 })
 export class BannersComponent implements OnInit {
 

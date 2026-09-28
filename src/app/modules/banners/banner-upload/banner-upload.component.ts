@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-banner-upload',
   templateUrl: './banner-upload.component.html',
-  styleUrls: ['./banner-upload.component.scss']
+  styleUrls: ['./banner-upload.component.scss','../../../../assets/css/login.css']
 })
 export class BannerUploadComponent implements OnInit {
 

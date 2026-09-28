@@ -13,7 +13,7 @@ import { BlockUI, NgBlockUI } from 'ng-block-ui';
 @Component({
   selector: 'app-teamform',
   templateUrl: './teamform.component.html',
-  styleUrls: ['./teamform.component.scss']
+  styleUrls: ['./teamform.component.scss','../../../../assets/css/login.css']
 })
 export class TeamformComponent implements OnInit {
 

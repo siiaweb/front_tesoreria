@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-faqs',
   templateUrl: './faqs.component.html',
-  styleUrls: ['./faqs.component.scss']
+  styleUrls: ['./faqs.component.scss','../../../assets/css/login.css']
 })
 export class FaqsComponent implements OnInit {
 

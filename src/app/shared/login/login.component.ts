@@ -10,7 +10,8 @@ import { DialogBodyComponent } from '../dialog-body/dialog-body.component';
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.component.html'
+  templateUrl: './login.component.html',
+  styleUrls: ['../../../assets/css/login.css']
 })
 export class LoginComponent implements OnInit {
   title = "Example Angular 10 Material Dialog";

@@ -10,7 +10,7 @@ import {Router, ActivatedRoute} from '@angular/router';
 @Component({
   selector: 'app-recepcion-recibos',
   templateUrl: './recepcion-recibos.component.html',
-  styleUrls: ['./recepcion-recibos.component.scss']
+  styleUrls: ['./recepcion-recibos.component.scss','../../../assets/css/login.css']
 })
 export class RecepcionRecibosComponent implements OnInit {
 

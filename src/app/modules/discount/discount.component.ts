@@ -15,7 +15,7 @@ declare const Checkout: any
 @Component({
   selector: 'app-discount',
   templateUrl: './discount.component.html',
-  styleUrls: ['./discount.component.scss']
+  styleUrls: ['./discount.component.scss','../../../assets/css/login.css']
 })
 export class DiscountComponent implements OnInit {
 

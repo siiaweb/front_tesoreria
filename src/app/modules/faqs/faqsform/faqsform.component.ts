@@ -13,7 +13,7 @@ import { BlockUI, NgBlockUI } from 'ng-block-ui';
 @Component({
   selector: 'app-faqsform',
   templateUrl: './faqsform.component.html',
-  styleUrls: ['./faqsform.component.scss']
+  styleUrls: ['./faqsform.component.scss','../../../../assets/css/login.css']
 })
 export class FaqsformComponent implements OnInit {
 

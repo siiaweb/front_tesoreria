@@ -12,14 +12,14 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "13.4.0",
-    "@angular/cdk": "12.2.13",
+    "@angular/cdk": "13.3.9",
     "@angular/common": "13.4.0",
     "@angular/compiler": "13.4.0",
     "@angular/core": "13.4.0",
     "@angular/flex-layout": "^9.0.0-beta.29",
     "@angular/forms": "13.4.0",
     "@angular/localize": "^13.4.0",
-    "@angular/material": "12.2.13",
+    "@angular/material": "13.3.9",
     "@angular/platform-browser": "13.4.0",
     "@angular/platform-browser-dynamic": "13.4.0",
     "@angular/router": "13.4.0",
@@ -37,6 +37,7 @@
     "rxjs-compat": "6.5.5",
     "sweetalert2": "9.14.0",
     "tslib": "^2.0.0",
+    "url": "^0.11.4",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
@@ -47,7 +48,7 @@
     "@types/jasmine": "~3.6.0",
     "@types/jasminewd2": "2.0.3",
     "@types/minimatch": "^6.0.0",
-    "@types/node": "^12.11.1",
+    "@types/node": "^12.20.55",
     "codelyzer": "^6.0.0",
     "jasmine-core": "~3.6.0",
     "jasmine-spec-reporter": "~5.0.0",

@@ -16,7 +16,7 @@
               <mat-card-subtitle class="card-subtitle">Tienes {{descuentos?.length}} {{descuentos?.length != 1 ? 'descuentos disponibles':'descuento disponible'}}.</mat-card-subtitle>
             </mat-card-header>
             <mat-card-content>
-              <mat-select class="form-input" formControlName="dsctodescrip" panelClass="autocomplete-dropdown" disableOptionCentering >
+              <mat-select class="form-input" formControlName="dsctodescrip" panelClass="autocomplete-dropdown">
                 <mat-option panelClass="autocomplete-dropdown" *ngFor="let option of descuentos" [value]="option.vdes_foldescto">{{option.vdes_descdescrip}}</mat-option>
               </mat-select>
             </mat-card-content>

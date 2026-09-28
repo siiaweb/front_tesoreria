@@ -165,24 +165,42 @@ export class ShoppingcartComponent implements OnInit {
     return this.total;
   }
 
+  // deleteItem(dpago_idingreso: any) {
+  //   /* //console.log("ID: "+dpago_idingreso);
+  //    var items: Array<any> = JSON.parse(sessionStorage.getItem('shoppingCart')!);
+  //    //console.log(items);
+  //    if (!items) {
+  //      return;
+  //    }
+  //    for (var i = 0; i < items.length; i++) {
+  //      if (items[i].dpago_idingreso == dpago_idingreso) {
+  //        items.splice(i, 1);
+  //        sessionStorage["shoppingCart"] = JSON.stringify(items);
+  //        this.ecomServices = JSON.parse(sessionStorage.getItem('shoppingCart')!);
+  //      }
+  //    }
+  //    this.totalPrice();
+  //    this.crearFormulario();
+  //    */
+  // }
   deleteItem(dpago_idingreso: any) {
-    /* //console.log("ID: "+dpago_idingreso);
-     var items: Array<any> = JSON.parse(sessionStorage.getItem('shoppingCart')!);
-     //console.log(items);
-     if (!items) {
-       return;
-     }
-     for (var i = 0; i < items.length; i++) {
-       if (items[i].dpago_idingreso == dpago_idingreso) {
-         items.splice(i, 1);
-         sessionStorage["shoppingCart"] = JSON.stringify(items);
-         this.ecomServices = JSON.parse(sessionStorage.getItem('shoppingCart')!);
-       }
-     }
-     this.totalPrice();
-     this.crearFormulario();*/
-  }
+    //console.log("ID: "+dpago_idingreso);
+    //const storage= sessionStorage.getItem('shoppingCart');
+    // let items = storage?JSON.parse(storage):[];
+    let items = this.ecomServices;
+    console.log('item', items);
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].dpago_idingreso == dpago_idingreso) {
+        items.splice(i, 1);
 
+
+      }
+    }
+    sessionStorage["shoppingCart"] = JSON.stringify(items);
+    this.totalPrice();
+    this.crearFormulario();
+  }
+  
   deleteArray(dpago_idingreso: any) {
     for (var i = 0; i < this.det.length; i++) {
       var splitted = this.det[i].split('-');

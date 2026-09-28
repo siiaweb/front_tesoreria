@@ -50,7 +50,8 @@ import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
     MatFormFieldModule,
     MatInputModule,
     MatPaginatorModule,
-    MatSortModule
+    MatSortModule,
+    
   ],
   imports: [
     CommonModule,

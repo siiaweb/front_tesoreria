@@ -29,14 +29,25 @@
     <script>
       window.errorCallback = function (error) {
         console.error("EVO ERROR:", error);
+        notifyAngularCheckoutFinished();
+        Swal.fire({
+          icon: "error",
+          title: "evo ERROR!!!",
+          text: JSON.stringify(error),
+          showConfirmButton: false,
+        
+        });
+
       };
 
       window.cancelCallback = function () {
         console.warn("EVO CANCELADO");
+        notifyAngularCheckoutFinished();
       };
 
       window.completeCallback = function (resultIndicator, sessionVersion) {
         console.log("EVO COMPLETADO:", resultIndicator, sessionVersion);
+        notifyAngularCheckoutFinished();
         const ID = sessionStorage.getItem("MasterID");
         const apiUrl = window.APP_CONFIG?.apiUrl;
         console.log(ID);
@@ -55,54 +66,9 @@
         console.log("Checkout cargado:", typeof window.Checkout);
       });
 
-      function errorCallback(error) {
-        console.log(JSON.stringify(error));
-        console.log("errorCallback version 100");
-        alert(JSON.stringify(error));
-        Swal.fire({
-          icon: "error",
-          title: "ERROR!!!",
-          text: JSON.stringify(error),
-          showConfirmButton: false,
-          timer: 6000,
-        });
+      function notifyAngularCheckoutFinished() {
+          window.dispatchEvent(new Event('evo-checkout-finished'));
       }
-
-      // function cancelCallback(error) {
-      //   alert("errorr");
-      //   console.log("cancelCallback.error version 100", error);
-      //   console.log("Payment cancelled");
-      // }
-
-      // function completeCallback(resultIndicator, sessionVersion) {
-      //   console.log("completeCallback version 100");
-      //   console.log("resultIndicator: " + resultIndicator);
-      //   console.log("sessionVersion:" + sessionVersion);
-      //   //console.log("successIndicator:" +$("#successIndicator").val());
-      //   Swal.fire({
-      //     icon: "success",
-      //     title: "Pago exitoso!!!",
-      //     text: "Puedes descargar tu recibo de pago en la sección de recibos",
-      //     showConfirmButton: false,
-      //     timer: 4000,
-      //   });
-      //   updateMaster();
-      // }
-
-      // function updateMaster() {
-      //   //this.http.put('http://localhost:8090/api/tpagosonline/{id}'+sessionStorage.getItem('MasterID'));
-
-      //   var ID = sessionStorage.getItem("MasterID");
-      //   console.log(ID);
-      //   $.ajax({
-      //     url: "https://tesoreria.ujed.mx/api/trespbanco/" + ID,
-      //     type: "POST", //type is any HTTP method
-      //     data: { trespbanco: ID }, //Data as js object
-      //     success: function () {
-      //       sessionStorage.removeItem("MasterID");
-      //     },
-      //   });
-      // }
     </script>
     <script
       src="https://evopaymentsmexico.gateway.mastercard.com/static/checkout/checkout.min.js"

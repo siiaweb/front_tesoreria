@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DescuentosService } from '../../services/dashboard/descuentos/descuentos.service';
-import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, Validators, UntypedFormBuilder } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
 import { Subscription } from 'rxjs';
@@ -51,11 +51,11 @@ export class DiscountComponent implements OnInit {
 
   public items: any = "";
 
-  forma!: FormGroup;
+  forma!: UntypedFormGroup;
 
   total = 0;
 
-  constructor(private _ds: DescuentosService, private fb: FormBuilder, private _ps: PagoServiciosService,
+  constructor(private _ds: DescuentosService, private fb: UntypedFormBuilder, private _ps: PagoServiciosService,
     public router: Router, private _evo: EvoService) { }
 
   ngOnInit() {

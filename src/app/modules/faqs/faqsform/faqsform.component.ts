@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Tfaqs } from '../../../services/dashboard/faqs/tfaqs';
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, FormControl, Validators, UntypedFormBuilder } from '@angular/forms';
 import { AngularEditorConfig } from '@kolkov/angular-editor';
 import { FaqsService } from '../../../services/dashboard/faqs/faqs.service';
 import Swal from 'sweetalert2';
@@ -21,7 +21,7 @@ export class FaqsformComponent implements OnInit {
 
   public urlEndPoint: string = `${environment.rutaAPI}`;
 
-  forma: FormGroup;
+  forma: UntypedFormGroup;
   tfaqs:Tfaqs[];
 
   isHiddenNew = false;
@@ -58,7 +58,7 @@ export class FaqsformComponent implements OnInit {
     ]
   };
 
-  constructor(private fb: FormBuilder, private _fs: FaqsService, public router: Router,
+  constructor(private fb: UntypedFormBuilder, private _fs: FaqsService, public router: Router,
     private activatedRoute: ActivatedRoute, private http: HttpClient) { }
 
   ngOnInit() {

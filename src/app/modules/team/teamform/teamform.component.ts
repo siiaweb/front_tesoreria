@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Tequipo } from '../../../services/dashboard/equipo/tequipo';
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, FormControl, Validators, UntypedFormBuilder } from '@angular/forms';
 import { AngularEditorConfig } from '@kolkov/angular-editor';
 import { EquipoService } from '../../../services/dashboard/equipo/equipo.service';
 import Swal from 'sweetalert2';
@@ -21,7 +21,7 @@ export class TeamformComponent implements OnInit {
 
   public urlEndPoint: string = `${environment.rutaAPI}`;
 
-  forma: FormGroup;
+  forma: UntypedFormGroup;
   tequipo:Tequipo[];
 
   isHiddenNew = false;
@@ -63,7 +63,7 @@ export class TeamformComponent implements OnInit {
     ]
   };
 
-  constructor( private fb: FormBuilder, private _es: EquipoService, public router: Router,
+  constructor( private fb: UntypedFormBuilder, private _es: EquipoService, public router: Router,
     private activatedRoute: ActivatedRoute, private http: HttpClient ) { }
 
   ngOnInit() {

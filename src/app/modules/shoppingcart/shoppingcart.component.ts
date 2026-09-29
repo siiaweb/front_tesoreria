@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { EvoService } from '../../services/dashboard/evo.service';
 import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
 import { Subscription } from 'rxjs';
-import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, Validators, UntypedFormBuilder } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { TdpagosOnline } from 'src/app/services/dashboard/pagoServicios/tdpagosonline';
@@ -63,7 +63,7 @@ export class ShoppingcartComponent implements OnInit {
   valores!: String;
   det: any[] = [];
   importe = 0;
-  forma!: FormGroup;
+  forma!: UntypedFormGroup;
   private subscription!: Subscription;
   ecomServices!: any[];
 
@@ -92,7 +92,7 @@ export class ShoppingcartComponent implements OnInit {
     private Long regidescto;
     */
 
-  constructor(private _evo: EvoService, private _ps: PagoServiciosService, private fb: FormBuilder,
+  constructor(private _evo: EvoService, private _ps: PagoServiciosService, private fb: UntypedFormBuilder,
     public router: Router, private ngZone: NgZone) { }
 
   ngOnInit() {

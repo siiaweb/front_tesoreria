@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, QueryList, ViewChildren, ViewEncapsulati
 import { CatalogoPagoService } from '../../services/dashboard/catalogoPago.service';
 import { CatalogoPago } from '../../services/dashboard/catalogoPago';
 import { CatalogoPagoTipoUser } from '../../services/dashboard/catalogoPagoTipoUser';
-import { FormGroup, Validators, FormBuilder, FormArray } from '@angular/forms';
+import { UntypedFormGroup, Validators, UntypedFormBuilder, UntypedFormArray } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { ListaUsuariosService } from '../../services/dashboard/listausuarios/listausuarios.service';
@@ -40,15 +40,15 @@ export class PostsComponent implements OnInit {
     punit: 'Precio'
   }
 
-  forma: FormGroup;
-  formDet: FormGroup = this.fb.group({detalle:this.fb.array([])});
+  forma: UntypedFormGroup;
+  formDet: UntypedFormGroup = this.fb.group({detalle:this.fb.array([])});
 
   get arreglo() {
-    return this.formDet.controls["detalle"] as FormArray;
+    return this.formDet.controls["detalle"] as UntypedFormArray;
   }
 
   get Detalles(){
-    return (this.arreglo).controls as FormGroup[];
+    return (this.arreglo).controls as UntypedFormGroup[];
   }
 
   catalogopago:CatalogoPago[];
@@ -67,7 +67,7 @@ export class PostsComponent implements OnInit {
 
   constructor( 
     private _cp: CatalogoPagoService, 
-    private fb: FormBuilder, 
+    private fb: UntypedFormBuilder, 
     private _lus: ListaUsuariosService,
     private _ds: DescuentosService,
     private _evo: EvoService, 

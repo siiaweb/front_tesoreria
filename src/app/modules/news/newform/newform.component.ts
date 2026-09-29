@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Tnoticias } from '../../../services/dashboard/noticias/tnoticias';
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, FormControl, Validators, UntypedFormBuilder } from '@angular/forms';
 import { AngularEditorConfig } from '@kolkov/angular-editor';
 import { NoticiasService } from '../../../services/dashboard/noticias/noticias.service';
 import Swal from 'sweetalert2';
@@ -21,7 +21,7 @@ export class NewformComponent implements OnInit {
 
   public urlEndPoint: string = `${environment.rutaAPI}`;
 
-  forma: FormGroup;
+  forma: UntypedFormGroup;
   tnoticia:Tnoticias[];
 
   isHiddenNew = false;
@@ -63,7 +63,7 @@ export class NewformComponent implements OnInit {
     ]
   };
 
-  constructor( private fb: FormBuilder, private _ns: NoticiasService, public router: Router,
+  constructor( private fb: UntypedFormBuilder, private _ns: NoticiasService, public router: Router,
                private activatedRoute: ActivatedRoute, private http: HttpClient ) { }
 
   ngOnInit() {

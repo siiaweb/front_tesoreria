@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { resolve } from 'url';
 
@@ -14,7 +14,7 @@ export class ValidadoresService {
 
   constructor() { }
 
-  existeUsuario( control: FormControl ):Promise<ErrorValidate> | Observable<ErrorValidate>{
+  existeUsuario( control: UntypedFormControl ):Promise<ErrorValidate> | Observable<ErrorValidate>{
 
     if ( !control.value ){
       return Promise.resolve(null);
@@ -34,7 +34,7 @@ export class ValidadoresService {
 
   passwordsIguales( pass1Name: string, pass2Name: string){
 
-    return (formGroup: FormGroup) =>{
+    return (formGroup: UntypedFormGroup) =>{
 
       const pass1Control = formGroup.controls[pass1Name];
       const pass2Control = formGroup.controls[pass2Name];

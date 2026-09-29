@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, FormControl, Validators, UntypedFormBuilder } from '@angular/forms';
 import { AngularEditorConfig } from '@kolkov/angular-editor';
 import { ServiciosService } from '../../../services/services.index';
 import { Tservicios } from '../../../services/dashboard/servicios/tservicios';
@@ -21,7 +21,7 @@ export class ServicesformComponent implements OnInit {
 
   public urlEndPoint: string = `${environment.rutaAPI}`;
 
-  forma: FormGroup;
+  forma: UntypedFormGroup;
   tservicios:Tservicios[];
 
   isHiddenNew = false;
@@ -63,7 +63,7 @@ export class ServicesformComponent implements OnInit {
     ]
   };
 
-  constructor( private fb: FormBuilder, private _ss: ServiciosService, public router: Router,
+  constructor( private fb: UntypedFormBuilder, private _ss: ServiciosService, public router: Router,
     private activatedRoute: ActivatedRoute, private http: HttpClient ) { }
 
   ngOnInit() {

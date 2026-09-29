@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, FormControl, Validators, UntypedFormBuilder } from '@angular/forms';
 import { ValidadoresService } from '../../services/validadores.service';
 import { RegistrarService } from 'src/app/services/services.index';
 import { Ttipouser } from './ttipouser';
@@ -23,7 +23,7 @@ export class RegistrarComponent implements OnInit {
 
   @BlockUI() blockUI: NgBlockUI;
 
-  forma: FormGroup;
+  forma: UntypedFormGroup;
 
   private subscription: Subscription;
 
@@ -35,7 +35,7 @@ export class RegistrarComponent implements OnInit {
   ures:Ures[];
   programas: any[];
 
-  constructor( private fb: FormBuilder, private validadores: ValidadoresService, private _reg: RegistrarService,
+  constructor( private fb: UntypedFormBuilder, private validadores: ValidadoresService, private _reg: RegistrarService,
                public router: Router, private _error: ErroresService ) { }
 
   ngOnInit(): void {

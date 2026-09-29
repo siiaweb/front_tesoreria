@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, FormControl, Validators, UntypedFormBuilder } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import Swal from 'sweetalert2';
@@ -16,8 +16,8 @@ export class RecepcionRecibosComponent implements OnInit {
 
   @BlockUI() blockUI: NgBlockUI;
 
-  forma: FormGroup;
-  formb: FormGroup;
+  forma: UntypedFormGroup;
+  formb: UntypedFormGroup;
   private subscription: Subscription;
 
   tvreciboalumno: Tvreciboalumno[];
@@ -30,7 +30,7 @@ export class RecepcionRecibosComponent implements OnInit {
   public FolReferencia: Number;
   public FolDescto: Number;
 
-  constructor( private fb: FormBuilder, private _rr: RecepcionRecibosService, public router: Router,
+  constructor( private fb: UntypedFormBuilder, private _rr: RecepcionRecibosService, public router: Router,
                private _ps: PagoServiciosService ) { }
 
   ngOnInit() {

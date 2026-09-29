@@ -1,8 +1,8 @@
-import { FormArray, FormGroup } from "@angular/forms";
+import { UntypedFormArray, UntypedFormGroup } from "@angular/forms";
 
 export class erroresFormulario{
 
-    static traerErroresFormularios(form: FormGroup, arreglo: FormArray | null = null, campos: Record<string, string> = {}): string{        
+    static traerErroresFormularios(form: UntypedFormGroup, arreglo: UntypedFormArray | null = null, campos: Record<string, string> = {}): string{        
         let htmlErrores = '<div style="text-align: left; font-size: 12px;">';
         let erroresPrincipales = '';
           Object.keys(form.controls).forEach(controlName => {
@@ -23,7 +23,7 @@ export class erroresFormulario{
             arreglo.controls.forEach((fila, i) => {
                 if (fila.invalid) {
                   let erroresFila = '';
-                  const filaGroup = fila as FormGroup;
+                  const filaGroup = fila as UntypedFormGroup;
                   Object.keys(filaGroup.controls).forEach(controlName => {
                     const control = filaGroup.get(controlName);
                     if (control && control.errors) {

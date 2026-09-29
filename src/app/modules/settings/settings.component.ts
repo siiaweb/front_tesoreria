@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, FormControl, Validators, UntypedFormBuilder } from '@angular/forms';
 import { ValidadoresService } from '../../services/validadores.service';
 import { RegistrarService } from 'src/app/services/services.index';
 import {Router, ActivatedRoute} from '@angular/router';
@@ -12,9 +12,9 @@ import Swal from 'sweetalert2';
 })
 export class SettingsComponent implements OnInit {
 
-  forma: FormGroup;
+  forma: UntypedFormGroup;
 
-  constructor( private fb: FormBuilder, private validadores: ValidadoresService, private _reg: RegistrarService,
+  constructor( private fb: UntypedFormBuilder, private validadores: ValidadoresService, private _reg: RegistrarService,
                public router: Router ) { }
 
   ngOnInit() {

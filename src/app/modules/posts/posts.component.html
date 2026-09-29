@@ -1,4 +1,4 @@
-<block-ui>
+<block-ui name="global">
   <form [formGroup]="forma">
     <h2>Pago de servicios</h2>
 
@@ -221,6 +221,7 @@
 
       </div>
     </div>
+    <pre>{{forma.value| json }}</pre>
   </form>
 </block-ui>
 

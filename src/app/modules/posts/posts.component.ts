@@ -1,27 +1,40 @@
-import { Component, ElementRef, OnInit, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, HostListener, NgZone, OnInit, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { CatalogoPagoService } from '../../services/dashboard/catalogoPago.service';
 import { CatalogoPago } from '../../services/dashboard/catalogoPago';
 import { CatalogoPagoTipoUser } from '../../services/dashboard/catalogoPagoTipoUser';
-import { UntypedFormGroup, Validators, UntypedFormBuilder, UntypedFormArray } from '@angular/forms';
+import { UntypedFormGroup, Validators, UntypedFormBuilder, UntypedFormArray, FormGroup, FormBuilder } from '@angular/forms';
 import Swal from 'sweetalert2';
-import { BlockUI, NgBlockUI } from 'ng-block-ui';
+import { BlockUI, BlockUIService, NgBlockUI } from 'ng-block-ui';
 import { ListaUsuariosService } from '../../services/dashboard/listausuarios/listausuarios.service';
 import { DescuentosService } from 'src/app/services/dashboard/descuentos/descuentos.service';
 import { Descuentos } from 'src/app/services/dashboard/descuentos/descuentos';
 import { erroresFormulario } from '../componentes-genericos/manejo-errores-forma/errores';
-import { DetPagoOnlineDTO, PagoOnline } from './interfaces/catalogos.post';
+import { DetPagoOnlineDTO } from './interfaces/catalogos.post';
 import { EvoService } from '../../services/dashboard/evo.service';
 import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
+interface EvoCheckout {
+  configure(options: {
+    session: {
+      id: string;
+    };
+  }): void;
+
+  showPaymentPage(): void;
+  showEmbeddedPage(selector: string): void;
+  showLightbox(): void;
+}
 
 @Component({
   selector: 'app-posts',
   templateUrl: './posts.component.html',
   styleUrls: ['./posts.component.scss'],
-  encapsulation: ViewEncapsulation.None
+
+  encapsulation: ViewEncapsulation.None,
+
 })
 export class PostsComponent implements OnInit {
 
-  @BlockUI() blockUI: NgBlockUI;
+  @BlockUI() blockUI!: NgBlockUI;
 
   detalle: any = {
     idingreso: '',
@@ -40,21 +53,21 @@ export class PostsComponent implements OnInit {
     punit: 'Precio'
   }
 
-  forma: UntypedFormGroup;
-  formDet: UntypedFormGroup = this.fb.group({detalle:this.fb.array([])});
+  forma!: FormGroup;
+  formDet: FormGroup = this.fb.group({ detalle: this.fb.array([]) });
 
   get arreglo() {
     return this.formDet.controls["detalle"] as UntypedFormArray;
   }
 
-  get Detalles(){
-    return (this.arreglo).controls as UntypedFormGroup[];
+  get Detalles() {
+    return (this.arreglo).controls as FormGroup[];
   }
 
-  catalogopago:CatalogoPago[];
-  catalogoPagoTipoUser:CatalogoPagoTipoUser[] = [];
+  catalogopago!: CatalogoPago[];
+  catalogoPagoTipoUser: CatalogoPagoTipoUser[] = [];
   filteredCatalogoServicios: CatalogoPagoTipoUser[] = [];
-  descuentos: Descuentos[];
+  descuentos!: Descuentos[];
 
   openDescto: boolean = false;
   openServicios: boolean = false;
@@ -62,38 +75,43 @@ export class PostsComponent implements OnInit {
 
   @ViewChildren('dropdownService') dropdownItems!: QueryList<ElementRef>;
 
-  session_id!: string;
+  //session_id!: string;
   successIndicator!: string;
 
-  constructor( 
-    private _cp: CatalogoPagoService, 
-    private fb: UntypedFormBuilder, 
+  constructor(
+    private _cp: CatalogoPagoService,
+    private fb: FormBuilder,
     private _lus: ListaUsuariosService,
     private _ds: DescuentosService,
-    private _evo: EvoService, 
-    private _ps: PagoServiciosService,) { }
+    private _evo: EvoService,
+    private _ps: PagoServiciosService,
+    private blockUIService: BlockUIService,
+  private ngZone: NgZone
+) { }
 
   async ngOnInit() {
+
     this.blockUI.start('Cargando datos...');
     this.crearFormulario();
     this.getDescuentos();
-    this.getCatalogoServicios(sessionStorage.getItem('Tipo').toString());
-    this.forma.controls['referencia'].setValue(await this.getReferencia());
+    const tipo: string = sessionStorage.getItem('Tipo').toString();
+    this.getCatalogoServicios(tipo);
+
   }
 
-  openDescuento(){
+  openDescuento() {
     this.openDescto = !this.openDescto;
   }
 
-  seleccionarDescuento(event:Descuentos){
+  seleccionarDescuento(event: Descuentos) {
     this.forma.controls['descuento'].setValue(event.vdes_foldescto);
-    this.forma.controls['dsctodescrip'].setValue(event.vdes_foldescto+' - '+event.vdes_descdescrip);
+    this.forma.controls['dsctodescrip'].setValue(event.vdes_foldescto + ' - ' + event.vdes_descdescrip);
     this.openDescto = false;
     this.limparDetalle();
     this._ds.getDescuentoDet(event.vdes_foldescto).subscribe({
-      next: (resp)=> {
-        resp.map(det =>{
-          const element = this.fb.group({...this.detalle});
+      next: (resp) => {
+        resp.map(det => {
+          const element = this.fb.group({ ...this.detalle });
           element.controls['idingreso'].setValue(det.vdes_id);
           element.controls['concepto'].setValue(det.vdes_concepto);
           element.controls['cantidad'].setValue(det.vdes_cantidad);
@@ -119,14 +137,14 @@ export class PostsComponent implements OnInit {
     })
   }
 
-  limpiarCamposDescuento(){
+  limpiarCamposDescuento() {
     this.forma.controls['descuento'].setValue('');
     this.forma.controls['dsctodescrip'].setValue('');
     this.openDescto = false;
   }
 
-  buscarServicio(event: any){
-    const filter = event.target.value.trim().toUpperCase()||'';
+  buscarServicio(event: any) {
+    const filter = event.target.value.trim().toUpperCase() || '';
     this.selectedIndexServicios = -1;
     this.openServicios = true;
     if (filter === '') {
@@ -146,7 +164,7 @@ export class PostsComponent implements OnInit {
     this.filteredCatalogoServicios = this.catalogoPagoTipoUser;
   }
 
-  limpiarCamposServicio(){
+  limpiarCamposServicio() {
     this.forma.get('idingreso').setValue('');
     this.forma.get('punit').setValue('');
     this.forma.get('cambiaPrecio').setValue('N');
@@ -159,25 +177,25 @@ export class PostsComponent implements OnInit {
     this.selectedIndexServicios = -1;
     this.forma.get('servicio').setValue(event.descripcion);
     this.forma.get('idingreso').setValue(event.concepto);
-    this.forma.get('punit').setValue(parseFloat(event.punit).toLocaleString('es-MX',{minimumFractionDigits: 2, maximumFractionDigits: 2}));
+    this.forma.get('punit').setValue(parseFloat(event.punit).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
     this.forma.get('paquete').setValue(event.paquete);
-    if(parseFloat(event.punit) === 1) this.forma.get('cambiaPrecio').setValue('S');
+    if (parseFloat(event.punit) === 1) this.forma.get('cambiaPrecio').setValue('S');
     this.filteredCatalogoServicios = [];
   }
 
-  formatearPrecio(){
+  formatearPrecio() {
     let precio = parseFloat(this.forma.get('punit').value.toString().replace(/,/g, ''));
-    if(isNaN(precio)) this.forma.get('punit').setValue('1.00')
-    else this.forma.get('punit').setValue(precio.toLocaleString('es-MX',{minimumFractionDigits: 2, maximumFractionDigits: 2}));
+    if (isNaN(precio)) this.forma.get('punit').setValue('1.00')
+    else this.forma.get('punit').setValue(precio.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
   }
 
-  ajustarCantidad(num: number){
+  ajustarCantidad(num: number) {
     let cant = this.forma.get('cantidad').value;
     cant = Math.max(1, Math.min(999, cant + num));
     this.forma.get('cantidad').setValue(cant);
   }
 
-  onKeyDown(event: KeyboardEvent){
+  onKeyDown(event: KeyboardEvent) {
     if (this.filteredCatalogoServicios.length === 0) return;
 
     switch (event.key) {
@@ -228,7 +246,7 @@ export class PostsComponent implements OnInit {
     });
   }
 
-  onBlur(){
+  onBlur() {
     setTimeout(() => {
       this.filteredCatalogoServicios = this.catalogoPagoTipoUser;
       this.selectedIndexServicios = -1;
@@ -236,51 +254,51 @@ export class PostsComponent implements OnInit {
     }, 200);
   }
 
-  setSelectedIndex(i: number){
+  setSelectedIndex(i: number) {
     this.selectedIndexServicios = i;
   }
 
-  onBlurDescuentos(){
+  onBlurDescuentos() {
     setTimeout(() => {
       this.openDescto = false;
     }, 200);
   }
 
-  eliminarFila(i:number){
+  eliminarFila(i: number) {
     this.arreglo.removeAt(i);
     this.sumarTotal();
   }
 
-  limparDetalle(){
-    for(let i = this.arreglo.length; 0<=i ; i--){
+  limparDetalle() {
+    for (let i = this.arreglo.length; 0 <= i; i--) {
       this.arreglo.removeAt(i);
     }
   }
 
-  agregarDetalle(){
-    if(this.forma.invalid){
+  agregarDetalle() {
+    if (this.forma.invalid) {
       this.forma.markAllAsTouched();
       Swal.fire({
         icon: 'error',
         title: 'Hay errores en los campos.',
         html: erroresFormulario.traerErroresFormularios(this.forma, null, this.diccionario),
       });
-    }else{
-      const element = this.fb.group({...this.detalle});
+    } else {
+      const element = this.fb.group({ ...this.detalle });
       let id = this.forma.get('idingreso').value;
       let encontrada = this.Detalles.find(a => a.get('idingreso').value === id);
       let cant = parseInt(this.forma.get('cantidad').value);
       let punit = parseFloat(this.forma.get('punit').value.toString().replace(/,/g, ''));
-      if(encontrada){
+      if (encontrada) {
         let cantactual = parseInt(encontrada.controls['cantidad'].value);
-        encontrada.controls['cantidad'].setValue(cantactual+cant);
-        encontrada.controls['subtotal'].setValue((cantactual+cant)*punit);
-      }else{
+        encontrada.controls['cantidad'].setValue(cantactual + cant);
+        encontrada.controls['subtotal'].setValue((cantactual + cant) * punit);
+      } else {
         element.controls['idingreso'].setValue(id);
         element.controls['concepto'].setValue(this.forma.get('servicio').value);
         element.controls['cantidad'].setValue(cant);
         element.controls['punit'].setValue(punit);
-        element.controls['subtotal'].setValue(cant*punit);
+        element.controls['subtotal'].setValue(cant * punit);
         element.controls['paquete'].setValue(this.forma.get('paquete').value);
         this.arreglo.push(element);
       }
@@ -291,7 +309,7 @@ export class PostsComponent implements OnInit {
     }
   }
 
-  calcularServicios(){
+  calcularServicios() {
     let suma = 0;
     this.Detalles.map(det => {
       suma += parseInt(det.controls['cantidad'].value);
@@ -299,7 +317,7 @@ export class PostsComponent implements OnInit {
     this.forma.get('numservicios').setValue(suma);
   }
 
-  sumarTotal(){
+  sumarTotal() {
     let total = 0
     this.Detalles.map(det => {
       total += parseFloat(det.controls['subtotal'].value);
@@ -307,16 +325,18 @@ export class PostsComponent implements OnInit {
     this.forma.get('total').setValue(total);
   }
 
-  get cantidadNovalido(){
+  get cantidadNovalido() {
     return this.forma.get('cantidad').invalid && this.forma.get('cantidad').touched
   }
 
-  crearFormulario(){
+  async crearFormulario() {
+    console.log('crear')
+
     this.forma = this.fb.group({
       idingreso: ['', Validators.required],
       servicio: '',
-      cantidad: [1, [Validators.required,Validators.max(999),Validators.min(1)]],
-      punit: ['', [Validators.required,Validators.max(99999),Validators.min(0.01)]],
+      cantidad: [1, [Validators.required, Validators.max(999), Validators.min(1)]],
+      punit: ['', [Validators.required, Validators.max(99999), Validators.min(0.01)]],
       cambiaPrecio: 'N',
       user: sessionStorage.getItem('usuID'),
       nombre: sessionStorage.getItem('Nombre'),
@@ -327,72 +347,94 @@ export class PostsComponent implements OnInit {
       total: '',
       referencia: '',
     });
+    this.forma.controls['referencia'].setValue(await this.getReferencia());
+    console.log(this.forma.value)
     this.blockUI.stop();
   }
 
+
+  @HostListener('window:evo-checkout-finished')
+  onEvoCheckoutFinished(): void {
+    console.log('onEvoCheckoutFinished')
+    this.blockUIService.stop('global');
+  }
   async Pagar() {
-    this.blockUI.start();
-    const detalle: Array<DetPagoOnlineDTO> = this.arreglo.getRawValue().map((e)=>{
+    this.blockUIService.start('global', 'pagando...')
+    const detalle: Array<DetPagoOnlineDTO> = this.arreglo.getRawValue().map((e) => {
       return {
-          idingreso: e.idingreso,
-          cantidad: e.cantidad,
-          punit: e.punit,
-          regidescto: e.regiddescto||null,
-          descto: e.descto||null,
-          dtoPagar: e.dtopagar||null,
+        idingreso: e.idingreso,
+        cantidad: e.cantidad,
+        punit: e.punit,
+        regidescto: e.regiddescto || null,
+        descto: e.descto || null,
+        dtoPagar: e.dtopagar || null,
       }
     });
 
-    const entity = { 
-      usuaid: this.forma.get('user').value||null, 
+    const entity = {
+      usuaid: this.forma.get('user').value,
       montoapagar: this.forma.get('total').value,
       referencia: this.forma.get('referencia').value,
-      concepto: "PAGO DE "+(this.forma.get('nombre').value||this.forma.get('user').value)+" REF: "+this.forma.get('referencia').value+" FOLIO: ",
-      user: this.forma.get('user').value||null,
-      detalle: detalle 
+      concepto: "PAGO DE " + (this.forma.get('nombre').value || this.forma.get('user').value) + " REF: " + this.forma.get('referencia').value + " FOLIO: ",
+      user: this.forma.get('user').value || null,
+      detalle: detalle
     }
-
+    console.warn('e', entity)
     let total = this.forma.get('total').value;
     this._evo.getEvo(total, entity).subscribe({
       next: (response: any) => {
+        this.blockUI.stop();
         console.warn('response', response)
-        this.session_id = response.session_id;
+        // this.session_id = response.session_id;
         this.successIndicator = response.successIndicator;
         sessionStorage.MasterID = this.forma.get('referencia').value;
-        this.forma.reset();
-        this.limparDetalle();
-        this.getDescuentos();
-        this.getCatalogoServicios(sessionStorage.getItem('Tipo').toString());
-        this.clearHostedCheckoutSessionStorage();
-        const ck = (window as any).Checkout;
-        if (ck) {
-          ck.configure({
-            session: {
-              id: this.session_id
+
+        // this.clearHostedCheckoutSessionStorage();
+
+
+        // this.showEvoOverlay();
+        setTimeout(() => {
+          try {
+          //  alert('->' + response.session_id)
+            const checkout:EvoCheckout = (window as any).Checkout;
+
+            if (!checkout) {
+              throw new Error('El SDK de Checkout no está cargado.');
             }
 
-          });
-          this.showEvoOverlay();
-                    setTimeout(() => {
-                try {
-                  // pasar height: '100%' no siempre funciona; el contenedor controla la altura
-                  const res = ck.showEmbeddedPage('#evo-embed-container');
-                  if (res && typeof res.then === 'function') {
-                    res.then(() => console.log('showEmbeddedPage completado')).catch((e: any) => {
-                      console.error('Error showEmbeddedPage:', e);
+            checkout.configure({
+              session: {
+                id: response.session_id
+              }
+            });
 
-                      this.closeEvoModal();
-                    });
-                  }
-                } catch (e) {
-                  console.error('Error invocando showEmbeddedPage:', e);
-                  this.closeEvoModal();
-                }
-              }, 200); // 200ms es suficiente si el overlay ya está visible
-        }
+            setTimeout(() => {
+              //checkout.showPaymentPage();
+              console.log(checkout);
+console.log(typeof checkout.configure);
+console.log(typeof checkout.showLightbox);
+console.log(typeof checkout.showEmbeddedPage);
+console.log(typeof checkout.showPaymentPage);
+             // checkout.showLightbox();
+           if(checkout){
+             checkout.showEmbeddedPage('#evo-embed-container');
+           }
+             //checkout.showEmbeddedPage('#evo-embed-container');
+            }, 700);
+
+            //  checkout.showLightbox();
+
+            //  (window as any).Checkout.showEmbeddedPage('#evo-embed-container');
+          } catch (e) {
+            console.error('Error invocando showEmbeddedPage:', e);
+            this.closeEvoModal();
+          }
+        }, 2000); // 200ms es suficiente si el overlay ya está visible
+
       },
       error: (e) => {
-        console.error('e', e)
+        this.blockUIService.stop('global');
+        console.error('e.getEvo', e)
         Swal.fire({
           title: 'ERROR!!!',
           text: JSON.stringify(e),
@@ -400,7 +442,8 @@ export class PostsComponent implements OnInit {
         });
       },
       complete: () => {
-
+        console.log('complete')
+        this.blockUIService.stop('global');
       }
     })
   }
@@ -417,12 +460,12 @@ export class PostsComponent implements OnInit {
 
   // Mostrar overlay con clase 'open' y forzar change detection
   private showEvoOverlay(): void {
-    const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
+    /*const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
     if (!overlay) { console.error('Overlay no encontrado'); return; }
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
     // forzar reflow para evitar problemas de stacking
-    void overlay.offsetHeight;
+    void overlay.offsetHeight;*/
   }
 
   // Cerrar
@@ -437,7 +480,7 @@ export class PostsComponent implements OnInit {
     this.clearHostedCheckoutSessionStorage();
   }
 
-  getCatalogoServicios(tipo:string){
+  getCatalogoServicios(tipo: string) {
     this._cp.getCatalogoPagoTipoUser(tipo).subscribe(
       (catalogoPagoTipoUser) => {
         this.catalogoPagoTipoUser = catalogoPagoTipoUser;
@@ -455,7 +498,7 @@ export class PostsComponent implements OnInit {
     )
   }
 
-  async getReferencia():Promise<string>{
+  async getReferencia(): Promise<string> {
     const ref = await this._ps.getTsqpagosonline().toPromise();
     return ref as string;
   }

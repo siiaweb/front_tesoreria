@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, HostListener, NgZone, OnInit, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { CatalogoPagoService } from '../../services/dashboard/catalogoPago.service';
 import { CatalogoPago } from '../../services/dashboard/catalogoPago';
 import { CatalogoPagoTipoUser } from '../../services/dashboard/catalogoPagoTipoUser';
@@ -12,6 +12,17 @@ import { erroresFormulario } from '../componentes-genericos/manejo-errores-forma
 import { DetPagoOnlineDTO } from './interfaces/catalogos.post';
 import { EvoService } from '../../services/dashboard/evo.service';
 import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
+interface EvoCheckout {
+  configure(options: {
+    session: {
+      id: string;
+    };
+  }): void;
+
+  showPaymentPage(): void;
+  showEmbeddedPage(selector: string): void;
+  showLightbox(): void;
+}
 
 @Component({
   selector: 'app-posts',
@@ -64,7 +75,7 @@ export class PostsComponent implements OnInit {
 
   @ViewChildren('dropdownService') dropdownItems!: QueryList<ElementRef>;
 
-  session_id!: string;
+  //session_id!: string;
   successIndicator!: string;
 
   constructor(
@@ -74,7 +85,9 @@ export class PostsComponent implements OnInit {
     private _ds: DescuentosService,
     private _evo: EvoService,
     private _ps: PagoServiciosService,
-  private blockUIService: BlockUIService) { }
+    private blockUIService: BlockUIService,
+  private ngZone: NgZone
+) { }
 
   async ngOnInit() {
 
@@ -345,7 +358,7 @@ export class PostsComponent implements OnInit {
     this.blockUIService.stop('global');
   }
   async Pagar() {
-     this.blockUIService.start('global', 'pagando...')
+    this.blockUIService.start('global', 'pagando...')
     const detalle: Array<DetPagoOnlineDTO> = this.arreglo.getRawValue().map((e) => {
       return {
         idingreso: e.idingreso,
@@ -371,7 +384,7 @@ export class PostsComponent implements OnInit {
       next: (response: any) => {
         this.blockUI.stop();
         console.warn('response', response)
-        this.session_id = response.session_id;
+        // this.session_id = response.session_id;
         this.successIndicator = response.successIndicator;
         sessionStorage.MasterID = this.forma.get('referencia').value;
 
@@ -381,7 +394,8 @@ export class PostsComponent implements OnInit {
         // this.showEvoOverlay();
         setTimeout(() => {
           try {
-            const checkout = (window as any).Checkout;
+          //  alert('->' + response.session_id)
+            const checkout:EvoCheckout = (window as any).Checkout;
 
             if (!checkout) {
               throw new Error('El SDK de Checkout no está cargado.');
@@ -389,36 +403,32 @@ export class PostsComponent implements OnInit {
 
             checkout.configure({
               session: {
-                id: this.session_id
-              },
-              initialized: () => {
-                console.log('Checkout inicializado');
-              },
-
-              formSessionUpdate: (response: any) => {
-                console.log('Respuesta del formulario:', response);
-              },
-
-              error: (error: any) => {
-                console.error('Error del Checkout:', error);
-              },
-
-              cancel: () => {
-                console.warn('Checkout cancelado');
-              },
-              complete: () => {
-                console.log('completado')
+                id: response.session_id
               }
             });
 
+            setTimeout(() => {
+              //checkout.showPaymentPage();
+              console.log(checkout);
+console.log(typeof checkout.configure);
+console.log(typeof checkout.showLightbox);
+console.log(typeof checkout.showEmbeddedPage);
+console.log(typeof checkout.showPaymentPage);
+             // checkout.showLightbox();
+           if(checkout){
+             checkout.showEmbeddedPage('#evo-embed-container');
+           }
+             //checkout.showEmbeddedPage('#evo-embed-container');
+            }, 700);
+
             //  checkout.showLightbox();
-            checkout.showPaymentPage();
+
             //  (window as any).Checkout.showEmbeddedPage('#evo-embed-container');
           } catch (e) {
             console.error('Error invocando showEmbeddedPage:', e);
             this.closeEvoModal();
           }
-        }, 1000); // 200ms es suficiente si el overlay ya está visible
+        }, 2000); // 200ms es suficiente si el overlay ya está visible
 
       },
       error: (e) => {

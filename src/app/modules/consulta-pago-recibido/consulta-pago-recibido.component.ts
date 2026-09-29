@@ -1,8 +1,8 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
-import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
+import {MatPaginator} from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { Tvpagoenescolar } from '../../services/dashboard/consultapagorecibido/tvpagoenescolar';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { PagoServiciosService, ConsultaPagoRecividoService } from '../../services/services.index';

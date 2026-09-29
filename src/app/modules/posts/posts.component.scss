@@ -90,7 +90,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
 .card-subtitle {
   font-size: 0.75rem !important;
   color: $color-text-light !important;
-  margin-top: 0.25rem !important;
   margin-bottom: 0 !important;
 }
 
@@ -133,50 +132,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   background: $color-bg-app;
 }
 
-::ng-deep .autocomplete-dropdown.mat-mdc-select-panel {
-  background: $color-surface !important;
-  border: 1px solid $color-border !important;
-  border-radius: $radius-md !important;
-  box-shadow: $shadow-xl !important;
-  max-height: 200px !important;
-  padding: 0 !important;
-  margin-top: 36px !important;
-}
-
-::ng-deep .dropdown-item.mat-mdc-option {
-  padding: 0.625rem 0.875rem !important;
-  border-bottom: 1px solid $color-border !important;
-  min-height: unset !important;
-  cursor: pointer !important;
-  transition: background 0.15s ease !important;
-
-  &:last-child {
-    border-bottom: none !important;
-  }
-
-  &:hover,
-  &.mdc-list-item--selected {
-    background: $color-bg-app !important;
-  }
-
-  .item-title {
-    font-size: 0.75rem !important;
-    font-weight: 600 !important;
-    color: $color-text-main !important;
-  }
-
-  .item-code {
-    font-size: 0.625rem !important;
-    color: $color-text-light !important;
-  }
-
-  .item-price {
-    font-size: 0.75rem !important;
-    font-weight: 800 !important;
-    color: $color-success !important;
-  }
-}
-
 .form-label {
   display: block;
   font-size: 0.6875rem;
@@ -192,44 +147,52 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   align-items: center;
 }
 
-.form-input {
-  width: 100%;
-  padding: 0.625rem 2rem 0.625rem 0.5rem;
-  font-size: 0.75rem;
-  background: $color-bg-app;
-  border: 1px solid $color-border;
-  border-radius: $radius-md;
-  outline: none;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
-  text-transform: uppercase;
+mat-form-field.custom-form-field {
+  width: 100% !important;
 
-  &:focus {
-    background: $color-surface;
-    border-color: $color-primary;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  .mdc-text-field--outlined {
+    background-color: $color-bg-app !important;
+    border-radius: $radius-md !important;
+  }
+
+  input.mat-mdc-input-element {
+    font-size: 0.75rem !important;
+    text-transform: uppercase !important;
+  }
+
+  &.mat-focused {
+    .mdc-text-field--outlined {
+      background-color: $color-surface !important;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+    }
+
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: $color-primary !important;
+      border-width: 2px !important;
+    }
   }
 }
 
-.form-input.mat-mdc-select {
-  width: 100%;
-  padding: 0.625rem 0.5rem;
-  font-size: 0.75rem;
-  background: $color-bg-app;
-  border: 1px solid $color-border;
-  border-radius: $radius-md;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
+.form-input {
+  width: 100% !important;
+  padding: 0 !important;
+  font-size: 0.75rem !important;
+  background: $color-bg-app !important;
+  border: 1px solid $color-border !important;
+  border-radius: $radius-md !important;
+  outline: none !important;
+  transition: all 0.2s ease !important;
+  box-sizing: border-box !important;
+  text-transform: uppercase !important;
+  align-items: center;
 
-  .mat-mdc-select-trigger {
-    text-transform: uppercase;
-  }
-
-  &.mat-mdc-select-focused {
-    background: $color-surface;
-    border-color: $color-primary;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-  }
+  &:focus {
+    background: $color-surface !important;
+    border-color: $color-primary !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+  }  
 }
 
 .form-input-invalid {
@@ -243,6 +206,12 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   transition: all 0.2s ease;
   box-sizing: border-box;
   text-transform: uppercase;
+}
+
+.align-left{
+  width: 100%;
+  display: flex;
+  justify-content: left;
 }
 
 .clear-btn {

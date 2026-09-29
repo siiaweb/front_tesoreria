@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import swal from 'sweetalert2';
 import { LoginService } from '../../services/login.service';
 import { environment } from '../../../environments/environment';
-import {MatDialog,MatDialogConfig} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog,MatLegacyDialogConfig as MatDialogConfig} from '@angular/material/legacy-dialog';
 import { DialogBodyComponent } from '../dialog-body/dialog-body.component';
 
 @Component({

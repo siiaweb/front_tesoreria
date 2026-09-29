@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from "@angular/material/dialog";
-import {MatDialogModule} from '@angular/material/dialog';
+import { MatLegacyDialogRef as MatDialogRef } from "@angular/material/legacy-dialog";
+import {MatLegacyDialogModule as MatDialogModule} from '@angular/material/legacy-dialog';
 import{recuperaPass} from './recuperaPass';
 import { RecuperarService } from '../../services/recuperar.service';
 import swal from 'sweetalert2';

@@ -1,9 +1,9 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { ListaUsuariosService } from '../../services/dashboard/listausuarios/listausuarios.service';
 import { Subscription } from 'rxjs';
-import {MatPaginator} from '@angular/material/paginator';
+import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { Tvusuario } from '../../services/dashboard/listausuarios/tvusuario';
 
 @Component({

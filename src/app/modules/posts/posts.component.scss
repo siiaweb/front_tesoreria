@@ -30,34 +30,26 @@ $shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 $shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 
-@mixin flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 @mixin flex-between {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.payment-wrapper {
-  font-family: $font-sans;
-  background-color: $color-bg-app;
-  color: $color-text-main;
-  padding: 1.5rem;
-  max-width: 1200px;
-  margin: 0 auto;
+.main-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px !important;
+  padding: 1rem;
+}
 
-  .payment-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
+@media (min-width: 1024px) {
+  .main-container {
+    flex-direction: row; 
+  }
 
-    @media (min-width: 1024px) {
-      grid-template-columns: 5fr 7fr;
-    }
+  .column {
+    flex: 1; 
   }
 }
 
@@ -67,7 +59,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   border-radius: $radius-lg !important;
   padding: 5px !important;
   box-shadow: $shadow-sm !important;
-  margin-bottom: 10px !important;
 }
 
 .card-header {

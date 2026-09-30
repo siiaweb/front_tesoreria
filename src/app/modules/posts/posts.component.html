@@ -1,11 +1,12 @@
 <block-ui name="global">
   <form [formGroup]="forma">
     <h2>Pago de servicios</h2>
-
-    <div class="payment-component">
-      <div class="payment-grid">
+    <div class="main-container">
+      
+      <!-- PRIMERA COLUMNA -->
+      <div class="column left-col">
         <!-- MAESTRO -->
-        <mat-card appearance="outlined" class="card" *ngIf="descuentos">
+        <mat-card appearance="outlined" class="card" *ngIf="descuentos" style="margin-bottom: 10px !important;">
           <mat-card-header class="card-header">
             <mat-card-title class="card-title">
               <i class="bi bi-currency-dollar"></i>
@@ -112,9 +113,12 @@
             </div>
           </mat-card-content>
         </mat-card>
+      </div>
 
+      <!-- SEGUNDA COLUMNA -->
+      <div class="column right-col">
         <!-- DETALLE -->
-        <div name="panel-detalle" style="margin-top: 10px !important;" *ngIf="arreglo?.length > 0">
+        <div name="panel-detalle" *ngIf="arreglo?.length > 0">
           <div class="card checkout-card" style="padding: 0 !important;">
 
             <!-- TITULO DETALLE -->
@@ -178,7 +182,6 @@
 
           </div>
         </div>
-
       </div>
     </div>
   </form>

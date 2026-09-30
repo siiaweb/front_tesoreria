@@ -61,7 +61,7 @@ import { DialogBodyComponent } from './dialog-body/dialog-body.component';
     ReactiveFormsModule,
     BlockUIModule.forRoot(),
     MatBadgeModule,
-    NgxPaginationModule
+    NgxPaginationModule,
   ],
   exports: [
     HeaderComponent,

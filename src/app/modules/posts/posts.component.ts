@@ -1,8 +1,8 @@
-import { Component, ElementRef, HostListener, NgZone, OnInit, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
+import { Component, HostListener, NgZone, OnInit, ViewEncapsulation } from '@angular/core';
 import { CatalogoPagoService } from '../../services/dashboard/catalogoPago.service';
 import { CatalogoPago } from '../../services/dashboard/catalogoPago';
 import { CatalogoPagoTipoUser } from '../../services/dashboard/catalogoPagoTipoUser';
-import { UntypedFormGroup, Validators, UntypedFormBuilder, UntypedFormArray, FormGroup, FormBuilder } from '@angular/forms';
+import { Validators, FormGroup, FormBuilder, FormArray } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { BlockUI, BlockUIService, NgBlockUI } from 'ng-block-ui';
 import { ListaUsuariosService } from '../../services/dashboard/listausuarios/listausuarios.service';
@@ -12,6 +12,10 @@ import { erroresFormulario } from '../componentes-genericos/manejo-errores-forma
 import { DetPagoOnlineDTO } from './interfaces/catalogos.post';
 import { EvoService } from '../../services/dashboard/evo.service';
 import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
+import { MatSelectChange } from '@angular/material/select';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 interface EvoCheckout {
   configure(options: {
     session: {
@@ -28,9 +32,6 @@ interface EvoCheckout {
   selector: 'app-posts',
   templateUrl: './posts.component.html',
   styleUrls: ['./posts.component.scss'],
-
-  encapsulation: ViewEncapsulation.None,
-
 })
 export class PostsComponent implements OnInit {
 
@@ -57,7 +58,7 @@ export class PostsComponent implements OnInit {
   formDet: FormGroup = this.fb.group({ detalle: this.fb.array([]) });
 
   get arreglo() {
-    return this.formDet.controls["detalle"] as UntypedFormArray;
+    return this.formDet.controls["detalle"] as FormArray;
   }
 
   get Detalles() {
@@ -68,12 +69,6 @@ export class PostsComponent implements OnInit {
   catalogoPagoTipoUser: CatalogoPagoTipoUser[] = [];
   filteredCatalogoServicios: CatalogoPagoTipoUser[] = [];
   descuentos!: Descuentos[];
-
-  openDescto: boolean = false;
-  openServicios: boolean = false;
-  selectedIndexServicios: number = 0;
-
-  @ViewChildren('dropdownService') dropdownItems!: QueryList<ElementRef>;
 
   //session_id!: string;
   successIndicator!: string;
@@ -99,16 +94,11 @@ export class PostsComponent implements OnInit {
 
   }
 
-  openDescuento() {
-    this.openDescto = !this.openDescto;
-  }
-
-  seleccionarDescuento(event: Descuentos) {
-    this.forma.controls['descuento'].setValue(event.vdes_foldescto);
-    this.forma.controls['dsctodescrip'].setValue(event.vdes_foldescto + ' - ' + event.vdes_descdescrip);
-    this.openDescto = false;
+  seleccionarDescuento(event:MatSelectChange) {
+    let value: Descuentos = event.value;
+    this.forma.controls['descuento'].setValue(value.vdes_foldescto);
     this.limparDetalle();
-    this._ds.getDescuentoDet(event.vdes_foldescto).subscribe({
+    this._ds.getDescuentoDet(value.vdes_foldescto).subscribe({
       next: (resp) => {
         resp.map(det => {
           const element = this.fb.group({ ...this.detalle });
@@ -140,22 +130,22 @@ export class PostsComponent implements OnInit {
   limpiarCamposDescuento() {
     this.forma.controls['descuento'].setValue('');
     this.forma.controls['dsctodescrip'].setValue('');
-    this.openDescto = false;
   }
 
-  buscarServicio(event: any) {
-    const filter = event.target.value.trim().toUpperCase() || '';
-    this.selectedIndexServicios = -1;
-    this.openServicios = true;
+  buscarServicio() {
+    const filter = this.forma.get('servicio').value?.toUpperCase()|| '';
     if (filter === '') {
       this.deseleccionarServicio();
-      this.openServicios = true;
     }else{
       this.filteredCatalogoServicios = this.catalogoPagoTipoUser.filter(item =>
         item.descripcion.toUpperCase().includes(filter) ||
         item.concepto.toUpperCase().includes(filter)
       );
     }
+  }
+
+  validarServicio(){
+    if(this.filteredCatalogoServicios?.length === 0) this.limpiarCamposServicio();
   }
 
   deseleccionarServicio(){
@@ -171,16 +161,15 @@ export class PostsComponent implements OnInit {
     this.forma.get('cantidad').setValue(1);
   }
 
-  seleccionarServicio(event:CatalogoPagoTipoUser){
-    this.openServicios = false;
+  seleccionarServicio(event:MatAutocompleteSelectedEvent){
+    let value:CatalogoPagoTipoUser = event.option.value;
     this.limpiarCamposServicio();
-    this.selectedIndexServicios = -1;
-    this.forma.get('servicio').setValue(event.descripcion);
-    this.forma.get('idingreso').setValue(event.concepto);
-    this.forma.get('punit').setValue(parseFloat(event.punit).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-    this.forma.get('paquete').setValue(event.paquete);
-    if (parseFloat(event.punit) === 1) this.forma.get('cambiaPrecio').setValue('S');
-    this.filteredCatalogoServicios = [];
+    this.forma.get('servicio').setValue(value.descripcion);
+    this.forma.get('idingreso').setValue(value.concepto);
+    this.forma.get('punit').setValue(parseFloat(value.punit).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    this.forma.get('paquete').setValue(value.paquete);
+    if (parseFloat(value.punit) === 1) this.forma.get('cambiaPrecio').setValue('S');
+    this.buscarServicio();
   }
 
   formatearPrecio() {
@@ -193,75 +182,6 @@ export class PostsComponent implements OnInit {
     let cant = this.forma.get('cantidad').value;
     cant = Math.max(1, Math.min(999, cant + num));
     this.forma.get('cantidad').setValue(cant);
-  }
-
-  onKeyDown(event: KeyboardEvent) {
-    if (this.filteredCatalogoServicios.length === 0) return;
-
-    switch (event.key) {
-      case 'ArrowDown':
-        event.preventDefault();
-        if (this.selectedIndexServicios < this.filteredCatalogoServicios.length - 1) {
-          this.selectedIndexServicios++;
-        } else {
-          this.selectedIndexServicios = 0;
-        }
-        this.scrollToOption();
-        break;
-
-      case 'ArrowUp':
-        event.preventDefault();
-        if (this.selectedIndexServicios > 0) {
-          this.selectedIndexServicios--;
-        } else {
-          this.selectedIndexServicios = this.filteredCatalogoServicios.length - 1;
-        }
-        this.scrollToOption();
-        break;
-
-      case 'Enter':
-        if (this.selectedIndexServicios >= 0 && this.selectedIndexServicios < this.filteredCatalogoServicios.length) {
-          event.preventDefault();
-          this.seleccionarServicio(this.filteredCatalogoServicios[this.selectedIndexServicios]);
-          this.selectedIndexServicios = -1;
-        }
-        break;
-
-      case 'Escape':
-        this.filteredCatalogoServicios = this.catalogoPagoTipoUser;
-        this.selectedIndexServicios = -1;
-        break;
-    }
-  }
-
-  scrollToOption() {
-    requestAnimationFrame(() => {
-      const itemsArray = this.dropdownItems.toArray();
-      if (itemsArray && itemsArray[this.selectedIndexServicios]) {
-        itemsArray[this.selectedIndexServicios].nativeElement.scrollIntoView({
-          block: 'nearest',
-          behavior: 'smooth'
-        });
-      }
-    });
-  }
-
-  onBlur() {
-    setTimeout(() => {
-      this.filteredCatalogoServicios = this.catalogoPagoTipoUser;
-      this.selectedIndexServicios = -1;
-      this.openServicios = false;
-    }, 200);
-  }
-
-  setSelectedIndex(i: number) {
-    this.selectedIndexServicios = i;
-  }
-
-  onBlurDescuentos() {
-    setTimeout(() => {
-      this.openDescto = false;
-    }, 200);
   }
 
   eliminarFila(i: number) {
@@ -305,7 +225,6 @@ export class PostsComponent implements OnInit {
       this.sumarTotal();
       this.calcularServicios();
       this.deseleccionarServicio();
-      this.openServicios = false;
     }
   }
 
@@ -330,8 +249,6 @@ export class PostsComponent implements OnInit {
   }
 
   async crearFormulario() {
-    console.log('crear')
-
     this.forma = this.fb.group({
       idingreso: ['', Validators.required],
       servicio: '',
@@ -348,7 +265,6 @@ export class PostsComponent implements OnInit {
       referencia: '',
     });
     this.forma.controls['referencia'].setValue(await this.getReferencia());
-    console.log(this.forma.value)
     this.blockUI.stop();
   }
 
@@ -411,10 +327,10 @@ export class PostsComponent implements OnInit {
             setTimeout(() => {
               //checkout.showPaymentPage();
               console.log(checkout);
-console.log(typeof checkout.configure);
-console.log(typeof checkout.showLightbox);
-console.log(typeof checkout.showEmbeddedPage);
-console.log(typeof checkout.showPaymentPage);
+              console.log(typeof checkout.configure);
+              console.log(typeof checkout.showLightbox);
+              console.log(typeof checkout.showEmbeddedPage);
+              console.log(typeof checkout.showPaymentPage);
              // checkout.showLightbox();
            if(checkout){
              checkout.showEmbeddedPage('#evo-embed-container');

@@ -17,6 +17,7 @@ $color-success: #059669;
 $color-success-dark: #047857;
 
 $color-danger: #EF4444;
+$color-danger-light: #f09191;
 $color-border: #E2E8F0;
 $color-border-dark: #334155;
 
@@ -66,6 +67,7 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   border-radius: $radius-lg !important;
   padding: 5px !important;
   box-shadow: $shadow-sm !important;
+  margin-bottom: 10px !important;
 }
 
 .card-header {
@@ -76,6 +78,7 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
 }
 
 .card-title {
+  height: 20px !important;
   font-family: $font-sans !important;
   font-size: 0.875rem !important;
   font-weight: 700 !important;
@@ -84,13 +87,18 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   align-items: center !important;
   gap: 0.5rem !important;
   margin: 0 !important;
+  padding-top: 5px !important;
+  padding-left: 10px !important;
   i { color: $color-primary; }
 }
 
 .card-subtitle {
+  height: 20px !important;
   font-size: 0.75rem !important;
   color: $color-text-light !important;
   margin-bottom: 0 !important;
+  font-weight: 400;
+  padding-left: 10px !important;
 }
 
 // --- CAMPOS DE BUSQUEDA Y AUTOCOMPLETADO ---
@@ -99,37 +107,51 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   margin-bottom: 0.2rem;
 }
 
-.autocomplete-dropdown {
+::ng-deep .autocomplete-dropdown {
   position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 1;
-  background: $color-surface;
-  border: 1px solid $color-border;
-  border-radius: $radius-md;
-  box-shadow: $shadow-xl;
-  max-height: 200px;
-  overflow-y: auto;
-  margin-top: 0.25rem;
+  background: $color-surface !important;
+  border: 1px solid $color-border !important;
+  border-radius: $radius-md !important;
+  box-shadow: $shadow-xl !important;
+  max-height: 200px !important;
+  padding: 0 !important;
 }
 
-.dropdown-item {
-  @include flex-between;
-  padding: 0.625rem 0.875rem;
-  border-bottom: 1px solid $color-border;
-  cursor: pointer;
-  transition: background 0.15s ease;
+::ng-deep .mat-mdc-option .mdc-list-item__primary-text{
+  width: 100% !important;
+}
 
-  &:last-child { border-bottom: none; }
+::ng-deep .mat-mdc-option{
+  min-height: 40px !important;
+  max-height: 40px !important;
+  height: 40px !important;
+}
+
+::ng-deep .mat-mdc-option.mdc-list-item--activated,
+::ng-deep .mat-mdc-option.mat-mdc-option-active {
+  min-height: 40px !important;
+  max-height: 40px !important;
+  height: 40px !important;
+}
+
+::ng-deep .mdc-menu-surface.mat-mdc-autocomplete-panel{
+  padding: 0 !important;
+}
+
+::ng-deep .dropdown-item {
+  @include flex-between;
+  max-height: 40px !important;
+  min-height: 40px !important;
+  height: 40px !important;
+  padding: 0 !important;
+  border-bottom: 1px solid $color-border !important;
+  cursor: pointer !important;
 
   .item-title { font-size: 0.75rem; font-weight: 600; color: $color-text-main; }
   .item-code { font-size: 0.625rem; color: $color-text-light; }
   .item-price { font-size: 0.75rem; font-weight: 800; color: $color-success; }
-}
 
-.dropdown-item:hover{
-  background: $color-bg-app;
+  
 }
 
 .form-label {
@@ -147,31 +169,89 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   align-items: center;
 }
 
-mat-form-field.custom-form-field {
+::ng-deep .custom-form-field {
   width: 100% !important;
+  font-family: $font-sans !important;
+  color: #555;
+  font-size: 10px !important;
+
+  .mdc-notched-outline__leading {
+    border-radius: $radius-md 0 0 $radius-md !important;
+  }
+
+  .mdc-notched-outline__trailing {
+    border-radius: 0 $radius-md $radius-md 0 !important;
+  }
+
+  .mdc-notched-outline__notch {
+    border-radius: 0 !important;
+  }
+
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-color: $color-border !important;
+  }
+
+  .mdc-notched-outline--no-label .mdc-notched-outline__notch {
+    border-top: 1px solid $color-border !important; 
+  }
+
+  .mat-mdc-text-field-wrapper{
+    height: 30px!important;
+    max-height: 30px!important;
+    background-color: #E9EDF1;
+  }
+
+  .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mat-mdc-form-field-infix {
+    padding: 3px 8px 0px 8px !important;
+  } 
 
   .mdc-text-field--outlined {
     background-color: $color-bg-app !important;
     border-radius: $radius-md !important;
+    transition: all 0.2s ease !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
 
   input.mat-mdc-input-element {
-    font-size: 0.75rem !important;
+    font-size: 13px !important;
+    font-family: $font-sans !important;
     text-transform: uppercase !important;
+    letter-spacing: 0;
+  }
+
+  .mat-mdc-select{
+    font-size: 13px !important;
+    font-family: $font-sans !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0;
   }
 
   &.mat-focused {
     .mdc-text-field--outlined {
       background-color: $color-surface !important;
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+      border-radius: $radius-md !important;
     }
 
     .mdc-notched-outline__leading,
     .mdc-notched-outline__notch,
     .mdc-notched-outline__trailing {
       border-color: $color-primary !important;
-      border-width: 2px !important;
     }
+  }
+
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none !important;
+  }
+
+  .mat-mdc-icon-button.mat-mdc-button-base {
+    width: 24px;
+    height: 24px;
+    padding: 0px;
+    margin-bottom: 24px;
   }
 }
 
@@ -247,9 +327,9 @@ mat-form-field.custom-form-field {
   background: $color-bg-app;
   border: 1px solid $color-border;
   border-radius: $radius-md;
-  padding: 0.875rem;
-  margin-bottom: 0.7rem;
-  margin-top: 0.5rem;
+  padding: 10px !important;
+  margin-bottom: 5px !important;
+  margin-top: 5px !important;
 
   .preview-header {
     @include flex-between;
@@ -276,8 +356,10 @@ mat-form-field.custom-form-field {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
+  height: 30px !important;
 
   .qty-picker {
+    height: 30px !important;
     max-width: 200px !important;
     display: flex;
     border: 1px solid $color-border;
@@ -286,7 +368,9 @@ mat-form-field.custom-form-field {
     background: $color-bg-app;
 
     button {
-      padding: 0.5rem 0.75rem;
+      padding: 0 10px 4px 10px;
+      height: 30px !important;
+      align-items: center;
       background: $color-surface-subtle;
       border: none;
       font-weight: bold;
@@ -308,8 +392,7 @@ mat-form-field.custom-form-field {
 // --- BOTONES ---
 .boton {
   width: 100%;
-  height: inherit;
-  padding: 0.625rem 1rem;
+  height: 30px !important;
   border-radius: $radius-md;
   font-size: 0.75rem;
   font-weight: 700;
@@ -446,12 +529,50 @@ mat-form-field.custom-form-field {
 }
 
 // ALINEACIONES Y MONOESPACIADO
-.text-center { text-align: center; }
-.text-right { text-align: right; }
-.font-bold { font-weight: 700; }
-.font-semibold { font-weight: 600; }
+.text-center { text-align: center !important; }
+.text-right { text-align: right !important; }
+.font-bold { font-weight: 700 !important; }
+.font-semibold { font-weight: 600 !important; }
 
+//EVO PAY
+/* forzar visibilidad cuando se abre */
+.evo-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 99999 !important; /* subir mucho el z-index */
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+}
 
+/* clase que activa el overlay */
+.evo-overlay.open {
+  display: flex !important;
+}
+
+/* modal box */
+.evo-modal {
+  background: #fff;
+  border-radius: 8px;
+  width: 95%;
+  max-width: 980px;
+  max-height: 90vh;      /* evitar que se salga de la pantalla */
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  position: relative;
+  padding: 0;
+}
+
+/* contenedor del embed con scroll interno si hace falta */
+#evo-embed-container {
+  width: 100%;
+  height: 100%;
+  min-height: 560px;     /* asegurar altura mínima */
+  max-height: calc(90vh - 40px);
+  overflow: auto;
+}
 
 /* close button */
 .evo-close { z-index: 100000; }

@@ -43,10 +43,11 @@ import { ServicesformComponent } from './modules/services/servicesform/servicesf
 import { PagossiiaComponent } from './modules/pagossiia/pagossiia.component';
 import { RecepcionRecibosComponent } from './modules/recepcion-recibos/recepcion-recibos.component';
 import { ConsultaPagoRecibidoComponent } from './modules/consulta-pago-recibido/consulta-pago-recibido.component';
-import { DialogBodyComponent } from "./shared/dialog-body/dialog-body.component";
 import { ResetpassComponent } from './modules/resetpass/resetpass.component';
-
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 
 @NgModule({
@@ -90,7 +91,10 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
         FlexLayoutModule,
         MatTableModule,
         MatDialogModule,
-        NgbModule
+        NgbModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatAutocompleteModule
     ],
     providers: [{ provide: LOCALE_ID, useValue: 'es-MX' }, { provide: LocationStrategy, useClass: HashLocationStrategy }],
     bootstrap: [AppComponent]

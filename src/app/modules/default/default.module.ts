@@ -35,6 +35,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { PAGES_ROUTES } from './default.routes';
 import { DialogOverviewExampleDialog } from '../resetpass/resetpass.component';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @NgModule({
     declarations: [
@@ -78,6 +79,7 @@ import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
         MatInputModule,
         MatSortModule,
         NgbTypeaheadModule,
+        MatAutocompleteModule
     ],
     providers: []
 })

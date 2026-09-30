@@ -5,106 +5,70 @@
     <div class="payment-component">
       <div class="payment-grid">
         <!-- MAESTRO -->
-        <div name="panel-concepto">
-
-          <mat-card appearance="outlined" class="card">
-            <mat-card-header class="card-header">
-              <mat-card-title class="card-title">
-                <i class="bi bi-currency-dollar"></i>
-                <span>Descuentos</span>
-              </mat-card-title>
-              <mat-card-subtitle class="card-subtitle">Tienes {{descuentos?.length}} {{descuentos?.length != 1 ? 'descuentos disponibles':'descuento disponible'}}.</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-              <mat-form-field class="custom-form-field">
-                <mat-select formControlName="dsctodescrip" panelClass="autocomplete-dropdown">
-                  <mat-option *ngFor="let option of descuentos" [value]="option.vdes_foldescto">{{option.vdes_descdescrip}}</mat-option>
-                </mat-select>
-              </mat-form-field>
-            </mat-card-content>
-          </mat-card>
-
-          <!-- DESCUENTOS -->
-          <div class="card" style="margin-bottom: 10px !important;" *ngIf="descuentos">
-            <div class="card-header">
-              <h2 class="card-title">
-                <i class="bi bi-currency-dollar"></i>
-                <span>Descuentos</span>
-              </h2>
-              <p class="card-subtitle">Tienes {{descuentos?.length}} {{descuentos?.length != 1 ? 'descuentos disponibles':'descuento disponible'}}.</p>
-            </div>
-
-            <div class="autocomplete-group">
-              <div class="input-relative">
-                <select class="form-input" formControlName="dsctodescrip">
-                  <option panelClass="autocomplete-dropdown" *ngFor="let option of descuentos" [value]="option.vdes_foldescto">{{option.vdes_descdescrip}}</option>
-                </select>
-              </div>
-                <!-- <input 
-                  class="form-input" 
-                  formControlName="dsctodescrip"
-                  readonly
-                  style="cursor: pointer;"
-                  (click)="openDescuento()"
-                  (blur)="onBlurDescuentos()">
-                  <span class="input-left-span">{{ openDescto === false ? '▼' : '▲' }}</span>
-              </div>
-              <div class="autocomplete-dropdown" *ngIf="openDescto === true">
-                <div 
-                  class="dropdown-item" 
-                  *ngFor="let item of descuentos"
-                  (click)="seleccionarDescuento(item)">
-                  <div>
-                    <div class="item-title">{{ item.vdes_descdescrip }}</div>
-                    <div class="item-code">Clave: {{ item.vdes_foldescto }}</div>
+        <mat-card appearance="outlined" class="card" *ngIf="descuentos">
+          <mat-card-header class="card-header">
+            <mat-card-title class="card-title">
+              <i class="bi bi-currency-dollar"></i>
+              <span>Descuentos</span>
+            </mat-card-title>
+            <mat-card-subtitle class="card-subtitle">Tienes {{descuentos?.length}} {{descuentos?.length != 1 ? 'descuentos disponibles':'descuento disponible'}}.</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content style="padding: 0 !important;">
+            <mat-form-field class="custom-form-field" appearance="outline">
+              <mat-select formControlName="dsctodescrip" panelClass="autocomplete-dropdown" (selectionChange)="seleccionarDescuento($event)">
+                <mat-select-trigger>
+                  {{ forma.get('dsctodescrip')?.value?.vdes_descdescrip }}
+                </mat-select-trigger>
+                <mat-option *ngFor="let option of descuentos" [value]="option">
+                  <div class="dropdown-item">
+                    <div class="item-title">{{ option.vdes_descdescrip }}</div>
+                    <div class="item-code">Clave: {{ option.vdes_foldescto }}</div>
                   </div>
-                </div>
-              </div> -->
-            </div>
-          </div>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
 
-          <!-- BUSQUEDA PAGO SERVICIOS -->
-          <div class="card" *ngIf="!forma.get('descuento').value">
-            <div class="card-header">
-              <h2 class="card-title">
-                <i class="bi bi-search"></i>
-                <span>Busqueda de servicios</span>
-              </h2>
-              <p class="card-subtitle">Selecciona de la lista los articulos que deseas pagar.</p>
-            </div>
+        <mat-card appearance="outlined" class="card" *ngIf="!forma.get('descuento').value">
+          <mat-card-header class="card-header">
+            <mat-card-title class="card-title">
+              <i class="bi bi-search"></i>
+              <span>Busqueda de servicios</span>
+            </mat-card-title>
+            <mat-card-subtitle class="card-subtitle">Selecciona de la lista los articulos que deseas pagar.</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content style="padding: 0 !important;">
+            <mat-form-field class="custom-form-field" appearance="outline">
+              <input
+                type="text"
+                matInput
+                formControlName="servicio"
+                [matAutocomplete]="autoServ"
+                onfocus="this.select()"
+                (input)="buscarServicio()"
+                (blur)="validarServicio()">
+                <button
+                  mat-icon-button
+                  matSuffix
+                  matTooltip="Limpiar Selección"
+                  *ngIf="forma.get('servicio')?.value"
+                  (click)="deseleccionarServicio()"
+                >
+                  <mat-icon>close</mat-icon>
+                </button>
+                <mat-autocomplete #autoServ="matAutocomplete" autoActiveFirstOption="true"  panelClass="autocomplete-dropdown" (optionSelected)="seleccionarServicio($event)">
+                  <mat-option *ngFor="let selected of filteredCatalogoServicios" [value]="selected">
+                    <div class="dropdown-item">
+                      <div>
+                        <div class="item-title">{{selected.descripcion}}</div>
+                      </div>
+                      <span class="item-price">{{selected.punit|currency:"MXN":"symbol"}}</span>
+                    </div>
+                  </mat-option>
+                </mat-autocomplete>
+            </mat-form-field> 
 
-            <!-- AUTOCOMPLETADO -->
-            <div class="autocomplete-group">
-              <div class="input-relative">
-                <input type="text" 
-                    class="form-input" 
-                    placeholder="Ej. Examen, Titulo, Constancias..."
-                    (click)="openServicios = true"
-                    (input)="buscarServicio($event)"
-                    (keydown)="onKeyDown($event)"
-                    (blur)="onBlur()"
-                    formControlName="servicio">
-                    <button type="button" *ngIf="forma.get('servicio')?.value" class="clear-btn" (click)="deseleccionarServicio()">
-                      <i class="bi bi-x"></i>
-                    </button>
-              </div>
-              <div class="autocomplete-dropdown" *ngIf="openServicios === true">
-                <div 
-                  #dropdownService
-                  class="dropdown-item" 
-                  *ngFor="let item of filteredCatalogoServicios; let i = index"
-                  [class.active]="i === selectedIndexServicios"
-                  (mouseenter)="setSelectedIndex(i)" 
-                  (click)="seleccionarServicio(item)">
-                  <div>
-                    <div class="item-title">{{item.descripcion}}</div>
-                  </div>
-                  <span class="item-price">{{item.punit|currency:"MXN":"symbol"}}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- VISUALIZAR SERVICIO SELECCIONADO -->
             <div class="selected-card" *ngIf="forma.get('idingreso').value">
               <div class="preview-header">
                 <div>
@@ -113,30 +77,27 @@
                   <p class="preview-code">ID: {{forma.get('idingreso')?.value}}</p>
                 </div>
                 <span class="preview-price" *ngIf="forma.get('cambiaPrecio').value === 'N'">${{forma.get('punit')?.value}}</span>
-                <div class="input-relative" *ngIf="forma.get('cambiaPrecio').value === 'S'" style="width: 40% !important;">
+                <mat-form-field class="custom-form-field" appearance="outline" *ngIf="forma.get('cambiaPrecio').value === 'S'" style="width: 40% !important;">
                   <input 
-                    type="text" 
-                    class="form-input" 
+                    type="text"
+                    matInput  
                     style="text-align: right;"
                     formControlName="punit"
-                    [ngClass]="{'form-input-invalid': forma.get('punit')?.invalid && forma.get('punit')?.touched}"
+                    [ngClass]="{'custom-form-field-error': forma.get('punit')?.invalid && forma.get('punit')?.touched}"
                     (blur)="formatearPrecio()">
                     <span class="input-moneda">$</span>
-                </div>
+                </mat-form-field>
               </div>
             </div>
 
-            <!-- AJUSTAR CANTIDADES Y BOTON DE AGREGAR A DETALLE -->
             <div style="margin: 0; padding: 0; width: 100%; align-items: start;" *ngIf="forma.get('idingreso').value">
               <label class="form-label">Cantidad</label>
             </div>
             <div class="action-grid" *ngIf="forma.get('idingreso').value">
-              <div class="qty-control">
-                <div class="qty-picker">
-                  <button type="button" (click)="ajustarCantidad(-1)">-</button>
-                  <input type="number" formControlName="cantidad" readonly>
-                  <button type="button" (click)="ajustarCantidad(1)">+</button>
-                </div>
+              <div class="qty-picker">
+                <button type="button" (click)="ajustarCantidad(-1)">-</button>
+                <input type="number" formControlName="cantidad" readonly>
+                <button type="button" (click)="ajustarCantidad(1)">+</button>
               </div>
               <div style="display:flex; justify-content: flex-end;">
                 <button
@@ -149,13 +110,12 @@
                 </button>
               </div>
             </div>
-
-          </div>
-        </div>
+          </mat-card-content>
+        </mat-card>
 
         <!-- DETALLE -->
         <div name="panel-detalle" style="margin-top: 10px !important;" *ngIf="arreglo?.length > 0">
-          <div class="card checkout-card">
+          <div class="card checkout-card" style="padding: 0 !important;">
 
             <!-- TITULO DETALLE -->
             <div class="table-header">
@@ -221,7 +181,6 @@
 
       </div>
     </div>
-    <pre>{{forma.value| json }}</pre>
   </form>
 </block-ui>
 

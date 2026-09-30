@@ -453,7 +453,7 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
 .table-header {
   display: flex;
   justify-content: space-between; 
-  padding: 1rem 1.25rem; 
+  padding: 10px !important; 
   background: rgba(248, 250, 252, 0.5); 
   border-bottom: 1px solid $color-border; 
 }

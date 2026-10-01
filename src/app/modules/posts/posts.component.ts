@@ -70,7 +70,7 @@ export class PostsComponent implements OnInit {
   filteredCatalogoServicios: CatalogoPagoTipoUser[] = [];
   descuentos!: Descuentos[];
 
-  //session_id!: string;
+  session_id!: string;
   successIndicator!: string;
 
   constructor(
@@ -87,9 +87,21 @@ export class PostsComponent implements OnInit {
   async ngOnInit() {
     this.blockUI.start('Cargando datos...');
     this.crearFormulario();
-    this.getDescuentos();
     const tipo: string = sessionStorage.getItem('Tipo').toString();
     this.getCatalogoServicios(tipo);
+    const entity = JSON.parse(sessionStorage.getItem('shoppingCart'));
+    if(entity){
+      this.forma.patchValue(entity.forma);
+      this.getDescuentos(entity.forma.descuento||null);
+      entity.detalles.map(det => {
+        const element = this.fb.group({ ...this.detalle });
+        element.patchValue(det);
+        this.arreglo.push(element);
+      })
+    }else{
+      this.getDescuentos(null);
+      this.forma.controls['referencia'].setValue(await this.getReferencia());
+    }
   }
 
   seleccionarDescuento(event:MatSelectChange) {
@@ -246,7 +258,7 @@ export class PostsComponent implements OnInit {
     return this.forma.get('cantidad').invalid && this.forma.get('cantidad').touched
   }
 
-  async crearFormulario() {
+  crearFormulario() {
     this.forma = this.fb.group({
       idingreso: ['', Validators.required],
       servicio: '',
@@ -262,7 +274,6 @@ export class PostsComponent implements OnInit {
       total: '',
       referencia: '',
     });
-    this.forma.controls['referencia'].setValue(await this.getReferencia());
     this.blockUI.stop();
   }
 
@@ -274,7 +285,7 @@ export class PostsComponent implements OnInit {
   }
   async Pagar() {
     this.blockUIService.start('global', 'pagando...')
-    const detalle: Array<DetPagoOnlineDTO> = this.arreglo.getRawValue().map((e) => {
+    const detalle = this.arreglo.getRawValue().map((e) => {
       return {
         idingreso: e.idingreso,
         cantidad: e.cantidad,
@@ -293,20 +304,20 @@ export class PostsComponent implements OnInit {
       user: this.forma.get('user').value || null,
       detalle: detalle
     }
-    console.warn('e', entity)
+    sessionStorage.shoppingCart = JSON.stringify({ forma: this.forma.getRawValue(), detalles: this.arreglo.getRawValue()});
     let total = this.forma.get('total').value;
     this._evo.getEvo(total, entity).subscribe({
       next: (response: any) => {
         this.blockUI.stop();
         console.warn('response', response)
-        // this.session_id = response.session_id;
+        this.session_id = response.session_id;
         this.successIndicator = response.successIndicator;
         sessionStorage.MasterID = this.forma.get('referencia').value;
 
         // this.clearHostedCheckoutSessionStorage();
 
 
-        // this.showEvoOverlay();
+        this.showEvoOverlay();
         setTimeout(() => {
           try {
           //  alert('->' + response.session_id)
@@ -374,12 +385,11 @@ export class PostsComponent implements OnInit {
 
   // Mostrar overlay con clase 'open' y forzar change detection
   private showEvoOverlay(): void {
-    /*const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
+    const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
     if (!overlay) { console.error('Overlay no encontrado'); return; }
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
-    // forzar reflow para evitar problemas de stacking
-    void overlay.offsetHeight;*/
+    void overlay.offsetHeight;
   }
 
   // Cerrar
@@ -403,13 +413,20 @@ export class PostsComponent implements OnInit {
     )
   }
 
-  getDescuentos(){
+  getDescuentos(id:string){
     this._ds.getDescuento().subscribe((descuentos) => { 
       if(descuentos.length != 0){
-          this.descuentos = descuentos
-        }  
-      }
-    )
+        this.descuentos = descuentos
+        this.llenarDescuento(id);
+      }  
+    })
+  }
+
+  llenarDescuento(id:string){
+    const encontrada = this.descuentos.find(s => s.vdes_foldescto?.toString() === id?.toString());
+    if(encontrada){
+      this.forma.controls['dsctodescrip'].setValue(encontrada);
+    }
   }
 
   async getReferencia(): Promise<string> {

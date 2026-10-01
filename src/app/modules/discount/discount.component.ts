@@ -8,7 +8,7 @@ import { Descuentos } from '../../services/dashboard/descuentos/descuentos';
 import { Router } from '@angular/router';
 import { EvoService } from '../../services/dashboard/evo.service';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
-import { PagoOnline, DetPagoOnlineDTO, Carrito, PagoOnlineDTO } from '../shoppingcart/shoppingcart.component';
+import { PagoOnline } from '../posts/interfaces/catalogos.post';
 
 declare const Checkout: any
 
@@ -89,7 +89,7 @@ export class DiscountComponent implements OnInit {
 
         for (var i = 0; i < this.descuentosdet.length; i++) {
            const descuento:Descuentos=this.descuentosdet[i];
-           const rowDetalle:Carrito = {
+           const rowDetalle = {
             dpago_idingreso: descuento.vdes_id,
             dpago_cantidad: descuento.vdes_cantidad,
             dpago_punit: descuento.vdes_punit,
@@ -186,16 +186,16 @@ export class DiscountComponent implements OnInit {
     } else {
       console.log(this.forma);
 
-      const pagoOnline:PagoOnline = (this.forma.getRawValue() as PagoOnline);
+      const pagoOnline = this.forma.getRawValue();
       
-      const detalle: Array<DetPagoOnlineDTO> = this.det.map((e:Carrito)=>{
+      const detalle = this.det.map((e)=>{
         return {
             idingreso:e.dpago_idingreso,
             cantidad:e.dpago_cantidad,
             punit:e.dpago_punit
         }
       });
-      const entity:PagoOnlineDTO = { 
+      const entity = { 
         usuaid:pagoOnline.pago_usuaid, 
         concepto:pagoOnline.pago_concepto,
         montoapagar:pagoOnline.pago_montoapagar,

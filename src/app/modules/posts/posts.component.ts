@@ -85,13 +85,11 @@ export class PostsComponent implements OnInit {
 ) { }
 
   async ngOnInit() {
-
     this.blockUI.start('Cargando datos...');
     this.crearFormulario();
     this.getDescuentos();
     const tipo: string = sessionStorage.getItem('Tipo').toString();
     this.getCatalogoServicios(tipo);
-
   }
 
   seleccionarDescuento(event:MatSelectChange) {

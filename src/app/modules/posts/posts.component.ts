@@ -91,6 +91,7 @@ export class PostsComponent implements OnInit {
     this.getCatalogoServicios(tipo);
     const entity = JSON.parse(sessionStorage.getItem('shoppingCart'));
     if(entity){
+      console.log(entity);
       this.forma.patchValue(entity.forma);
       this.getDescuentos(entity.forma.descuento||null);
       entity.detalles.map(det => {
@@ -304,6 +305,7 @@ export class PostsComponent implements OnInit {
       user: this.forma.get('user').value || null,
       detalle: detalle
     }
+    sessionStorage.removeItem("shoppingCart");
     sessionStorage.shoppingCart = JSON.stringify({ forma: this.forma.getRawValue(), detalles: this.arreglo.getRawValue()});
     let total = this.forma.get('total').value;
     this._evo.getEvo(total, entity).subscribe({

@@ -75,7 +75,9 @@ export class ReceiptComponent implements OnInit {
 
   generarCartaNoAdeudo(id: string, ref: string){
     console.log(id);
+    this.blockUI.start("Generando...")
     this._ps.getCartaNoAdeudo(id, ref).subscribe(resp =>{
+      this.blockUI.stop();
       let blob = new Blob([resp], {type: resp.type});
       const fileURL = URL.createObjectURL(blob);
       window.open(fileURL);

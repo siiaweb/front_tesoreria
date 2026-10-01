@@ -1,4 +1,11 @@
 <block-ui>
+  <div style="width: 100%; margin-bottom: 10px;">
+    <button mat-button routerLink="/dashboard" style="letter-spacing: 0;">
+      <mat-icon>arrow_back</mat-icon>
+      Regresar
+    </button>
+  </div>
+
   <table class="concepts-table">
     <caption class="text-end">Listado de recibos</caption>
     <thead>
@@ -32,6 +39,7 @@
         <td>
           <section class="seccion">
             <button
+              type="button"
               *ngIf="recibo.estatus == 'A'"
               class="custom-btn custom-btn-blue"
               (click)="
@@ -44,27 +52,26 @@
             >
               <mat-icon>receipt</mat-icon> Recibo
             </button>
-            <a
+            <button
+              type="button"
               class="custom-btn custom-btn-red"
               target="_blank"
               *ngIf="
                 recibo.fautoriza != null &&
-                recibo.estatus == 'A' &&
-                recibo.hasCartaNoAdedudo
+                recibo.hasCartaNoAdedudo &&
+                recibo.estatus == 'A'                 
               "
-              [attr.href]="
-                'https://sistemas.ujed.mx/SIIA/cartaNA?foliopago=' +
-                recibo.foliopago +
-                '&ref=' +
-                recibo.referencia +
-                '&forma=L'
-              "
+              (click)="generarCartaNoAdeudo(recibo.foliopago,recibo.referencia)"
             >
               <mat-icon>picture_as_pdf</mat-icon>Carta no adeudo
-            </a>
+            </button>
           </section>
         </td>
       </tr>
     </tbody>
   </table>
 </block-ui>
+
+
+<!-- recibo.fautoriza != null &&
+recibo.hasCartaNoAdedudo && -->

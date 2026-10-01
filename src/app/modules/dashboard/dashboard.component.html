@@ -8,12 +8,20 @@
 
 <hr>
 
-<ng-container *ngIf="descuentos?.length > 0">
-<div class="card" style="background-color: #d9d9d9;">
-    <div class="container">
-      <h3><b>Descuentos</b></h3> 
-        <a routerLink="/posts"> <p>Usted tiene ({{ this.count }}) descuento(s)</p> 
-        </a>
-    </div>
+<div class="main-container">
+  <div class="column left-col">
+    <mat-card  appearance="outlined" class="card" routerLink="/posts">
+      <mat-card-header class="card-header">
+        <mat-card-title class="card-title">PAGAR SERVICIOS</mat-card-title>
+        <mat-card-subtitle class="card-subtitle" *ngIf="descuentos?.length > 0">Usted tiene {{ this.count }} {{this.count != 1 ? 'descuentos disponibles':'descuento disponible'}}</mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
   </div>
-</ng-container>
+  <div class="column right-col">
+    <mat-card  appearance="outlined" class="card2" routerLink="/recibos">
+      <mat-card-header class="card-header">
+        <mat-card-title class="card-title">RECIBOS</mat-card-title>
+      </mat-card-header>
+    </mat-card>
+  </div>
+</div>

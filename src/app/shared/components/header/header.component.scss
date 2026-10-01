@@ -1,3 +1,88 @@
-ul li {
-  list-style: none;
+$font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+$font-mono: 'JetBrains Mono', monospace;
+
+::ng-deep .color-header{
+  background: #5B656E !important;
+  background: radial-gradient(circle,rgba(91, 101, 110, 1) 0%, rgba(53, 59, 64, 1) 100%) !important;
+  height: 80px !important;
+}
+
+.div-container{
+  display: flex;
+  justify-content: space-between;
+  width: 100%
+}
+
+.div-left {
+  width: 50% !important;
+  height: 80px !important;
+}
+
+.div-right {
+  width: 50% !important;
+  height: 80px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.div-image{
+  display: grid;
+  height: 80px;
+  padding: 5px !important;
+}
+
+.image{
+  max-height: 70px;
+  max-width: 100%;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+.div-name{
+  width: 100% !important;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: flex-end;
+  margin-right: 0 !important;
+  margin-left: auto !important;
+  justify-content: flex-end;
+}
+
+.title-text{
+  color: white;
+  font-family: $font-sans;
+}
+
+.subtitle-text{
+  color: white;
+  font-family: $font-sans;
+  font-size: 12px !important;
+}
+
+.responsive-span {
+  color: white;
+  font-size: 12px !important;
+  font-size: 15px !important;
+  max-width: 100%;
+}
+
+@media (max-width: 600px) {
+  .responsive-span {
+    font-size: 10px !important;
+    overflow: hidden;
+  }
+}
+
+::ng-deep .boton-persona{
+  background-color: #951823 !important;
+  width: 30px !important;
+  height: 30px !important;
+}
+
+::ng-deep .icon{
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

@@ -20,8 +20,6 @@ import { TeamComponent } from '../team/team.component';
 import { TeamformComponent } from '../team/teamform/teamform.component';
 import { ServicesComponent } from '../services/services.component';
 import { ServicesformComponent } from '../services/servicesform/servicesform.component';
-import { PagosSiiaService } from 'src/app/services/services.index';
-import { PagossiiaComponent } from '../pagossiia/pagossiia.component';
 import { RecepcionRecibosComponent } from '../recepcion-recibos/recepcion-recibos.component';
 import { ConsultaPagoRecibidoComponent } from '../consulta-pago-recibido/consulta-pago-recibido.component';
 const pagesRoutes: Routes = [
@@ -46,7 +44,6 @@ const pagesRoutes: Routes = [
 			{ path: 'teamform/:id/:acc', component: TeamformComponent },
 			{ path: 'services', component: ServicesComponent },
 			{ path: 'servicesform/:id/:acc', component: ServicesformComponent },
-			{ path: 'pagossiia', component: PagossiiaComponent },	
 			{ path: 'recepcionrecibos', component: RecepcionRecibosComponent },
 			{ path: 'consultapagorecibido', component: ConsultaPagoRecibidoComponent },
 			{ path: 'resetpass', component: ResetpassComponent }

@@ -39,7 +39,6 @@ import { TeamComponent } from './modules/team/team.component';
 import { TeamformComponent } from './modules/team/teamform/teamform.component';
 import { ServicesComponent } from './modules/services/services.component';
 import { ServicesformComponent } from './modules/services/servicesform/servicesform.component';
-import { PagossiiaComponent } from './modules/pagossiia/pagossiia.component';
 import { RecepcionRecibosComponent } from './modules/recepcion-recibos/recepcion-recibos.component';
 import { ConsultaPagoRecibidoComponent } from './modules/consulta-pago-recibido/consulta-pago-recibido.component';
 import { ResetpassComponent } from './modules/resetpass/resetpass.component';
@@ -64,7 +63,6 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
         TeamformComponent,
         ServicesComponent,
         ServicesformComponent,
-        PagossiiaComponent,
         RecepcionRecibosComponent,
         ConsultaPagoRecibidoComponent,
         ResetpassComponent

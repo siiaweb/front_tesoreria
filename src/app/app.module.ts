@@ -11,7 +11,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SharedModule } from './shared/shared.module';
 import { DefaultModule } from './modules/default/default.module';
 import { ServicesModule } from './services/services.module';
-import { DiscountComponent } from './modules/discount/discount.component';
 import { AngularEditorModule } from '@kolkov/angular-editor';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
@@ -24,12 +23,10 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 
 import localeEsMx from '@angular/common/locales/es-MX';
 import { registerLocaleData } from '@angular/common';
-import { ListausuarioComponent } from './modules/listausuario/listausuario.component';
 registerLocaleData(localeEsMx, 'es-Mx');
 import {LocationStrategy, HashLocationStrategy} from '@angular/common';
 
 import {NgxPaginationModule} from 'ngx-pagination';
-import { NewformComponent } from './modules/news/newform/newform.component';
 import { SettingsComponent } from './modules/settings/settings.component';
 import { BannersComponent } from './modules/banners/banners.component';
 import { BannerUploadComponent } from './modules/banners/banner-upload/banner-upload.component';
@@ -51,9 +48,6 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 @NgModule({
     declarations: [
         AppComponent,
-        DiscountComponent,
-        ListausuarioComponent,
-        NewformComponent,
         SettingsComponent,
         BannersComponent,
         BannerUploadComponent,

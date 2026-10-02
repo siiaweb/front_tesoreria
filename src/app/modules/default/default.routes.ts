@@ -6,11 +6,7 @@ import { DefaultComponent } from './default.component';
 import { DashboardComponent } from 'src/app/modules/dashboard/dashboard.component';
 import { PostsComponent } from 'src/app/modules/posts/posts.component';
 import { ReceiptComponent } from '../receipt/receipt.component';
-import { DiscountComponent } from '../discount/discount.component';
-import { ListausuarioComponent } from '../listausuario/listausuario.component';
 import { ResetpassComponent } from '../resetpass/resetpass.component';
-import { NewsComponent } from '../news/news.component';
-import { NewformComponent } from '../news/newform/newform.component';
 import { SettingsComponent } from '../settings/settings.component';
 import { BannersComponent } from '../banners/banners.component';
 import { BannerUploadComponent } from '../banners/banner-upload/banner-upload.component';
@@ -31,10 +27,6 @@ const pagesRoutes: Routes = [
 			{ path: 'dashboard', component: DashboardComponent },
 			{ path: 'posts', component: PostsComponent },
 			{ path: 'recibos', component: ReceiptComponent },
-			{ path: 'descuentos', component: DiscountComponent },
-			{ path: 'listausuario', component: ListausuarioComponent },
-			{ path: 'noticias', component: NewsComponent },
-			{ path: 'noticiasform/:id/:acc', component: NewformComponent },
 			{ path: 'settings', component: SettingsComponent },
 			{ path: 'banners', component: BannersComponent },
 			{ path: 'bannersUpload/:id/:acc', component: BannerUploadComponent },

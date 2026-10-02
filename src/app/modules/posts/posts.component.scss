@@ -18,6 +18,8 @@ $color-success-dark: #047857;
 
 $color-danger: #EF4444;
 $color-danger-light: #f09191;
+$color-warning: #fff5d6;
+$color-warning-border: #ffbf00;
 $color-border: #E2E8F0;
 $color-border-dark: #334155;
 
@@ -60,11 +62,43 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   box-shadow: $shadow-sm !important;
 }
 
+.card-warning {
+  background: $color-warning !important;
+  border: 1px solid $color-warning-border !important;
+  border-radius: $radius-lg !important;
+  padding: 5px !important;
+  box-shadow: $shadow-sm !important;
+  align-items: center;
+  justify-content: center;
+}
+
 .card-header {
   border-bottom: 1px solid $color-border !important;
   padding: 0 !important;
   margin-bottom: 5px !important;
   background-color: $color-surface !important;
+}
+
+.card-header-warning {
+  border-bottom: 0;
+  padding: 0 !important;
+  margin-bottom: 5px !important;
+}
+
+.card-title-warning {
+  height: 20px !important;
+  font-family: $font-sans !important;
+  font-size: 10px !important;
+  font-weight: 400 !important;
+  color: $color-text-main !important;
+  display: flex !important;
+  align-items: center !important;
+  margin: 0 !important;
+  padding-top: 5px !important;
+  padding-left: 10px !important;
+  line-height: 1;
+  text-align: center;
+  i { color: $color-warning-border; }
 }
 
 .card-title {

@@ -126,7 +126,7 @@
       <!-- SEGUNDA COLUMNA -->
       <div class="column right-col">
         <!-- DETALLE -->
-        <div name="panel-detalle" *ngIf="arreglo?.length > 0">
+        <div name="panel-detalle" *ngIf="arreglo?.length > 0" style="margin-bottom: 10px !important;">
           <div class="card checkout-card" style="padding: 0 !important;">
 
             <!-- TITULO DETALLE -->
@@ -190,6 +190,16 @@
 
           </div>
         </div>
+
+        <mat-card appearance="outlined" class="card-warning">
+          <mat-card-header class="card-header-warning">
+            <mat-card-title class="card-title-warning">
+              <i class="bi bi-exclamation-circle"></i>
+              <span>Antes de efectuar su pago, favor de verificar con su banco si tiene habilitado en su tarjeta la opción de pago en línea o contar con el servicio 3D Secure</span>
+            </mat-card-title>
+          </mat-card-header>
+        </mat-card>
+
       </div>
     </div>
   </form>

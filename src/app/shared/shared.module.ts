@@ -17,7 +17,6 @@ import { SHARED_ROUTES } from './shared.routes';
 
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
-import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { HighchartsChartModule } from 'highcharts-angular';
 
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -31,7 +30,6 @@ import { DialogBodyComponent } from './dialog-body/dialog-body.component';
   declarations: [
     HeaderComponent,
     FooterComponent,
-    SidebarComponent,
     RegistrarComponent,
     LoginComponent,
     DialogBodyComponent
@@ -58,7 +56,6 @@ import { DialogBodyComponent } from './dialog-body/dialog-body.component';
   exports: [
     HeaderComponent,
     FooterComponent,
-    SidebarComponent,
   ]
 })
 export class SharedModule { }

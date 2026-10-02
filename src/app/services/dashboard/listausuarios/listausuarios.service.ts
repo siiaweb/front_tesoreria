@@ -3,8 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { environment, } from '../../../../environments/environment';
 import { map } from 'rxjs/operators';
-import { Tvusuario } from './tvusuario';
-import { DialogData } from '../../../modules/resetpass/resetpass.component';
+
+export interface DialogData {
+  id: string;
+  password: string;
+}
 
 @Injectable({
   providedIn: 'root'

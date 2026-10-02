@@ -6,18 +6,7 @@ import { DefaultComponent } from './default.component';
 import { DashboardComponent } from 'src/app/modules/dashboard/dashboard.component';
 import { PostsComponent } from 'src/app/modules/posts/posts.component';
 import { ReceiptComponent } from '../receipt/receipt.component';
-import { ResetpassComponent } from '../resetpass/resetpass.component';
 import { SettingsComponent } from '../settings/settings.component';
-import { BannersComponent } from '../banners/banners.component';
-import { BannerUploadComponent } from '../banners/banner-upload/banner-upload.component';
-import { FaqsComponent } from '../faqs/faqs.component';
-import { FaqsformComponent } from '../faqs/faqsform/faqsform.component';
-import { TeamComponent } from '../team/team.component';
-import { TeamformComponent } from '../team/teamform/teamform.component';
-import { ServicesComponent } from '../services/services.component';
-import { ServicesformComponent } from '../services/servicesform/servicesform.component';
-import { RecepcionRecibosComponent } from '../recepcion-recibos/recepcion-recibos.component';
-import { ConsultaPagoRecibidoComponent } from '../consulta-pago-recibido/consulta-pago-recibido.component';
 const pagesRoutes: Routes = [
 	{
 		path: '',
@@ -28,17 +17,6 @@ const pagesRoutes: Routes = [
 			{ path: 'posts', component: PostsComponent },
 			{ path: 'recibos', component: ReceiptComponent },
 			{ path: 'settings', component: SettingsComponent },
-			{ path: 'banners', component: BannersComponent },
-			{ path: 'bannersUpload/:id/:acc', component: BannerUploadComponent },
-			{ path: 'faqs', component: FaqsComponent },
-			{ path: 'faqsform/:id/:acc', component: FaqsformComponent },
-			{ path: 'team', component: TeamComponent },
-			{ path: 'teamform/:id/:acc', component: TeamformComponent },
-			{ path: 'services', component: ServicesComponent },
-			{ path: 'servicesform/:id/:acc', component: ServicesformComponent },
-			{ path: 'recepcionrecibos', component: RecepcionRecibosComponent },
-			{ path: 'consultapagorecibido', component: ConsultaPagoRecibidoComponent },
-			{ path: 'resetpass', component: ResetpassComponent }
 		]
 	}
 ];

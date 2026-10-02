@@ -33,7 +33,6 @@ import { MatSortModule } from '@angular/material/sort';
 
 // Rutas
 import { PAGES_ROUTES } from './default.routes';
-import { DialogOverviewExampleDialog } from '../resetpass/resetpass.component';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
@@ -42,9 +41,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
         DefaultComponent,
         DashboardComponent,
         PostsComponent,
-        ReceiptComponent,
-        DialogOverviewExampleDialog
-        //NewsComponent
+        ReceiptComponent
     ],
     exports: [
         DefaultComponent,

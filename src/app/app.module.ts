@@ -28,38 +28,18 @@ import {LocationStrategy, HashLocationStrategy} from '@angular/common';
 
 import {NgxPaginationModule} from 'ngx-pagination';
 import { SettingsComponent } from './modules/settings/settings.component';
-import { BannersComponent } from './modules/banners/banners.component';
-import { BannerUploadComponent } from './modules/banners/banner-upload/banner-upload.component';
-import { FaqsComponent } from './modules/faqs/faqs.component';
-import { FaqsformComponent } from './modules/faqs/faqsform/faqsform.component';
-import { TeamComponent } from './modules/team/team.component';
-import { TeamformComponent } from './modules/team/teamform/teamform.component';
-import { ServicesComponent } from './modules/services/services.component';
-import { ServicesformComponent } from './modules/services/servicesform/servicesform.component';
-import { RecepcionRecibosComponent } from './modules/recepcion-recibos/recepcion-recibos.component';
-import { ConsultaPagoRecibidoComponent } from './modules/consulta-pago-recibido/consulta-pago-recibido.component';
-import { ResetpassComponent } from './modules/resetpass/resetpass.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { ReceiptComponent } from './modules/receipt/receipt.component';
+import { PostsComponent } from './modules/posts/posts.component';
 
 
 @NgModule({
     declarations: [
         AppComponent,
         SettingsComponent,
-        BannersComponent,
-        BannerUploadComponent,
-        FaqsComponent,
-        FaqsformComponent,
-        TeamComponent,
-        TeamformComponent,
-        ServicesComponent,
-        ServicesformComponent,
-        RecepcionRecibosComponent,
-        ConsultaPagoRecibidoComponent,
-        ResetpassComponent
     ],
     imports: [
         BrowserModule,

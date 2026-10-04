@@ -1,4 +1,4 @@
-import { Component, HostListener, NgZone, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, HostListener, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { CatalogoPagoService } from '../../services/dashboard/catalogoPago.service';
 import { CatalogoPago } from '../../services/dashboard/catalogoPago';
 import { CatalogoPagoTipoUser } from '../../services/dashboard/catalogoPagoTipoUser';
@@ -9,13 +9,10 @@ import { ListaUsuariosService } from '../../services/dashboard/listausuarios/lis
 import { DescuentosService } from 'src/app/services/dashboard/descuentos/descuentos.service';
 import { Descuentos } from 'src/app/services/dashboard/descuentos/descuentos';
 import { erroresFormulario } from '../componentes-genericos/manejo-errores-forma/errores';
-import { DetPagoOnlineDTO } from './interfaces/catalogos.post';
 import { EvoService } from '../../services/dashboard/evo.service';
 import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
 import { MatSelectChange } from '@angular/material/select';
-import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { switchMap } from 'rxjs/operators';
 import { interval, of, Subscription } from 'rxjs';
 interface EvoCheckout {

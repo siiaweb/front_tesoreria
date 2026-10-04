@@ -18,24 +18,9 @@ export class ListaUsuariosService {
 
   constructor( private http: HttpClient ) { }
 
-  getListaUsuarios() {
-      return this.http.get(this.urlEndPoint + '/tvusuarios/').pipe(
-      map((response: any) => {
-        return response;
-        })
-    );
 
-  }
 
-  //Filtra los usuarios para que no aparezca el tipo user 50,60,70,80,90
-  getListaUsuariosFiltro() {
-    return this.http.get(this.urlEndPoint + '/tvusuariosfiltro/').pipe(
-    map((response: any) => {
-      return response;
-      })
-  );
 
-}
 
   getListaUsuario() {
     return this.http.get(this.urlEndPoint + '/tvusuarios/'+sessionStorage.getItem('usuID')).pipe(

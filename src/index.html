@@ -26,51 +26,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   </head>
   <body>
-    <script>
-      window.errorCallback = function (error) {
-        console.error("EVO ERROR:", error);
-        notifyAngularCheckoutFinished();
-        Swal.fire({
-          icon: "error",
-          title: "evo ERROR!!!",
-          text: JSON.stringify(error),
-          showConfirmButton: false,
-        
-        });
-
-      };
-
-      window.cancelCallback = function () {
-        console.warn("EVO CANCELADO");
-        notifyAngularCheckoutFinished();
-      };
-
-      window.completeCallback = function (resultIndicator, sessionVersion) {
-        console.log("EVO COMPLETADO:", resultIndicator, sessionVersion);
-        notifyAngularCheckoutFinished();
-        const ID = sessionStorage.getItem("MasterID");
-        const apiUrl = window.APP_CONFIG?.apiUrl;
-        console.log(ID);
-
-        $.ajax({
-          url: `${apiUrl}/trespbanco/${ID}`,
-          contentType: "application/json; charset=UTF-8",
-          type: "POST", //type is any HTTP method
-         // data: { trespbanco: ID }, //Data as js object
-          success: function () {
-            sessionStorage.removeItem("MasterID");
-            sessionStorage.removeItem("shoppingCart");
-          },
-        });
-      };
-      window.addEventListener("load", function () {
-        console.log("Checkout cargado:", typeof window.Checkout);
-      });
-
-      function notifyAngularCheckoutFinished() {
-          window.dispatchEvent(new Event('evo-checkout-finished'));
-      }
-    </script>
     <script
       src="https://evopaymentsmexico.gateway.mastercard.com/static/checkout/checkout.min.js"
       data-error="errorCallback"

@@ -1,4 +1,4 @@
-import { Component, HostListener, NgZone, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, HostListener, NgZone, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { CatalogoPagoService } from '../../services/dashboard/catalogoPago.service';
 import { CatalogoPago } from '../../services/dashboard/catalogoPago';
 import { CatalogoPagoTipoUser } from '../../services/dashboard/catalogoPagoTipoUser';
@@ -16,6 +16,8 @@ import { MatSelectChange } from '@angular/material/select';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { switchMap } from 'rxjs/operators';
+import { interval, of, Subscription } from 'rxjs';
 interface EvoCheckout {
   configure(options: {
     session: {
@@ -33,7 +35,7 @@ interface EvoCheckout {
   templateUrl: './posts.component.html',
   styleUrls: ['./posts.component.scss'],
 })
-export class PostsComponent implements OnInit {
+export class PostsComponent implements OnInit, OnDestroy {
 
   @BlockUI() blockUI!: NgBlockUI;
 
@@ -81,31 +83,93 @@ export class PostsComponent implements OnInit {
     private _evo: EvoService,
     private _ps: PagoServiciosService,
     private blockUIService: BlockUIService,
-  private ngZone: NgZone
-) { }
+    private ngZone: NgZone
+  ) { }
+  ngOnDestroy(): void {
+    //throw new Error('Method not implemented.');
+        this.stopPolling();
+    delete (window as any).miErrorCallback;
+    delete (window as any).miCancelCallback;
+    delete (window as any).miCompleteCallback;
+  }
+  handleError(error: any) {
+    console.error('Error en el pago de EVO:', error);
+    // Tu lógica para mostrar un mensaje de error al usuario
+  }
 
+  handleCancel() {
+    console.warn('El usuario canceló el pago');
+    // Tu lógica al cancelar el pago
+  }
+
+  handleComplete(resultIndicator: string, sessionVersion: string) {
+    this.stopPolling();
+    alert('pago completado')    
+    console.log('Pago completado con éxito:', resultIndicator);
+    const referencia = sessionStorage.getItem("MasterID");
+    this._evo.insertarRespuesta(referencia)
+    .pipe(
+      switchMap(response=>{
+        return of();
+      })
+    ).subscribe({
+      next:(response)=>{
+        sessionStorage.removeItem("MasterID");
+        sessionStorage.removeItem("shoppingCart");
+      },
+      error:(e)=>{
+        console.error('e.handleComplete',e)
+      },
+      complete:()=>{
+        console.log('complete handlecomplete')
+      }
+    })
+    // Tu lógica para validar el pago contra tu backend usando el resultIndicator
+  }
+
+  prepararEvo() {
+    (window as any).errorCallback = (error: any) => {
+      this.ngZone.run(() => {
+        this.handleError(error);
+      });
+    };
+
+    (window as any).cancelCallback = () => {
+      this.ngZone.run(() => {
+        this.handleCancel();
+      });
+    };
+
+    (window as any).completeCallback = (resultIndicator: string, sessionVersion: string) => {
+      this.ngZone.run(() => {
+        this.handleComplete(resultIndicator, sessionVersion);
+      });
+    };
+
+  }
   async ngOnInit() {
+    this.prepararEvo();//esta linea es importante
     this.blockUI.start('Cargando datos...');
     this.crearFormulario();
     const tipo: string = sessionStorage.getItem('Tipo').toString();
     this.getCatalogoServicios(tipo);
     const entity = JSON.parse(sessionStorage.getItem('shoppingCart'));
-    if(entity){
+    if (entity) {
       console.log(entity);
       this.forma.patchValue(entity.forma);
-      this.getDescuentos(entity.forma.descuento||null);
+      this.getDescuentos(entity.forma.descuento || null);
       entity.detalles.map(det => {
         const element = this.fb.group({ ...this.detalle });
         element.patchValue(det);
         this.arreglo.push(element);
       })
-    }else{
+    } else {
       this.getDescuentos(null);
       this.forma.controls['referencia'].setValue(await this.getReferencia());
     }
   }
 
-  seleccionarDescuento(event:MatSelectChange) {
+  seleccionarDescuento(event: MatSelectChange) {
     let value: Descuentos = event.value;
     this.forma.controls['descuento'].setValue(value.vdes_foldescto);
     this.limparDetalle();
@@ -144,10 +208,10 @@ export class PostsComponent implements OnInit {
   }
 
   buscarServicio() {
-    const filter = this.forma.get('servicio').value?.toUpperCase()|| '';
+    const filter = this.forma.get('servicio').value?.toUpperCase() || '';
     if (filter === '') {
       this.deseleccionarServicio();
-    }else{
+    } else {
       this.filteredCatalogoServicios = this.catalogoPagoTipoUser.filter(item =>
         item.descripcion.toUpperCase().includes(filter) ||
         item.concepto.toUpperCase().includes(filter)
@@ -155,11 +219,11 @@ export class PostsComponent implements OnInit {
     }
   }
 
-  validarServicio(){
-    if(this.filteredCatalogoServicios?.length === 0) this.limpiarCamposServicio();
+  validarServicio() {
+    if (this.filteredCatalogoServicios?.length === 0) this.limpiarCamposServicio();
   }
 
-  deseleccionarServicio(){
+  deseleccionarServicio() {
     this.forma.get('servicio').setValue('');
     this.limpiarCamposServicio();
     this.filteredCatalogoServicios = this.catalogoPagoTipoUser;
@@ -172,8 +236,8 @@ export class PostsComponent implements OnInit {
     this.forma.get('cantidad').setValue(1);
   }
 
-  seleccionarServicio(event:MatAutocompleteSelectedEvent){
-    let value:CatalogoPagoTipoUser = event.option.value;
+  seleccionarServicio(event: MatAutocompleteSelectedEvent) {
+    let value: CatalogoPagoTipoUser = event.option.value;
     this.limpiarCamposServicio();
     this.forma.get('servicio').setValue(value.descripcion);
     this.forma.get('idingreso').setValue(value.concepto);
@@ -306,7 +370,7 @@ export class PostsComponent implements OnInit {
       detalle: detalle
     }
     sessionStorage.removeItem("shoppingCart");
-    sessionStorage.shoppingCart = JSON.stringify({ forma: this.forma.getRawValue(), detalles: this.arreglo.getRawValue()});
+    sessionStorage.shoppingCart = JSON.stringify({ forma: this.forma.getRawValue(), detalles: this.arreglo.getRawValue() });
     let total = this.forma.get('total').value;
     this._evo.getEvo(total, entity).subscribe({
       next: (response: any) => {
@@ -322,8 +386,8 @@ export class PostsComponent implements OnInit {
         this.showEvoOverlay();
         setTimeout(() => {
           try {
-          //  alert('->' + response.session_id)
-            const checkout:EvoCheckout = (window as any).Checkout;
+            //  alert('->' + response.session_id)
+            const checkout: EvoCheckout = (window as any).Checkout;
 
             if (!checkout) {
               throw new Error('El SDK de Checkout no está cargado.');
@@ -342,11 +406,11 @@ export class PostsComponent implements OnInit {
               console.log(typeof checkout.showLightbox);
               console.log(typeof checkout.showEmbeddedPage);
               console.log(typeof checkout.showPaymentPage);
-             // checkout.showLightbox();
-           if(checkout){
-             checkout.showEmbeddedPage('#evo-embed-container');
-           }
-             //checkout.showEmbeddedPage('#evo-embed-container');
+              // checkout.showLightbox();
+              if (checkout) {
+                checkout.showEmbeddedPage('#evo-embed-container');
+              }
+              //checkout.showEmbeddedPage('#evo-embed-container');
             }, 700);
 
             //  checkout.showLightbox();
@@ -415,18 +479,18 @@ export class PostsComponent implements OnInit {
     )
   }
 
-  getDescuentos(id:string){
-    this._ds.getDescuento().subscribe((descuentos) => { 
-      if(descuentos.length != 0){
+  getDescuentos(id: string) {
+    this._ds.getDescuento().subscribe((descuentos) => {
+      if (descuentos.length != 0) {
         this.descuentos = descuentos
         this.llenarDescuento(id);
-      }  
+      }
     })
   }
 
-  llenarDescuento(id:string){
+  llenarDescuento(id: string) {
     const encontrada = this.descuentos.find(s => s.vdes_foldescto?.toString() === id?.toString());
-    if(encontrada){
+    if (encontrada) {
       this.forma.controls['dsctodescrip'].setValue(encontrada);
     }
   }
@@ -435,4 +499,55 @@ export class PostsComponent implements OnInit {
     const ref = await this._ps.getTsqpagosonline().toPromise();
     return ref as string;
   }
+  /*cosas que agrugué JCMH*/
+  private pollingSubscription?: Subscription;
+
+  private startPolling(referencia: string): void {
+    this.stopPolling();
+
+    this.pollingSubscription = interval(3000)
+      .pipe(
+        switchMap(() => this._evo.retrieveInfo(referencia))
+      )
+      .subscribe({
+        next: (response: any) => {
+          console.log('Estado de la transacción:', response);
+
+          // Sustituye esta condición por el campo/estados que devuelve tu API.
+          if (response && this.transaccionTerminada(response)) {
+            this.stopPolling();
+          }
+        },
+        error: (error) => {
+          console.error('Error consultando la transacción:', error);
+          this.stopPolling();
+        }
+      });
+  }
+  private transaccionTerminada(response: any): boolean {
+    return response.estado === 'APROBADA' ||
+      response.estado === 'RECHAZADA';
+  }
+  private stopPolling(): void {
+    if (this.pollingSubscription) {
+      this.pollingSubscription.unsubscribe();
+      this.pollingSubscription = undefined;
+    }
+  }
+
+  @HostListener('window:pagehide', ['$event'])
+  onPageHide(event: PageTransitionEvent): void {
+    alert('usuario saliendo de la página')
+    console.log('La página está saliendo o entrando en BFCache', {
+      persisted: event.persisted
+    });
+  }
+  @HostListener('window:pageshow', ['$event'])
+  onPageShow(event: PageTransitionEvent): void {
+    if (event.persisted) {
+      console.log('La página fue restaurada desde BFCache');
+      // Consulta aquí el estado de la transacción al backend.
+    }
+  }
+
 }

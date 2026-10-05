@@ -12,10 +12,4 @@ export class DashboardService {
 
   constructor( private http: HttpClient ) { }
 
-  getRol(id:string): Observable<Roles[]> {
-    return this.http.get(`${environment.rutaAPI}/rolsusuario/${id}`).pipe(
-      map(response => response as Roles[])
-    );
-  }
-
 }

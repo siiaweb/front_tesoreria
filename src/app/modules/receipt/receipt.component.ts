@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import Swal from 'sweetalert2';
-import { HttpClient, HttpEventType } from '@angular/common/http';
 
 @Component({
   selector: 'app-receipt',

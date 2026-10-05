@@ -3,9 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { environment, } from '../../../../environments/environment';
 import { map } from 'rxjs/operators';
-import { TpagosOnline } from '../pagoServicios/tpagosonline';
-import { TdpagosOnline } from '../pagoServicios/tdpagosonline';
-import { HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -33,13 +30,7 @@ export class PagoServiciosService {
     return this.http.get(this.urlEndPoint + '/tsqpagosonline/', { responseType: 'text' });
   }
 
-  getRecibos() {
-    return this.http.get(this.urlEndPoint + '/tpagosonline/' + sessionStorage.getItem('usuID')).pipe(
-      map((response: any) => {
-        return response;
-      })
-    );
-  }
+ 
 
 
 

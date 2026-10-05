@@ -1,16 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { UntypedFormGroup, FormControl, Validators, UntypedFormBuilder } from '@angular/forms';
+import { UntypedFormGroup, Validators, UntypedFormBuilder } from '@angular/forms';
 import { ValidadoresService } from '../../services/validadores.service';
 import { RegistrarService } from 'src/app/services/services.index';
 import { Ttipouser } from './ttipouser';
 import { Tnivelures } from './tnivelures';
 import { Ures } from './ures';
-import { Programas } from './programas';
-import {Router, ActivatedRoute} from '@angular/router';
+import {Router} from '@angular/router';
 import Swal from 'sweetalert2';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
-import { sha256, sha224 } from 'js-sha256';
 import { ErroresService } from '../../services/manejo_errores/errores.service';
 
 

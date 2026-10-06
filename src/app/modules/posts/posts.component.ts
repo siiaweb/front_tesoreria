@@ -431,6 +431,7 @@ export class PostsComponent implements OnInit, OnDestroy {
         regidescto: e.regiddescto || null,
         descto: e.descto || null,
         dtoPagar: e.dtopagar || null,
+        paquete: e.paquete || null,
       }
     });
 
@@ -440,6 +441,7 @@ export class PostsComponent implements OnInit, OnDestroy {
       referencia: this.forma.get('referencia').value,
       concepto: "PAGO DE " + (this.forma.get('nombre').value || this.forma.get('user').value) + " REF: " + this.forma.get('referencia').value + " FOLIO: ",
       user: this.forma.get('user').value || null,
+      foldescto: this.forma.get('descuento').value || null,
       detalle: detalle
     }
     sessionStorage.removeItem("shoppingCart");

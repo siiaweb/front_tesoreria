@@ -1,4 +1,4 @@
-import { Component, HostListener, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, NgZone, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { CatalogoPagoService } from '../../services/dashboard/catalogoPago.service';
 import { CatalogoPago } from '../../services/dashboard/catalogoPago';
 import { CatalogoPagoTipoUser } from '../../services/dashboard/catalogoPagoTipoUser';
@@ -13,8 +13,10 @@ import { EvoService } from '../../services/dashboard/evo.service';
 import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
 import { MatSelectChange } from '@angular/material/select';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { switchMap } from 'rxjs/operators';
-import { interval, of, Subscription } from 'rxjs';
+import { catchError, switchMap, takeUntil } from 'rxjs/operators';
+import { EMPTY, interval, Subscription, timer } from 'rxjs';
+import { Router } from '@angular/router';
+
 interface EvoCheckout {
   configure(options: {
     session: {
@@ -26,6 +28,8 @@ interface EvoCheckout {
   showEmbeddedPage(selector: string): void;
   showLightbox(): void;
 }
+
+
 
 @Component({
   selector: 'app-posts',
@@ -75,19 +79,42 @@ export class PostsComponent implements OnInit, OnDestroy {
   constructor(
     private _cp: CatalogoPagoService,
     private fb: FormBuilder,
-    private _lus: ListaUsuariosService,
     private _ds: DescuentosService,
     private _evo: EvoService,
     private _ps: PagoServiciosService,
     private blockUIService: BlockUIService,
-    private ngZone: NgZone
-  ) { }
+    private ngZone: NgZone,
+    private router: Router,
+    private renderer: Renderer2
+  ) {
+
+
+    (window as any).errorCallback = (error: any) => {
+      console.log('EVO error:', error);
+      if(error.explanation.includes('expired')){
+
+      }
+    };
+    (window as any).cancelCallback = () => {
+      console.log('EVO cancelado');
+    };
+    (window as any).completeCallback = (resultIndicator: string, sessionVersion: string) => {
+      console.log('EVO complete');
+      const referencia = sessionStorage.getItem('MasterID');
+      console.log('resultIndicator:', resultIndicator);
+      console.log('sessionVersion:', sessionVersion);
+      console.log('referencia:', referencia);
+      this.handleCompletado(resultIndicator['resultIndicator'], resultIndicator['sessionVersion'], referencia)
+    };
+    console.log('construido')
+  }
   ngOnDestroy(): void {
+    // alert('ondestroy')
     //throw new Error('Method not implemented.');
-        this.stopPolling();
-    delete (window as any).miErrorCallback;
-    delete (window as any).miCancelCallback;
-    delete (window as any).miCompleteCallback;
+    this.stopPolling();
+    /*  delete (window as any).errorCallback;
+      delete (window as any).cancelCallback;
+      delete (window as any).completeCallback;*/
   }
   handleError(error: any) {
     console.error('Error en el pago de EVO:', error);
@@ -99,49 +126,102 @@ export class PostsComponent implements OnInit, OnDestroy {
     // Tu lógica al cancelar el pago
   }
 
-  handleComplete(resultIndicator: string, sessionVersion: string) {
+
+  handleCompletado(resultIndicator: string, sessionVersion: string, referencia: string) {
     this.stopPolling();
-    alert('pago completado')    
     console.log('Pago completado con éxito:', resultIndicator);
-    const referencia = sessionStorage.getItem("MasterID");
+    console.log('sessionVersion', sessionVersion)
+    console.log('referencia', referencia)
+    //alert('pago completado ' + referencia)
     this._evo.insertarRespuesta(referencia)
-    .pipe(
-      switchMap(response=>{
-        return of();
+      .pipe(
+        switchMap(response => {
+          console.warn('success', response)
+          sessionStorage.removeItem("MasterID");
+          sessionStorage.removeItem("shoppingCart");
+          //trespbanco1
+          return this._ps.getPDF(referencia);
+        })
+      ).subscribe({
+        next: (response) => {
+          const blob = response.body;
+          if (!blob) {
+            console.error('La respuesta no contiene el PDF.');
+            return;
+          }
+
+          const disposition = response.headers.get('Content-Disposition') ?? '';
+          console.log('Content-Disposition recibido:', response.headers.get('Content-Disposition'));
+          const nombre = disposition.match(/filename\*?=(?:UTF-8''|")?([^";]+)/i)?.[1]
+            ?.replace(/"/g, '')
+            ?? 'reporte.pdf';
+
+          const url = URL.createObjectURL(blob);
+          const enlace = document.createElement('a');
+          enlace.href = url;
+          enlace.download = decodeURIComponent(nombre);
+          document.body.appendChild(enlace);
+          enlace.click();
+          enlace.remove();
+
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          this.router.navigate(['/recibos'], {
+            queryParams: {
+              resultIndicator: resultIndicator,
+              sessionVersion: sessionVersion
+            }
+          });
+          console.log('response success', blob)
+
+        },
+        error: (e) => {
+          console.error('e.handleComplete', e)
+        },
+        complete: () => {
+          console.log('complete handlecomplete')
+        }
       })
-    ).subscribe({
-      next:(response)=>{
-        sessionStorage.removeItem("MasterID");
-        sessionStorage.removeItem("shoppingCart");
-      },
-      error:(e)=>{
-        console.error('e.handleComplete',e)
-      },
-      complete:()=>{
-        console.log('complete handlecomplete')
-      }
-    })
     // Tu lógica para validar el pago contra tu backend usando el resultIndicator
   }
 
   prepararEvo() {
-    (window as any).errorCallback = (error: any) => {
-      this.ngZone.run(() => {
-        this.handleError(error);
-      });
+    //
+    const script = this.renderer.createElement('script');
+
+    this.renderer.setAttribute(
+      script,
+      'src',
+      'https://evopaymentsmexico.gateway.mastercard.com/static/checkout/checkout.min.js'
+    );
+
+    this.renderer.setAttribute(
+      script,
+      'data-error',
+      'errorCallback'
+    );
+
+    this.renderer.setAttribute(
+      script,
+      'data-cancel',
+      'cancelCallback'
+    );
+
+    this.renderer.setAttribute(
+      script,
+      'data-complete',
+      'completeCallback'
+    );
+
+
+    script.onerror = () => {
+      console.error('Error cargando Checkout.js');
     };
 
-    (window as any).cancelCallback = () => {
-      this.ngZone.run(() => {
-        this.handleCancel();
-      });
-    };
+    this.renderer.appendChild(
+      document.head,
+      script
+    );
 
-    (window as any).completeCallback = (resultIndicator: string, sessionVersion: string) => {
-      this.ngZone.run(() => {
-        this.handleComplete(resultIndicator, sessionVersion);
-      });
-    };
 
   }
   async ngOnInit() {
@@ -340,11 +420,7 @@ export class PostsComponent implements OnInit, OnDestroy {
   }
 
 
-  @HostListener('window:evo-checkout-finished')
-  onEvoCheckoutFinished(): void {
-    console.log('onEvoCheckoutFinished')
-    this.blockUIService.stop('global');
-  }
+
   async Pagar() {
     this.blockUIService.start('global', 'pagando...')
     const detalle = this.arreglo.getRawValue().map((e) => {
@@ -368,53 +444,48 @@ export class PostsComponent implements OnInit, OnDestroy {
     }
     sessionStorage.removeItem("shoppingCart");
     sessionStorage.shoppingCart = JSON.stringify({ forma: this.forma.getRawValue(), detalles: this.arreglo.getRawValue() });
-    let total = this.forma.get('total').value;
-    this._evo.getEvo(total, entity).subscribe({
+    // let total = this.forma.get('total').value;
+
+    this.mostrarEvo(entity)
+  }
+
+
+  mostrarEvo(entity: any) {
+    const referencia = this.forma.get('referencia').value;
+    this._evo.getEvo(entity).subscribe({
       next: (response: any) => {
         this.blockUI.stop();
         console.warn('response', response)
         this.session_id = response.session_id;
         this.successIndicator = response.successIndicator;
-        sessionStorage.MasterID = this.forma.get('referencia').value;
-
-        // this.clearHostedCheckoutSessionStorage();
-
-
+        sessionStorage.MasterID = referencia;
+        //    this.clearHostedCheckoutSessionStorage();
         this.showEvoOverlay();
         setTimeout(() => {
           try {
-            //  alert('->' + response.session_id)
-            const checkout: EvoCheckout = (window as any).Checkout;
-
+            const checkout: EvoCheckout | any = (window as any).Checkout;
             if (!checkout) {
               throw new Error('El SDK de Checkout no está cargado.');
             }
-
             checkout.configure({
               session: {
                 id: response.session_id
-              }
+              },
             });
-
             setTimeout(() => {
               //checkout.showPaymentPage();
-              console.log(checkout);
-              console.log(typeof checkout.configure);
-              console.log(typeof checkout.showLightbox);
-              console.log(typeof checkout.showEmbeddedPage);
-              console.log(typeof checkout.showPaymentPage);
               // checkout.showLightbox();
               if (checkout) {
+                this.startPolling(referencia)
                 checkout.showEmbeddedPage('#evo-embed-container');
               }
               //checkout.showEmbeddedPage('#evo-embed-container');
             }, 700);
 
-            //  checkout.showLightbox();
-
-            //  (window as any).Checkout.showEmbeddedPage('#evo-embed-container');
+            console.log(checkout);
           } catch (e) {
             console.error('Error invocando showEmbeddedPage:', e);
+            this.ngZone.run(() => this.handleError(e));
             this.closeEvoModal();
           }
         }, 2000); // 200ms es suficiente si el overlay ya está visible
@@ -435,7 +506,6 @@ export class PostsComponent implements OnInit, OnDestroy {
       }
     })
   }
-
   clearHostedCheckoutSessionStorage() {
     const keys = ['HostedCheckout_sessionId', 'HostedCheckout_embedContainer', 'HostedCheckout_merchantState'];
     keys.forEach(k => {
@@ -502,16 +572,26 @@ export class PostsComponent implements OnInit, OnDestroy {
   private startPolling(referencia: string): void {
     this.stopPolling();
 
-    this.pollingSubscription = interval(3000)
-      .pipe(
-        switchMap(() => this._evo.retrieveInfo(referencia))
-      )
+    this.pollingSubscription = interval(10000)
+    .pipe(
+      switchMap(() =>
+        this._evo.retrieveInfo(referencia).pipe(
+          catchError(error => {
+            console.error('Error consultando la transacción; se volverá a intentar:', error);
+            return EMPTY;
+          })
+        )
+      ),
+      takeUntil(timer(10 * 60 * 1000))
+    )
       .subscribe({
         next: (response: any) => {
           console.log('Estado de la transacción:', response);
 
           // Sustituye esta condición por el campo/estados que devuelve tu API.
           if (response && this.transaccionTerminada(response)) {
+            //sessionStorage.removeItem("MasterID");
+            // sessionStorage.removeItem("shoppingCart");
             this.stopPolling();
           }
         },
@@ -522,8 +602,8 @@ export class PostsComponent implements OnInit, OnDestroy {
       });
   }
   private transaccionTerminada(response: any): boolean {
-    return response.estado === 'APROBADA' ||
-      response.estado === 'RECHAZADA';
+    // console.info('estado de la trans terminada', response)
+    return response.status === 'CAPTURED';
   }
   private stopPolling(): void {
     if (this.pollingSubscription) {
@@ -532,19 +612,33 @@ export class PostsComponent implements OnInit, OnDestroy {
     }
   }
 
-  @HostListener('window:pagehide', ['$event'])
-  onPageHide(event: PageTransitionEvent): void {
-    alert('usuario saliendo de la página')
-    console.log('La página está saliendo o entrando en BFCache', {
-      persisted: event.persisted
-    });
-  }
+
+
+  // @HostListener('window:pagehide', ['$event'])
+  // onPageHide(event: PageTransitionEvent): void {
+  //   alert('usuario saliendo de la página')
+  //   console.log('La página está saliendo o entrando en BFCache', {
+  //     persisted: event.persisted
+  //   });
+  // }
   @HostListener('window:pageshow', ['$event'])
   onPageShow(event: PageTransitionEvent): void {
     if (event.persisted) {
       console.log('La página fue restaurada desde BFCache');
       // Consulta aquí el estado de la transacción al backend.
     }
+  }
+
+  @HostListener('window:evo-checkout-error', ['$event'])
+  onEvoCheckoutError(event: CustomEvent): void {
+    console.error('Error reportado por EVO:', event.detail);
+  }
+
+
+  @HostListener('window:evo-checkout-finished')
+  onEvoCheckoutFinished(): void {
+    console.log('onEvoCheckoutFinished')
+    this.blockUIService.stop('global');
   }
 
 }

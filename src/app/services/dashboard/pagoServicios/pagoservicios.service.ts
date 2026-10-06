@@ -20,17 +20,23 @@ export class PagoServiciosService {
         )
       );
   }
-  getPDF(referencia: string): Observable<Blob> {
+  getPDF(referencia: string): Observable<any> {
     return this.http.get(
       `${this.urlEndPoint}/pdf/${encodeURIComponent(referencia)}`,
-      { responseType: 'blob' }
+      {
+    observe: 'response',
+    responseType: 'blob'
+  }
     );
+    
   }
   getTsqpagosonline() {
-    return this.http.get(this.urlEndPoint + '/tsqpagosonline/', { responseType: 'text' });
+    return this.http.get(this.urlEndPoint + '/evo/tsqpagosonline/', { responseType: 'text' });
   }
 
- 
+  logoutSession(error:{}){
+    return this.http.post(`${this.urlEndPoint}/evo/logoutsesion`,error)
+  }
 
 
 

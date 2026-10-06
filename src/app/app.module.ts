@@ -66,7 +66,9 @@ import { PostsComponent } from './modules/posts/posts.component';
         MatInputModule,
         MatAutocompleteModule
     ],
-    providers: [{ provide: LOCALE_ID, useValue: 'es-MX' }, { provide: LocationStrategy, useClass: HashLocationStrategy }],
+    providers: [{ provide: LOCALE_ID, useValue: 'es-MX' }, 
+        //{ provide: LocationStrategy, useClass: HashLocationStrategy }
+    ],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

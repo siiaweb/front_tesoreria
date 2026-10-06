@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import Swal from 'sweetalert2';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-receipt',
@@ -9,17 +10,19 @@ import Swal from 'sweetalert2';
   styleUrls: ['./receipt.component.scss']
 })
 export class ReceiptComponent implements OnInit {
-
+  resultIndicator: string | null = null;
   @BlockUI() blockUI!: NgBlockUI;
 
   p: number = 1;
 
   recibos: any;
-  constructor(private _ps: PagoServiciosService) { }
+  constructor(private _ps: PagoServiciosService, private route: ActivatedRoute) { }
 
   ngOnInit() {
 
     const usuario = sessionStorage.getItem('usuID');
+   this.resultIndicator =
+      this.route.snapshot.queryParamMap.get('resultIndicator');
 
     if (!usuario) {
       console.error('No existe usuID en sessionStorage');
@@ -34,15 +37,7 @@ export class ReceiptComponent implements OnInit {
 
   }
 
-  getPdf(referencia: string) {
-    this._ps.getPDF(referencia).subscribe({
-      next: (blob: Blob) => {
-        const url = URL.createObjectURL(blob);
-        window.open(url, '_blank');
-      },
-      error: (error) => console.error('Error al obtener el PDF:', error)
-    });
-  }
+
 
   printInvoice(id: any, ref_banco: any, bandera: null) {
     console.warn('params', id, ref_banco, bandera)

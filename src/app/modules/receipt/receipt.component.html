@@ -20,7 +20,9 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let recibo of recibos">
+      <tr *ngFor="let recibo of recibos"
+      [ngClass]="{ 'fila-destacada': recibo.successIndicator === resultIndicator && resultIndicator!=null}"
+      >
         <td>{{ recibo.foliopago }}</td>
         <td>
           <b>{{ recibo.referencia }}</b>

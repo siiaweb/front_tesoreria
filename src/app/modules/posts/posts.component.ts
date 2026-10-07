@@ -132,7 +132,7 @@ export class PostsComponent implements OnInit, OnDestroy {
     console.log('sessionVersion', sessionVersion)
     console.log('referencia', referencia)
     //alert('pago completado ' + referencia)
-    this._evo.insertarRespuesta(referencia)
+    this._evo.insertarRespuesta(referencia,resultIndicator)
       .pipe(
         switchMap(response => {
           console.warn('success', response)
@@ -183,48 +183,31 @@ export class PostsComponent implements OnInit, OnDestroy {
     // Tu lógica para validar el pago contra tu backend usando el resultIndicator
   }
 
-  prepararEvo() {
-    //
-    const script = this.renderer.createElement('script');
+ prepararEvo(): void {
+  const scriptUrl =
+    'https://evopaymentsmexico.gateway.mastercard.com/static/checkout/checkout.min.js';
 
-    this.renderer.setAttribute(
-      script,
-      'src',
-      'https://evopaymentsmexico.gateway.mastercard.com/static/checkout/checkout.min.js'
-    );
+  const existente = Array.from(document.scripts)
+    .find(script => script.src === scriptUrl);
 
-    this.renderer.setAttribute(
-      script,
-      'data-error',
-      'errorCallback'
-    );
-
-    this.renderer.setAttribute(
-      script,
-      'data-cancel',
-      'cancelCallback'
-    );
-
-    this.renderer.setAttribute(
-      script,
-      'data-complete',
-      'completeCallback'
-    );
-
-
-    script.onerror = () => {
-      console.error('Error cargando Checkout.js');
-    };
-
-    this.renderer.appendChild(
-      document.head,
-      script
-    );
-
-
+  if (existente) {
+    console.log('Checkout.js ya está agregado; no se insertará otra vez.');
+    return;
   }
+
+  const script = this.renderer.createElement('script') as HTMLScriptElement;
+
+  this.renderer.setAttribute(script, 'src', scriptUrl);
+  this.renderer.setAttribute(script, 'data-error', 'errorCallback');
+  this.renderer.setAttribute(script, 'data-cancel', 'cancelCallback');
+  this.renderer.setAttribute(script, 'data-complete', 'completeCallback');
+
+  script.onerror = () => console.error('Error cargando Checkout.js');
+
+  this.renderer.appendChild(document.head, script);
+}
   async ngOnInit() {
-    this.prepararEvo();//esta linea es importante
+     this.prepararEvo();//esta linea es importante
     this.blockUI.start('Cargando datos...');
     this.crearFormulario();
     const tipo: string = sessionStorage.getItem('Tipo').toString();

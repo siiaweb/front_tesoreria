@@ -435,7 +435,7 @@ export class PostsComponent implements OnInit, OnDestroy {
 
 
   mostrarEvo(entity: any) {
-    const referencia = this.forma.get('referencia').value;
+    let referencia = this.forma.get('referencia').value;
     this._evo.getEvo(entity).subscribe({
       next: (response: any) => {
         this.blockUI.stop();
@@ -444,6 +444,7 @@ export class PostsComponent implements OnInit, OnDestroy {
         this.successIndicator = response.successIndicator;
         sessionStorage.MasterID = referencia;
         //    this.clearHostedCheckoutSessionStorage();
+         referencia=response.referencia;
         this.showEvoOverlay();
         setTimeout(() => {
           try {

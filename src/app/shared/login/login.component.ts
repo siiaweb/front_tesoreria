@@ -73,8 +73,10 @@ export class LoginComponent implements OnInit {
 
 
     openDialog() {
-      const dialogConfig = new MatDialogConfig();
-      this.dialog.open(DialogBodyComponent);
+      const dialogRef = this.dialog.open(DialogBodyComponent, {
+        panelClass: 'dialogo-responsivo',
+        maxWidth: "100vw"
+      });
     }
 
 }

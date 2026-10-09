@@ -48,13 +48,16 @@ export class erroresFormulario{
     }
 
     private static getErrorMessage(errorKey: string, errorValue: any): string {
+      
       const messages: Record<string, string> = {
-          required: `Campo requerido.`,
-          min: `Valor menor a lo permitido (${errorValue.min}).`,
-          max: `Valor mayor a lo permitido (${errorValue.max}).`,
-          maxlength: `Supera el número de caracteres permitidos (${errorValue.requiredLength}).`,
-          isNaN: `Necesita ser valor númerico.`,
-        };
-        return messages[errorKey] || `Error de validación: ${errorKey}`;
+        required: `Campo requerido.`,
+        min: `Valor menor a lo permitido (${errorValue.min}).`,
+        max: `Valor mayor a lo permitido (${errorValue.max}).`,
+        maxlength: `Supera el número de caracteres permitidos (${errorValue.requiredLength}).`,
+        isNaN: `Necesita ser valor númerico.`,
+        fieldsDoNotMatch: `No coincide con ${errorValue.field}`,
+        email: `Necesita tener formato de correo.`
+      };
+      return messages[errorKey] || `Error de validación: ${errorKey}`;
     }
 }

@@ -1,0 +1,118 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+$color-bg-app: #F8FAFC;
+$color-surface: #FFFFFF;
+$color-border: #E2E8F0;
+$color-primary: #2563EB;
+$color-danger: #EF4444;
+$radius-md: 0.75rem;
+
+.title{
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    padding: 10px !important;
+}
+
+.btn-cerrar{
+    height: 30px !important;
+    width: 30px !important;
+    background-color: #EB0002;
+    border: none !important;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: white;
+    transition: background-color 0.2s ease;
+}
+
+.btn-cerrar:hover{
+    background-color: #B30003;
+}
+
+.contenido{
+    display: flex;
+    padding: 10px !important;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.form-input {
+    width: 100% !important;
+    padding: 5px !important;
+    font-size: 15px !important;
+    background: $color-bg-app !important;
+    border: 1px solid $color-border !important;
+    border-radius: $radius-md !important;
+    outline: none !important;
+    transition: all 0.2s ease !important;
+    box-sizing: border-box !important;
+    align-items: center;
+  
+    &:focus {
+      background: $color-surface !important;
+      border-color: $color-primary !important;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+    }  
+}
+
+.form-input-invalid {
+    width: 100% !important;
+    padding: 5px !important;
+    font-size: 15px !important;
+    background: $color-bg-app !important;
+    border: 1px solid $color-danger !important;
+    border-radius: $radius-md !important;
+    outline: none !important;
+    transition: all 0.2s ease !important;
+    box-sizing: border-box !important;
+    align-items: center;
+}
+
+.div-botones{
+    display: flex;
+    flex-direction: row; 
+    gap: 10px;
+    width: 100%;
+    padding: 10px !important;
+}
+
+.btn-submit {
+    width: 100% !important;
+    background-color: #951823;
+    color: #ffffff;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-submit:hover {
+    background-color: #70121A;
+}
+
+.btn-cancelar {
+    width: 100% !important;
+    background-color: #E2E8F0;
+    color: black;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.btn-cancelar:hover {
+    background-color: #b6c4d5;
+}

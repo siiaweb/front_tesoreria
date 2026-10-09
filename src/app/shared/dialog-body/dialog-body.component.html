@@ -1,25 +1,51 @@
-<div mat-dialog-title>
-    <div class="row float-right">
-        <div class="col">
-            <a href="#" click="close()">X</a>
-        </div>   
+<form [formGroup]="form">
+    <div mat-dialog-title class="title">
+        <div>
+            <div class="col">
+                <button type="button" class="btn-cerrar" (click)="close()">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>   
+        </div>
+        
+        <div>
+            <h5 >Ingrese sus datos</h5>
+        </div>
     </div>
     
-    <div class="row">
-        <h5 >Ingrese sus datos</h5>
+    <div mat-dialog-content class="contenido">
+        <label class="label">Usuario</label>
+        <input 
+            type="text" 
+            class="form-input" 
+            formControlName="usuario" 
+            autocomplete="off"
+            [ngClass]="{'form-input-invalid': form.get('usuario')?.invalid && form.get('usuario')?.touched}">
+    <br>
+        <label class="label">Correo</label>
+        <input 
+            type="email" 
+            class="form-input" 
+            formControlName="email"  
+            autocomplete="off"
+            [ngClass]="{'form-input-invalid': form.get('email')?.invalid && form.get('email')?.touched}" 
+            style="margin-bottom: 5px !important;">
+    
+        <input 
+            type="email" 
+            class="form-input" 
+            formControlName="confemail"
+            placeholder="Confirma tu correo"
+            [ngClass]="{'form-input-invalid': form.get('confemail')?.invalid && form.get('confemail')?.touched}" 
+            autocomplete="off"
+            onpaste="return false;" 
+            onCopy="return false" 
+            onCut="return false" 
+            onDrag="return false" 
+            onDrop="return false">
     </div>
-</div>
-
-<div mat-dialog-content>
-    <label class="label">Usuario</label>
-    <input type="text" class="form-control" [(ngModel)]="recupera.usua_usuario" name="usua_usuario"  placeholder="Ingrese su usuario" autocomplete="off" oninput="this.value = this.value.toUpperCase()">
-<br>
-    <label class="label">Email</label>
-    <input type="email" class="form-control" [(ngModel)]="recupera.usua_email" name="usua_email"placeholder="Ex. pat@example.com" autocomplete="off">
-</div>
-<br><br>
-<div class="row">
-    <button mat-raised-button (click)="close()" id="cerrar">Cancelar</button>
-    <button mat-raised-button color="primary" (click)="enviarPass()">Recuperar password</button>
-</div>
-
+    <div class="div-botones">
+        <button type="button" class="btn-submit"  (click)="enviarPass()">Recuperar</button>
+        <button type="button" class="btn-cancelar" (click)="close()" id="cerrar">Cancelar</button>
+    </div>
+</form>

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { environment, } from '../../../environments/environment';
 import { map } from 'rxjs/operators';
@@ -14,15 +14,54 @@ export class EvoService {
 
   constructor( private http: HttpClient ) { }
 
-  getEvo(id: string, mount: number) {
-    //return this.http.post<Usuarios>(this.urlEndPoint + '/tusuarios/'+login.user+'/'+login.password, login).pipe(
-    //return this.http.post(this.urlEndPoint + '/evo/'+evo.session_id+'/'+evo.successIndicator, evo).pipe(
-        return this.http.get(this.urlEndPoint + '/evo/'+id+'/'+mount).pipe(
-      map((response: any) => {
-        return response;
-        })
-    );
+  getEvo(amount: number,entity:any) {
 
+    return this.http.post(`${this.urlEndPoint}/evo/${amount}`,entity);
+        //return this.http.get(this.urlEndPoint + '/evo/'+referencia+'/'+mount,entity);
+  }
+  
+  retrieveInfo(referencia:string){
+    return this.http.get(`${this.urlEndPoint}/evo/callback/${referencia}`)
   }
 
+  insertarRespuesta(referencia : string,resultIndicator:string ){
+     let params = new HttpParams();
+        params = params.append('resultIndicator', resultIndicator);
+      return this.http.post(`${this.urlEndPoint}/evo/trespbanco/${referencia}`,{}, {  params })
+  }
+
+insertarRespuestaConPdf(
+  referencia: string,
+  resultIndicator: string
+): Observable<HttpResponse<ArrayBuffer>> {
+  const params = new HttpParams()
+    .set('resultIndicator', resultIndicator);
+
+  const httpOptions: {
+    params: HttpParams;
+    responseType: 'arraybuffer';
+    observe: 'response';
+  } = {
+    params,
+    responseType: 'arraybuffer',
+    observe: 'response'
+  };
+
+  return this.http.post(
+    `${this.urlEndPoint}/evo/respuesta/${referencia}`,
+    {},
+    httpOptions
+  );
 }
+  
+}
+/*
+  getPDF(referencia: string): Observable<any> {
+    return this.http.get(
+      `${this.urlEndPoint}/pdf/${encodeURIComponent(referencia)}`,
+      {
+    
+    responseType: 'blob'
+  }
+    );
+    */

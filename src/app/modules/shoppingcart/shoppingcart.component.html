@@ -1,6 +1,4 @@
 
-<link rel="stylesheet" href="../../../assets/css/login.css">
-
 <form class="row" [formGroup]="forma" (ngSubmit)="Pagar()" (keydown.enter)="$event.preventDefault()">
     <div class="alert alert-dark" role="alert">
         
@@ -40,7 +38,7 @@
                         <input type="hidden" formControlName="pago_estatus" value="P">
                     </td>
                 </tr>
-                <tr style="text-align: left;">
+                <!-- <tr style="text-align: left;">
                     <th colspan="4">
                         <small *ngIf="metodoPagoNovalido" class="text-danger">
                             Selecciona un metodo de pago
@@ -51,7 +49,7 @@
                             <option value="TC">Tarjeta de Débito</option>
                         </select>
                     </th>
-                </tr>
+                </tr> -->
             </tbody>
         </table>
         Agrege una descripción para que pueda diferenciar este pago en el apartado de Recibos

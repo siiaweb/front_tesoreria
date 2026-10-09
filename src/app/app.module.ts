@@ -43,10 +43,11 @@ import { ServicesformComponent } from './modules/services/servicesform/servicesf
 import { PagossiiaComponent } from './modules/pagossiia/pagossiia.component';
 import { RecepcionRecibosComponent } from './modules/recepcion-recibos/recepcion-recibos.component';
 import { ConsultaPagoRecibidoComponent } from './modules/consulta-pago-recibido/consulta-pago-recibido.component';
-import { DialogBodyComponent } from "./shared/dialog-body/dialog-body.component";
 import { ResetpassComponent } from './modules/resetpass/resetpass.component';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+registerLocaleData(localeEsMx, 'es-MX');
+// ...existing code...
 
 
 @NgModule({
@@ -94,6 +95,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
   ],
   providers: [ { provide: LOCALE_ID, useValue: 'es-MX' }, {provide: LocationStrategy, useClass: HashLocationStrategy} ],
   bootstrap: [AppComponent],
-  entryComponents: [DialogBodyComponent],
+  //entryComponents: [DialogBodyComponent],
 })
 export class AppModule { }

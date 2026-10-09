@@ -65,6 +65,7 @@ import { DialogBodyComponent } from './dialog-body/dialog-body.component';
     AreaComponent,
     CardComponent,
     PieComponent
-  ]
+  ],
+  entryComponents: [DialogBodyComponent],
 })
 export class SharedModule { }

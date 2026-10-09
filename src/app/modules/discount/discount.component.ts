@@ -1,21 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { DescuentosService } from '../../services/dashboard/descuentos/descuentos.service'; 
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
 import { Subscription } from 'rxjs';
 import { Descuentos } from '../../services/dashboard/descuentos/descuentos';
-import {Router, ActivatedRoute} from '@angular/router';
+import {Router} from '@angular/router';
 import { EvoService } from '../../services/dashboard/evo.service';
-import { Tvdescuentos } from './tvdescuentos';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
+import { Carrito } from '../shoppingcart/shoppingcart.model';
 
 declare const Checkout:any
 
 @Component({
   selector: 'app-discount',
   templateUrl: './discount.component.html',
-  styleUrls: ['./discount.component.scss']
+  styleUrls: ['./discount.component.scss','../../../assets/css/login.css']
 })
 export class DiscountComponent implements OnInit {
 
@@ -88,14 +88,18 @@ export class DiscountComponent implements OnInit {
         this.totalPrice(this.descuentosdet);
 
       for (var i=0;i<this.descuentosdet.length;i++){
-      //console.log(items[i]);
-      this.det.push(this.descuentosdet[i].vdes_id+'_'+
-                    //this.descuentosdet[i].vdes_concepto+'_'+
-                    this.descuentosdet[i].vdes_cantidad+'_'+
-                    this.descuentosdet[i].vdes_punit+'_'+
-                    this.descuentosdet[i].vdes_regid+'_'+
-                    this.descuentosdet[i].vdes_porc+'_'+
-                    this.descuentosdet[i].vdes_a_pagar);
+      const descuento:Descuentos=this.descuentosdet[i];
+           const rowDetalle:Carrito = {
+            dpago_idingreso: descuento.vdes_id,
+            dpago_cantidad: descuento.vdes_cantidad,
+            dpago_punit: descuento.vdes_punit,
+            regidescto:descuento.vdes_regid,
+            descto:descuento.vdes_porc,
+            dto_pagar:descuento.vdes_a_pagar,
+            Mount:descuento.vdes_a_pagar,
+            Descrip:descuento.vdes_concepto
+          }
+        this.det.push(rowDetalle)
       }
       //console.log(this.det);
       
@@ -180,77 +184,8 @@ export class DiscountComponent implements OnInit {
         this.blockUI.stop();
       })
     }else{
-      console.log(this.forma);
-      this._ps.create(this.forma.value).subscribe(master => {
-
-        this._ps.createDetalle(master.pago_folpago.toString(),this.det).subscribe(detalle =>{
-          this.blockUI.stop();
-          Swal.fire({icon: 'success',title: 'Datos Guardados',text: 'Se te redireccionara al portal de pago',showConfirmButton: false,timer: 3000});
-          sessionStorage.removeItem('shoppingCart');
-          this._evo.getEvo(this.ID,this.total).subscribe(
-            (variables) => {
-              this.session_id = variables.session_id;
-              this.successIndicator = variables.successIndicator;
-              //this.router.navigate(['dashboard']);
-                    
-              
-              this.clearHostedCheckoutSessionStorage();
-
-              const ck = (window as any).Checkout;
-              if (!ck) {
-                console.error('Checkout no disponible en window');
-              } else {
-                ck.configure({ session: { id: this.session_id } });
-                console.log('Checkout configurado con:', this.session_id);
-
-                // 1) mostrar overlay primero
-                this.showEvoOverlay();
-
-                // 2) esperar un tick para que Angular pinte el overlay y el contenedor
-                setTimeout(() => {
-                  try {
-                    // pasar height: '100%' no siempre funciona; el contenedor controla la altura
-                    const res = ck.showEmbeddedPage('#evo-embed-container');
-                    if (res && typeof res.then === 'function') {
-                      res.then(() => console.log('showEmbeddedPage completado')).catch((e:any) => {
-                        console.error('Error showEmbeddedPage:', e);
-
-                        this.closeEvoModal();
-                      });
-                    }
-                    
-                  } catch (e) {
-                    console.error('Error invocando showEmbeddedPage:', e);
-                    this.closeEvoModal();
-                  }
-                }, 200); // 200ms es suficiente si el overlay ya está visible
-              }
-
-              sessionStorage.MasterID = master.pago_referencia.toString()
-
-            }
-          )
-
-        },
-        error => {
-          console.log(error);
-          this.blockUI.stop();
-          Swal.fire({
-            title: 'ERROR!!!',
-            text: error.error.message,
-            icon: 'error'});
-        });
-
-      },
-      error => {
-        console.log(error);
-        this.blockUI.stop();
-        Swal.fire({
-          title: 'ERROR!!!',
-          text: error.error.message,
-          icon: 'error'});
-      })
+     
     }
-    
+  
   }
 }

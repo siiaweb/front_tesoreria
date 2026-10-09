@@ -1,139 +1,86 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, Renderer2 } from '@angular/core';
 import { EvoService } from '../../services/dashboard/evo.service';
 import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
-import { Subscription } from 'rxjs';
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { EMPTY, interval, Subscription, timer } from 'rxjs';
+import { FormGroup, Validators, FormBuilder, FormControl } from '@angular/forms';
 import Swal from 'sweetalert2';
-import { Router, ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs/Rx';
-import { promise } from 'protractor';
+import { Router } from '@angular/router';
 import { TdpagosOnline } from 'src/app/services/dashboard/pagoServicios/tdpagosonline';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
-import { Console } from 'console';
 import { NgZone } from '@angular/core';
+import { Carrito, DetPagoOnlineDTO, PagoOnline, PagoOnlineDTO } from './shoppingcart.model';
+import { startWith, switchMap, catchError, takeUntil } from 'rxjs/operators';
 
 
+interface EvoCheckout {
+  configure(options: {
+    session: {
+      id: string;
+    };
+  }): void;
 
-declare var Checkout: any;
+  showPaymentPage(): void;
+  showEmbeddedPage(selector: string): void;
+  showLightbox(): void;
+}
+
+
+//declare var Checkout: any;
 
 @Component({
   selector: 'app-shoppingcart',
   templateUrl: './shoppingcart.component.html',
-  styleUrls: ['./shoppingcart.component.scss']
+  styleUrls: ['./shoppingcart.component.scss', '../../../assets/css/login.css']
 })
 export class ShoppingcartComponent implements OnInit {
-
   @BlockUI() blockUI!: NgBlockUI;
-
   public pagodet: TdpagosOnline = new TdpagosOnline();
   valores!: String;
   det: any[] = [];
   importe = 0;
-  /*
-  public loadScript() {
-    let body = <HTMLDivElement> document.body;
-    let script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.innerHTML = '';
-    script.src = "https://cdn.jsdelivr.net/npm/sweetalert2@9";
-    script.async = false;
-    script.defer = true;
-    body.appendChild(script);
-  }
-  */
-
-  /*
-  public cancelCallbackScript() {
-    let body = <HTMLDivElement> document.body;
-    let script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.innerHTML = "function cancelCallback() {"+
-                       " console.log('Payment cancelled');}";
-    script.async = false;
-    script.defer = true;
-    body.appendChild(script);
-  }
-
-  public errorCallbackScript() {
-    let body = <HTMLDivElement> document.body;
-    let script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.innerHTML = "function errorCallback(error) {"+
-                       " console.log(JSON.stringify(error));}";
-    script.async = false;
-    script.defer = true;
-    body.appendChild(script);
-  }
-
-  public completeCallbackScript() {
-    let body = <HTMLDivElement> document.body;
-    let script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.innerHTML = "function completeCallback(resultIndicator, sessionVersion) {"+
-                       " console.log('resultIndicator: ' +resultIndicator);"+
-                       " console.log('sessionVersion:' +sessionVersion);"+
-                       " Swal.fire({icon: 'success',title: 'Pago exitoso!!!',text: 'Puedes descargar tu pago en la sección de recibos',showConfirmButton: false,timer: 1500});}";
-    script.async = false;
-    script.defer = true;
-    body.appendChild(script);
-  }
-  */
-
-  /*
-  public Checkout() {
-    let body = <HTMLDivElement> document.body;
-    let script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.innerHTML = "Checkout.configure({"+
-      //"merchant: 'TEST1143891',"+
-      "merchant: '1143891',"+
-        "order: {description: 'Pago de servicios',amount: '"+this.forma.get('pago_montoapagar')!.value+"',currency: 'MXN',id: '"+this.ID+"'},"+
-        "interaction: {merchant: {name: 'UJED',address: {line1: 'Calle Constitución 404, Zona Centro, 34100 Durango, Dgo.'}},"+
-            "displayControl : {billingAddress : 'HIDE'},},"+
-        "session: {id:  '"+this.session_id+"'},"+
-      "});";
-    script.async = false;
-    script.defer = true;
-    body.appendChild(script);
-  }
-  */
-
-
   forma!: FormGroup;
-
   private subscription!: Subscription;
-
   ecomServices!: any[];
-
   session_id!: string;
   successIndicator!: string;
   ID!: string;
   total = 0;
 
-  constructor(private _evo: EvoService, private _ps: PagoServiciosService, private fb: FormBuilder,
-    public router: Router, private ngZone: NgZone) { }
+  constructor(
+    private _evo: EvoService,
+    private _ps: PagoServiciosService,
+    private fb: FormBuilder,
+    public router: Router,
+    private renderer: Renderer2,
+    private cdr: ChangeDetectorRef,
+  ) {
+
+    (window as any).errorCallback = (error: any) => {
+      console.log('EVO error:', error);
+      if (error.explanation.includes('expired')) {
+
+      }
+    };
+    (window as any).cancelCallback = () => {
+      console.log('EVO cancelado');
+    };
+    (window as any).completeCallback = (resultIndicator: string, sessionVersion: string) => {
+      console.log('EVO complete');
+      const referencia = sessionStorage.getItem('MasterID');
+      console.log('resultIndicator:', resultIndicator);
+      console.log('sessionVersion:', sessionVersion);
+      console.log('referencia:', referencia);
+      this.handleCompletado(resultIndicator['resultIndicator'], resultIndicator['sessionVersion'], referencia)
+    };
+    console.log('construido')
+
+  }
 
   ngOnInit() {
-
-    this.subscription = this._ps.getTsqpagosonline()
-      .subscribe((data: any) => {
-        this.ID = data;
-        //console.log(data);
-      })
-
-    //this.cancelCallbackScript();
-    //this.errorCallbackScript();
-
+    this.prepararEvo();
     this.ecomServices = JSON.parse(sessionStorage.getItem('shoppingCart')!);
-
     this.totalPrice();
-
     this.crearFormulario();
-
-    //console.log(sessionStorage.getItem('shoppingCart'));
-    // var items = JSON.parse(sessionStorage.getItem('shoppingCart')!);
-
-
   }
 
   get conceptoNovalido() {
@@ -148,7 +95,7 @@ export class ShoppingcartComponent implements OnInit {
 
     this.forma = this.fb.group({
       pago_concepto: ['', [Validators.required, Validators.maxLength(150)]],
-      metodoPago: ['', Validators.required],
+     // metodoPago: ['', Validators.required],
       pago_referencia: [this.ID],
       pago_montoapagar: [this.total],
       pago_usuaid: [sessionStorage.getItem('usuID')],
@@ -172,16 +119,11 @@ export class ShoppingcartComponent implements OnInit {
   }
 
   deleteItem(dpago_idingreso: any) {
-    //console.log("ID: "+dpago_idingreso);
-    //const storage= sessionStorage.getItem('shoppingCart');
-    // let items = storage?JSON.parse(storage):[];
     let items = this.ecomServices;
     console.log('item', items);
     for (let i = 0; i < items.length; i++) {
       if (items[i].dpago_idingreso == dpago_idingreso) {
         items.splice(i, 1);
-
-
       }
     }
     sessionStorage["shoppingCart"] = JSON.stringify(items);
@@ -245,96 +187,243 @@ export class ShoppingcartComponent implements OnInit {
     } else {
       /**/
       const items = this.ecomServices;
+      console.log('items', items)
       this.det = [];
       for (var i = 0; i < items.length; i++) {
-        //console.log(items[i]);
-        //this.det.push(items[i].dpago_idingreso+'_'+items[i].Descrip+'_'+items[i].dpago_cantidad+'_'+items[i].dpago_punit+'_null');
-        this.det.push(items[i].dpago_idingreso + '_' + items[i].dpago_cantidad + '_' + items[i].dpago_punit + '_null');
+        const rowDetalle = {
+          dpago_idingreso: items[i].dpago_idingreso,
+          dpago_cantidad: items[i].dpago_cantidad,
+          dpago_punit: items[i].dpago_punit
+        }
+        this.det.push(rowDetalle);
       }
-      /**/
 
+      console.log('test', this.det)
+      this.mostrarEvo();
 
-      this._ps.create(this.forma.value).subscribe(master => {
-
-        this._ps.createDetalle(master.pago_folpago.toString(), this.det).subscribe(detalle => {
-          this.blockUI.stop();
-          Swal.fire({ icon: 'success', title: 'Datos Guardados', text: 'Se te redireccionara al portal de pago', showConfirmButton: false, timer: 3000 });
-          sessionStorage.removeItem('shoppingCart');
-          //this._evo.getEvo(this.ID,master.pago_montoapagar).subscribe(
-          this._evo.getEvo(this.ID, this.total).subscribe(
-            (variables) => {
-              console.log(variables);
-              this.session_id = variables.session_id;
-              this.successIndicator = variables.successIndicator;
-              //this.router.navigate(['/dashboard']);
-
-
-              this.clearHostedCheckoutSessionStorage();
-
-              const ck = (window as any).Checkout;
-              if (!ck) {
-                console.error('Checkout no disponible en window');
-              } else {
-                ck.configure({ session: { id: this.session_id } });
-                console.log('Checkout configurado con:', this.session_id);
-
-                // 1) mostrar overlay primero
-                this.showEvoOverlay();
-
-                // 2) esperar un tick para que Angular pinte el overlay y el contenedor
-                setTimeout(() => {
-                  try {
-                    // pasar height: '100%' no siempre funciona; el contenedor controla la altura
-                    const res = ck.showEmbeddedPage('#evo-embed-container');
-                    if (res && typeof res.then === 'function') {
-                      res.then(() => console.log('showEmbeddedPage completado')).catch((e: any) => {
-                        console.error('Error showEmbeddedPage:', e);
-
-                        this.closeEvoModal();
-                      });
-                    }
-
-                  } catch (e) {
-                    console.error('Error invocando showEmbeddedPage:', e);
-                    this.closeEvoModal();
-                  }
-                }, 200); // 200ms es suficiente si el overlay ya está visible
-              }
-
-
-
-
-
-              sessionStorage.MasterID = master.pago_referencia.toString();
-
-
-            }
-          )
-
-        },
-          error => {
-            console.log(error);
-            this.blockUI.stop();
-            Swal.fire({
-              title: 'ERROR!!!',
-              text: error.error.message,
-              icon: 'error'
-            });
-          });
-
-      },
-        error => {
-          console.log(error);
-          this.blockUI.stop();
-          Swal.fire({
-            title: 'ERROR!!!',
-            text: error.error.message,
-            icon: 'error'
-          });
-        })
     }
-
   }
 
+  //se agrega en lugar de 
+  private stopPolling(): void {
+    if (this.pollingSubscription) {
+      this.pollingSubscription.unsubscribe();
+      this.pollingSubscription = undefined;
+    }
+  }
+
+  private pollingSubscription?: Subscription;
+
+  private startPolling(referencia: string): void {
+    this.stopPolling();
+    this.pollingSubscription = interval(30000)
+      .pipe(
+        startWith(0),
+        switchMap(() =>
+          this._evo.retrieveInfo(referencia).pipe(
+            catchError(error => {
+              console.error('Error consultando la transacción; se volverá a intentar:', error);
+              return EMPTY;
+            })
+          )
+        ),
+        takeUntil(timer(10 * 60 * 1000))
+      )
+      .subscribe({
+        next: (response: any) => {
+          console.log('Estado de la transacción:', response);
+
+          // Sustituye esta condición por el campo/estados que devuelve tu API.
+          if (response && this.transaccionTerminada(response)) {
+            //sessionStorage.removeItem("MasterID");
+            // sessionStorage.removeItem("shoppingCart");
+            this.stopPolling();
+          }
+        },
+        error: (error) => {
+          console.error('Error consultando la transacción:', error);
+          this.stopPolling();
+        }
+      });
+  }
+
+  mostrarEvo() {//(this.ID, this.total)
+    console.warn('forma', this.forma.getRawValue())
+    //let referencia = this.forma.get('referencia').value;
+    const entity = this.generarEntidad();
+    this._evo.getEvo(this.total, entity).subscribe({
+      next: (response: any) => {
+        this.blockUI.stop();
+        console.warn('response', response)
+        this.session_id = response.session_id;
+        this.successIndicator = response.successIndicator;
+        sessionStorage.MasterID = response.referencia;
+        this.pago_referencia.setValue(response.referencia);
+        this.showEvoOverlay();
+        setTimeout(() => {
+          try {
+            const checkout: EvoCheckout | any = (window as any).Checkout;
+            if (!checkout) {
+              throw new Error('El SDK de Checkout no está cargado.');
+            }
+            checkout.configure({
+              session: {
+                id: response.session_id
+              },
+            });
+            setTimeout(() => {
+              //checkout.showPaymentPage();
+              // checkout.showLightbox();
+              if (checkout) {
+                this.startPolling(this.pago_referencia.value)
+                checkout.showEmbeddedPage('#evo-embed-container');
+              }
+              //checkout.showEmbeddedPage('#evo-embed-container');
+            }, 700);
+
+            console.log(checkout);
+          } catch (e) {
+            console.error('Error invocando showEmbeddedPage:', e);
+            Swal.fire({ title: 'AVISO!!!', text: JSON.stringify(e), icon: 'error' });
+            this.closeEvoModal();
+          }
+        }, 2000); // 200ms es suficiente si el overlay ya está visible
+
+      },
+      error: (e) => {
+        this.blockUI.stop();
+        console.error('e.getEvo', e)
+        Swal.fire({
+          title: 'ERROR!!!',
+          text: JSON.stringify(e),
+          icon: 'error'
+        });
+      },
+      complete: () => {
+        console.log('complete')
+        this.blockUI.stop();
+      }
+    })
+  }
+
+  generarEntidad(): any {
+
+    const pagoOnline: PagoOnline = (this.forma.getRawValue() as PagoOnline);
+
+    const detalle: Array<DetPagoOnlineDTO> = this.det.map((e: Carrito) => {
+      return {
+        idingreso: e.dpago_idingreso,
+        cantidad: e.dpago_cantidad,
+        punit: e.dpago_punit
+      }
+    });
+    const entity: PagoOnlineDTO = {
+      usuaid: pagoOnline.pago_usuaid,
+      concepto: pagoOnline.pago_concepto,
+      montoapagar: pagoOnline.pago_montoapagar,
+      user: pagoOnline.pago_usuaid,
+      detalle: detalle
+    }
+    console.info('pagoOnline', pagoOnline)
+    console.info('detalle', detalle)
+    console.warn('entity', entity)
+    return entity;
+  }
+
+  private transaccionTerminada(response: any): boolean {
+    return response.status === 'CAPTURED';
+  }
+  handleCompletado(resultIndicator: string, sessionVersion: string, referencia: string) {
+    this.stopPolling();
+    console.log('Pago completado con éxito:', resultIndicator);
+    console.log('sessionVersion', sessionVersion)
+    console.log('referencia', referencia)
+    //alert('pago completado ' + referencia)
+    this._evo.insertarRespuestaConPdf(referencia, resultIndicator)
+      .subscribe({
+        next: (response) => {
+          const disposition = response.headers.get('Content-Disposition');
+          console.log('Content-Disposition recibido:', response.headers.get('Content-Disposition'));
+          const coincidencia = disposition.match(/filename\*?=(?:UTF-8''|")?([^";]+)/i);
+          let nombre = coincidencia && coincidencia[1]
+            ? coincidencia[1].replace(/"/g, '')
+            : 'reporte.pdf';
+          try {
+            nombre = decodeURIComponent(nombre);
+          } catch {
+            // Conserva el nombre original si no tiene codificación URL válida.
+          }
+          sessionStorage.removeItem("MasterID");
+          sessionStorage.removeItem("shoppingCart");
+          const blob = new Blob([response.body], { type: 'application/pdf' });
+          if (!blob) {
+            console.error('La respuesta no contiene el PDF.');
+            return;
+          }
+
+
+
+          const url = URL.createObjectURL(blob);
+          const enlace = document.createElement('a');
+          enlace.href = url;
+          enlace.download = decodeURIComponent(nombre);
+          document.body.appendChild(enlace);
+          enlace.click();
+          enlace.remove();
+
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          this.closeEvoModal();
+
+          this.router.navigate(['/recibos'], {
+            queryParams: { resultIndicator, sessionVersion }
+          }).then(navigated => {
+            console.log('Navegación completada:', navigated);
+           // this.cdr.detectChanges();
+           if(navigated){
+            window.location.reload();
+           }
+          }).catch(error => {
+            console.error('Error de navegación:', error);
+          });
+          console.log('response success', blob)
+
+        },
+        error: (e) => {
+          console.error('e.handleComplete', e)
+        },
+        complete: () => {
+          console.log('complete handlecomplete')
+        }
+      })
+    // Tu lógica para validar el pago contra tu backend usando el resultIndicator
+  }
+  get pago_referencia() {
+    return this.forma.get('pago_referencia') as FormControl;
+  }
+  //
+
+  prepararEvo(): void {
+    const scriptUrl =
+      'https://evopaymentsmexico.gateway.mastercard.com/static/checkout/checkout.min.js';
+
+    const existente = Array.from(document.scripts)
+      .find(script => script.src === scriptUrl);
+
+    if (existente) {
+      console.log('Checkout.js ya está agregado; no se insertará otra vez.');
+      return;
+    }
+
+    const script = this.renderer.createElement('script') as HTMLScriptElement;
+
+    this.renderer.setAttribute(script, 'src', scriptUrl);
+    this.renderer.setAttribute(script, 'data-error', 'errorCallback');
+    this.renderer.setAttribute(script, 'data-cancel', 'cancelCallback');
+    this.renderer.setAttribute(script, 'data-complete', 'completeCallback');
+
+    script.onerror = () => console.error('Error cargando Checkout.js');
+
+    this.renderer.appendChild(document.head, script);
+  }
 
 }

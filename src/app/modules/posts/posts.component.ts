@@ -5,7 +5,6 @@ import { CatalogoPagoTipoUser } from '../../services/dashboard/catalogoPagoTipoU
 import { Validators, FormGroup, FormBuilder, FormArray } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { BlockUI, BlockUIService, NgBlockUI } from 'ng-block-ui';
-import { ListaUsuariosService } from '../../services/dashboard/listausuarios/listausuarios.service';
 import { DescuentosService } from 'src/app/services/dashboard/descuentos/descuentos.service';
 import { Descuentos } from 'src/app/services/dashboard/descuentos/descuentos';
 import { erroresFormulario } from '../componentes-genericos/manejo-errores-forma/errores';
@@ -13,7 +12,7 @@ import { EvoService } from '../../services/dashboard/evo.service';
 import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
 import { MatSelectChange } from '@angular/material/select';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { catchError, switchMap, takeUntil } from 'rxjs/operators';
+import { catchError, startWith, switchMap, takeUntil } from 'rxjs/operators';
 import { EMPTY, interval, Subscription, timer } from 'rxjs';
 import { Router } from '@angular/router';
 
@@ -112,9 +111,9 @@ export class PostsComponent implements OnInit, OnDestroy {
     // alert('ondestroy')
     //throw new Error('Method not implemented.');
     this.stopPolling();
-    /*  delete (window as any).errorCallback;
+      delete (window as any).errorCallback;
       delete (window as any).cancelCallback;
-      delete (window as any).completeCallback;*/
+      delete (window as any).completeCallback;
   }
   handleError(error: any) {
     console.error('Error en el pago de EVO:', error);
@@ -133,7 +132,7 @@ export class PostsComponent implements OnInit, OnDestroy {
     console.log('sessionVersion', sessionVersion)
     console.log('referencia', referencia)
     //alert('pago completado ' + referencia)
-    this._evo.insertarRespuesta(referencia)
+    this._evo.insertarRespuesta(referencia,resultIndicator)
       .pipe(
         switchMap(response => {
           console.warn('success', response)
@@ -184,49 +183,31 @@ export class PostsComponent implements OnInit, OnDestroy {
     // Tu lógica para validar el pago contra tu backend usando el resultIndicator
   }
 
-  prepararEvo() {
-    //
-    const script = this.renderer.createElement('script');
+ prepararEvo(): void {
+  const scriptUrl =
+    'https://evopaymentsmexico.gateway.mastercard.com/static/checkout/checkout.min.js';
 
-    this.renderer.setAttribute(
-      script,
-      'src',
-      'https://evopaymentsmexico.gateway.mastercard.com/static/checkout/checkout.min.js'
-    );
+  const existente = Array.from(document.scripts)
+    .find(script => script.src === scriptUrl);
 
-    this.renderer.setAttribute(
-      script,
-      'data-error',
-      'errorCallback'
-    );
-
-    this.renderer.setAttribute(
-      script,
-      'data-cancel',
-      'cancelCallback'
-    );
-
-    this.renderer.setAttribute(
-      script,
-      'data-complete',
-      'completeCallback'
-    );
-
-
-    script.onerror = () => {
-      console.error('Error cargando Checkout.js');
-    };
-
-    this.renderer.appendChild(
-      document.head,
-      script
-    );
-
-
+  if (existente) {
+    console.log('Checkout.js ya está agregado; no se insertará otra vez.');
+    return;
   }
 
-  ngOnInit() {
-    this.prepararEvo();
+  const script = this.renderer.createElement('script') as HTMLScriptElement;
+
+  this.renderer.setAttribute(script, 'src', scriptUrl);
+  this.renderer.setAttribute(script, 'data-error', 'errorCallback');
+  this.renderer.setAttribute(script, 'data-cancel', 'cancelCallback');
+  this.renderer.setAttribute(script, 'data-complete', 'completeCallback');
+
+  script.onerror = () => console.error('Error cargando Checkout.js');
+
+  this.renderer.appendChild(document.head, script);
+}
+  async ngOnInit() {
+     this.prepararEvo();//esta linea es importante
     this.blockUI.start('Cargando datos...');
     this.crearFormulario();
     const tipo: string = sessionStorage.getItem('Tipo').toString();
@@ -569,9 +550,9 @@ export class PostsComponent implements OnInit, OnDestroy {
 
   private startPolling(referencia: string): void {
     this.stopPolling();
-
-    this.pollingSubscription = interval(10000)
+    this.pollingSubscription = interval(30000)
     .pipe(
+      startWith(0),
       switchMap(() =>
         this._evo.retrieveInfo(referencia).pipe(
           catchError(error => {

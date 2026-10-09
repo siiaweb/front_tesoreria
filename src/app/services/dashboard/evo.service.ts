@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment, } from '../../../environments/environment';
 //import { Evo } from './Evo'
 
@@ -21,8 +21,10 @@ export class EvoService {
     return this.http.get(`${this.urlEndPoint}/evo/callback/${referencia}`)
   }
 
-  insertarRespuesta(referencia : string ){
-      return this.http.post(`${this.urlEndPoint}/evo/trespbanco/${referencia}`,{})
+  insertarRespuesta(referencia : string,resultIndicator:string ){
+     let params = new HttpParams();
+        params = params.append('resultIndicator', resultIndicator);
+      return this.http.post(`${this.urlEndPoint}/evo/trespbanco/${referencia}`,{}, {  params })
   }
 
 }

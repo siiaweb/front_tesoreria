@@ -15,14 +15,7 @@ export class DescuentosService {
 
   constructor( private http: HttpClient ) { }
 
-  getDescuentos() {
-        return this.http.get(this.urlEndPoint + '/tvdescuentos/').pipe(
-      map((response: any) => {
-        return response;
-        })
-    );
 
-  }
 
   getDescuento() {
     return this.http.get(this.urlEndPoint + '/tvdescuentos/'+sessionStorage.getItem('Ures')+'/'+sessionStorage.getItem('Persona')).pipe(

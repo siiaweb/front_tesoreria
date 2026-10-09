@@ -34,20 +34,22 @@ export class LoginComponent implements OnInit {
   login() {
     this.subscription = this._log.getLogin(this.log)
       .subscribe((data: any) => {
-        
-        if ( typeof data !== 'undefined' && data.length > 0) {
+        console.log('DATA',data);
+        console.warn(typeof data !== 'undefined',data.length > 0)
+        if ( typeof data !== 'undefined' && data['token'].length > 0) {
           swal.fire({
             icon: 'success',
             title: 'Usuario Logeado',
-            text: 'Bienvenido ' + data[0].usua_nombre,
+            text: 'Bienvenido ' + data.usua_nombre,
             timer: 2000
           });
           sessionStorage.Login = this.log.user.toString();
-          sessionStorage.Tipo = data[0].usua_tipo_usuario.toString();
-          sessionStorage.usuID = data[0].usua_id.toString();
-          sessionStorage.Ures = data[0].usua_ures.toString();
-          sessionStorage.Persona = data[0].usua_persona.toString();
-          sessionStorage.Nombre = data[0].usua_nombre.toString();
+          sessionStorage.Tipo = data.usua_tipo_usuario.toString();
+          sessionStorage.usuID = data.usua_id.toString();
+          sessionStorage.Ures = data.usua_ures.toString();
+          sessionStorage.Persona = data.usua_persona.toString();
+          sessionStorage.Nombre = data.usua_nombre.toString();
+          sessionStorage.token=data.token;
           this.router.navigate(['/dashboard']);
         } else{
           swal.fire({

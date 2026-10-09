@@ -12,20 +12,20 @@ import { map } from 'rxjs/operators';
 })
 export class LoginService {
 
-  constructor( private http: HttpClient, public router: Router ) { }
+  constructor(private http: HttpClient, public router: Router) { }
 
   public urlEndPoint = `${environment.rutaAPI}`;
 
 
-	getLogin(login: Login) {
-		//return this.http.post<Usuarios>(this.urlEndPoint + '/tusuarios/'+login.user+'/'+login.password, login).pipe(
-		return this.http.post(this.urlEndPoint + '/tusuarios/'+login.user+'/'+login.password, login).pipe(
-          map((response: any) => {
-            return response;
-            })
-		);
+  getLogin(login: Login) {
 
-      }
+    return this.http.post(this.urlEndPoint + '/tusuarios/' + login.user + '/' + login.password, login).pipe(
+      map((response: any) => {
+        return response;
+      })
+    );
+
+  }
 
   logout() {
     sessionStorage.removeItem('Login');
@@ -34,17 +34,17 @@ export class LoginService {
     sessionStorage.removeItem('usuID');
     sessionStorage.removeItem('Ures');
     sessionStorage.removeItem('Persona');
-		// sessionStorage.removeItem(_TOKEN);
-		this.router.navigate(['']);
+    // sessionStorage.removeItem(_TOKEN);
+    this.router.navigate(['']);
   }
-  
+
   estaLogueado() {
-		 if (sessionStorage.removeItem('Login') === null) {
+    if (sessionStorage.removeItem('Login') === null) {
       return false;
-		} else {
+    } else {
       //return true;
       return (sessionStorage.getItem('Login'));
-		}
+    }
   }
-  
+
 }

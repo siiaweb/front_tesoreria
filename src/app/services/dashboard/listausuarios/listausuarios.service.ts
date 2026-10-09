@@ -14,31 +14,23 @@ export interface DialogData {
 })
 export class ListaUsuariosService {
 
-    public urlEndPoint = `${environment.rutaAPI}`;
+  public urlEndPoint = `${environment.rutaAPI}`;
 
-  constructor( private http: HttpClient ) { }
+  constructor(private http: HttpClient) { }
 
 
 
 
 
   getListaUsuario() {
-    return this.http.get(this.urlEndPoint + '/tvusuarios/'+sessionStorage.getItem('usuID')).pipe(
-    map((response: any) => {
-      return response;
+    return this.http.get(this.urlEndPoint + '/tvusuarios/' + sessionStorage.getItem('usuID')).pipe(
+      map((response: any) => {
+        return response;
       })
-  );
+    );
 
-}
+  }
 
-updatePassword(data:DialogData): Observable<DialogData> { 
-  //console.log(equipo);
-  return this.http.put<DialogData>(`${environment.rutaAPI + '/actPassUser/'+data.id}`,data.password).pipe(
-    map((response: any) => {
-      //console.log(response);
-      return response;
-      })
-  );
-}
+
 
 }

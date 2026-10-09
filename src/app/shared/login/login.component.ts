@@ -11,14 +11,16 @@ import { DialogBodyComponent } from '../dialog-body/dialog-body.component';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['../../../assets/css/login.css']
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
-  title = "Example Angular 10 Material Dialog";
   private subscription: Subscription;
   public log: Login = new Login();
 
-  constructor( private router: Router, private _log: LoginService ,private dialog: MatDialog) { }
+  constructor( 
+    private router: Router, 
+    private _log: LoginService ,
+    private dialog: MatDialog,) { }
 
   ngOnInit() {
   }
@@ -30,10 +32,8 @@ export class LoginComponent implements OnInit {
   }
   
   login() {
- //   this.log.password='tesoreria2025';
     this.subscription = this._log.getLogin(this.log)
       .subscribe((data: any) => {
-        //console.log(data);
         
         if ( typeof data !== 'undefined' && data.length > 0) {
           swal.fire({
@@ -74,7 +74,5 @@ export class LoginComponent implements OnInit {
       const dialogConfig = new MatDialogConfig();
       this.dialog.open(DialogBodyComponent);
     }
-
-
 
 }

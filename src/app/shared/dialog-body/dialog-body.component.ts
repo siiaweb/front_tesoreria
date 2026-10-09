@@ -28,7 +28,7 @@ export class DialogBodyComponent implements OnInit {
  
 
   enviarPass() {
-    //console.log(this.recupera);
+
     this.usuario=this.recupera.usua_usuario;
     this.email=this.recupera.usua_email;
     if (!this.usuario||!this.email){

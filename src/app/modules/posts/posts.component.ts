@@ -224,16 +224,19 @@ export class PostsComponent implements OnInit, OnDestroy {
 
 
   }
-  async ngOnInit() {
-    this.prepararEvo();//esta linea es importante
+
+  ngOnInit() {
+    this.prepararEvo();
     this.blockUI.start('Cargando datos...');
     this.crearFormulario();
     const tipo: string = sessionStorage.getItem('Tipo').toString();
     this.getCatalogoServicios(tipo);
     const entity = JSON.parse(sessionStorage.getItem('shoppingCart'));
+    const referencia = sessionStorage.getItem('MasterID');
     if (entity) {
       console.log(entity);
       this.forma.patchValue(entity.forma);
+      this.forma.controls['referencia'].setValue(referencia||null);
       this.getDescuentos(entity.forma.descuento || null);
       entity.detalles.map(det => {
         const element = this.fb.group({ ...this.detalle });
@@ -242,7 +245,6 @@ export class PostsComponent implements OnInit, OnDestroy {
       })
     } else {
       this.getDescuentos(null);
-      this.forma.controls['referencia'].setValue(await this.getReferencia());
     }
   }
 
@@ -446,22 +448,19 @@ export class PostsComponent implements OnInit, OnDestroy {
     }
     sessionStorage.removeItem("shoppingCart");
     sessionStorage.shoppingCart = JSON.stringify({ forma: this.forma.getRawValue(), detalles: this.arreglo.getRawValue() });
-    // let total = this.forma.get('total').value;
 
     this.mostrarEvo(entity)
   }
 
 
   mostrarEvo(entity: any) {
-    const referencia = this.forma.get('referencia').value;
     this._evo.getEvo(entity).subscribe({
       next: (response: any) => {
         this.blockUI.stop();
         console.warn('response', response)
         this.session_id = response.session_id;
         this.successIndicator = response.successIndicator;
-        sessionStorage.MasterID = referencia;
-        //    this.clearHostedCheckoutSessionStorage();
+        sessionStorage.MasterID = response.referencia;
         this.showEvoOverlay();
         setTimeout(() => {
           try {
@@ -478,7 +477,7 @@ export class PostsComponent implements OnInit, OnDestroy {
               //checkout.showPaymentPage();
               // checkout.showLightbox();
               if (checkout) {
-                this.startPolling(referencia)
+                this.startPolling(response.referencia)
                 checkout.showEmbeddedPage('#evo-embed-container');
               }
               //checkout.showEmbeddedPage('#evo-embed-container');
@@ -508,6 +507,7 @@ export class PostsComponent implements OnInit, OnDestroy {
       }
     })
   }
+  
   clearHostedCheckoutSessionStorage() {
     const keys = ['HostedCheckout_sessionId', 'HostedCheckout_embedContainer', 'HostedCheckout_merchantState'];
     keys.forEach(k => {
@@ -564,10 +564,6 @@ export class PostsComponent implements OnInit, OnDestroy {
     }
   }
 
-  async getReferencia(): Promise<string> {
-    const ref = await this._ps.getTsqpagosonline().toPromise();
-    return ref as string;
-  }
   /*cosas que agrugué JCMH*/
   private pollingSubscription?: Subscription;
 

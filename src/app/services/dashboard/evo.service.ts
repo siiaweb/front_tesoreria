@@ -111,7 +111,51 @@ export class EvoService {
     //this.clearHostedCheckoutSessionStorage();
   }
 
+   mostrarEvo(total:number,entity:any) {//(this.ID, this.total)
    
+    //let referencia = this.forma.get('referencia').value;
+    
+    return this.getEvo(total, entity).pipe(
+      map(response=>{
+        //this.blockUIService.stop('global');
+        console.warn('response', response)
+        sessionStorage.MasterID = response.referencia;
+       
+        //this.pago_referencia.setValue(response.referencia);
+       
+        this.showEvoOverlay();
+        setTimeout(() => {
+          try {
+            const checkout: EvoCheckout | any = (window as any).Checkout;
+            if (!checkout) {
+              throw new Error('El SDK de Checkout no está cargado.');
+            }
+            checkout.configure({
+              session: {
+                id: response.session_id
+              },
+            });
+            setTimeout(() => {
+              if (checkout) {
+                this.startPolling(response.referencia)
+                checkout.showEmbeddedPage('#evo-embed-container');
+              }
+              //checkout.showEmbeddedPage('#evo-embed-container');
+            }, 700);
+
+            console.log(checkout);
+          } catch (e) {
+            console.error('Error invocando showEmbeddedPage:', e);
+            Swal.fire({ title: 'AVISO!!!', text: JSON.stringify(e), icon: 'error' });
+            this.closeEvoModal();
+          }
+        }, 2000); // 200ms es suficiente si el overlay ya está visible
+        return response;
+    })
+  )
+    
+  
+  }
 
   public startPolling(referencia: string): void {
     this.stopPolling();

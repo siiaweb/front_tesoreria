@@ -225,7 +225,31 @@ export class ShoppingcartComponent implements OnInit,OnDestroy {
       console.log('test', this.det)
       const entity = this.generarEntidad();
       console.warn('forma', this.forma.getRawValue())
-      this.mostrarEvo(this.total, entity)
+      //this.mostrarEvo(this.total, entity)
+      this._evo.mostrarEvo(this.total, entity).subscribe({
+        next: (r) => {
+          console.log('r',r)
+          this.pago_referencia.setValue(r.referencia);
+          this.blockUI.stop();
+        },
+        error: (e) => {
+          if(sessionStorage.MasterID){
+            this.pago_referencia.setValue(sessionStorage.MasterID);
+          }
+          this.blockUI.stop();
+          console.error('e.getEvo', e)
+          Swal.fire({
+            title: 'ERROR!!!',
+            text: JSON.stringify(e),
+            icon: 'error'
+          });
+        },
+        complete: () => {
+          console.log('complete')
+          this.blockUI.stop();
+        }
+      });
+
     }
   }
 

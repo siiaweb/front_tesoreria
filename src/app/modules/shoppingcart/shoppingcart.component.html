@@ -1,5 +1,10 @@
 
-<form class="row" [formGroup]="forma" (ngSubmit)="Pagar()" (keydown.enter)="$event.preventDefault()">
+
+<form class="row" 
+[formGroup]="forma" 
+(ngSubmit)="Pagar()" 
+(keydown.enter)="$event.preventDefault()"
+>
     <div class="alert alert-dark" role="alert">
         
         <h3 class="encabezado">Mi carrito de compras</h3>

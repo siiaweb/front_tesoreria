@@ -1,70 +1,94 @@
-import { Component, OnInit } from '@angular/core';
-import { DescuentosService } from '../../services/dashboard/descuentos/descuentos.service'; 
-import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { DescuentosService } from '../../services/dashboard/descuentos/descuentos.service';
+import { FormGroup, Validators, FormBuilder, FormControl } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
-import { Subscription } from 'rxjs';
 import { Descuentos } from '../../services/dashboard/descuentos/descuentos';
-import {Router} from '@angular/router';
+import { Router } from '@angular/router';
 import { EvoService } from '../../services/dashboard/evo.service';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
-import { Carrito } from '../shoppingcart/shoppingcart.model';
+import { Carrito, DetPagoOnlineDTO, PagoOnline, PagoOnlineDTO } from '../shoppingcart/shoppingcart.model';
+import { EvoCheckout } from '../shoppingcart/shoppingcart.component';
 
-declare const Checkout:any
+declare const Checkout: any
 
 @Component({
   selector: 'app-discount',
   templateUrl: './discount.component.html',
-  styleUrls: ['./discount.component.scss','../../../assets/css/login.css']
+  styleUrls: ['./discount.component.scss', '../../../assets/css/login.css']
 })
-export class DiscountComponent implements OnInit {
-
+export class DiscountComponent implements OnInit,OnDestroy {
   @BlockUI() blockUI!: NgBlockUI;
-
   det: any[] = [];
-  
-  public Checkout() {
-    let body = <HTMLDivElement> document.body;
-    let script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.innerHTML = "Checkout.configure({"+
-      //"merchant: 'TEST1143891',"+
-      "merchant: '1143891',"+
-        "order: {description: 'Pago de servicios',amount: '"+this.forma.get('pago_montoapagar')!.value+"',currency: 'MXN',id: '"+this.ID+"'},"+
-        "interaction: {merchant: {name: 'UJED',address: {line1: 'Calle Constitución 404, Zona Centro, 34100 Durango, Dgo.'}},"+
-            "displayControl : {billingAddress : 'HIDE'},},"+
-		    "session: {id:  '"+this.session_id+"'},"+
-      "});";
-    script.async = false;
-    script.defer = true;
-    body.appendChild(script);
-  }
-  
-  private subscription!: Subscription;
-
   descuentos!: Descuentos[];
   descuentosdet!: Descuentos[];
-
-  session_id!:string;
-  successIndicator!:string;
-  ID!:string;
-
+  session_id!: string;
+  successIndicator!: string;
   public items: any = "";
-
   forma!: FormGroup;
-
   total = 0;
 
-  constructor( private _ds: DescuentosService, private fb: FormBuilder, private _ps: PagoServiciosService,
-               public router: Router, private _evo: EvoService ) { }
+  constructor(private _ds: DescuentosService,
+    private fb: FormBuilder,
+    private _ps: PagoServiciosService,
+    private renderer: Renderer2,
+    public router: Router,
+    private _evo: EvoService
+  ) { 
 
+       (window as any).errorCallback = (error: any) => {
+      console.log('EVO error:', error);
+      if (error.explanation.includes('expired')) {
+
+      }
+    };
+    (window as any).cancelCallback = () => {
+      console.log('EVO cancelado');
+    };
+    (window as any).completeCallback = (resultIndicator: string, sessionVersion: string) => {
+      console.log('EVO complete');
+      const referencia = sessionStorage.getItem('MasterID');
+      console.log('resultIndicator:', resultIndicator);
+      console.log('sessionVersion:', sessionVersion);
+      console.log('referencia:', referencia);
+      this._evo.handleCompletado(resultIndicator['resultIndicator'], resultIndicator['sessionVersion'], referencia)
+    };
+    console.log('construido')
+  }
+  ngOnDestroy(): void {
+      //this.stopPolling();
+      delete (window as any).errorCallback;
+      delete (window as any).cancelCallback;
+      delete (window as any).completeCallback;
+  }
+  prepararEvo(): void {
+    const scriptUrl =
+      'https://evopaymentsmexico.gateway.mastercard.com/static/checkout/checkout.min.js';
+
+    const existente = Array.from(document.scripts)
+      .find(script => script.src === scriptUrl);
+
+    if (existente) {
+      console.log('Checkout.js ya está agregado; no se insertará otra vez.');
+      return;
+    } else{
+      console.log('checkout no existe')
+    }
+
+    const script = this.renderer.createElement('script') as HTMLScriptElement;
+
+    this.renderer.setAttribute(script, 'src', scriptUrl);
+    this.renderer.setAttribute(script, 'data-error', 'errorCallback');
+    this.renderer.setAttribute(script, 'data-cancel', 'cancelCallback');
+    this.renderer.setAttribute(script, 'data-complete', 'completeCallback');
+
+    script.onerror = () => console.error('Error cargando Checkout.js');
+
+    this.renderer.appendChild(document.head, script);
+  }
   ngOnInit() {
 
-    this.subscription = this._ps.getTsqpagosonline()
-    .subscribe((data: any) => {
-      this.ID = data;
-      //console.log(data);
-      })	
+    this.prepararEvo();
 
     window.scroll(0, 0);
     this.crearFormulario();
@@ -78,7 +102,7 @@ export class DiscountComponent implements OnInit {
 
   }
 
-  valuesSelect(values: any){
+  valuesSelect(values: any) {
     //console.log(values);
     this.forma.get('pago_foldescto')!.setValue(values);
     this._ds.getDescuentoDet(values).subscribe(
@@ -87,105 +111,181 @@ export class DiscountComponent implements OnInit {
         console.log(descuentosdet);
         this.totalPrice(this.descuentosdet);
 
-      for (var i=0;i<this.descuentosdet.length;i++){
-      const descuento:Descuentos=this.descuentosdet[i];
-           const rowDetalle:Carrito = {
+        for (var i = 0; i < this.descuentosdet.length; i++) {
+          const descuento: Descuentos = this.descuentosdet[i];
+          const rowDetalle: Carrito = {
             dpago_idingreso: descuento.vdes_id,
             dpago_cantidad: descuento.vdes_cantidad,
             dpago_punit: descuento.vdes_punit,
-            regidescto:descuento.vdes_regid,
-            descto:descuento.vdes_porc,
-            dto_pagar:descuento.vdes_a_pagar,
-            Mount:descuento.vdes_a_pagar,
-            Descrip:descuento.vdes_concepto
+            regidescto: descuento.vdes_regid,
+            descto: descuento.vdes_porc,
+            dto_pagar: descuento.vdes_a_pagar,
+            Mount: descuento.vdes_a_pagar,
+            Descrip: descuento.vdes_concepto
           }
-        this.det.push(rowDetalle)
-      }
-      //console.log(this.det);
-      
+          console.warn('test',rowDetalle)
+          this.det.push(rowDetalle)
+        }
+        //console.log(this.det);
+
       }
     )
   }
 
   totalPrice(datosdet: any) {
     this.total = 0;
-    for(let data of datosdet){
+    for (let data of datosdet) {
       this.total += parseFloat(data.vdes_a_pagar);
     }
     this.forma.get('pago_montoapagar')!.setValue(this.total);
     return this.total;
   }
 
-  get conceptoNovalido(){
+  get conceptoNovalido() {
     return this.forma.get('pago_concepto')!.invalid && this.forma.get('pago_concepto')!.touched
   }
 
-  get metodoPagoNovalido(){
+  get metodoPagoNovalido() {
     return this.forma.get('metodoPago')!.invalid && this.forma.get('metodoPago')!.touched
   }
 
-  getdescuentosNovalido(){
+  getdescuentosNovalido() {
     return this.forma.get('descuentos')!.invalid && this.forma.get('descuentos')!.touched
   }
 
-  crearFormulario(){
+  crearFormulario() {
 
     this.forma = this.fb.group({
       descuentos: ['', Validators.required],
-      pago_concepto: ['', [Validators.required,Validators.maxLength(150)]],
+      pago_concepto: ['', [Validators.required, Validators.maxLength(150)]],
       pago_foldescto: [''],
-      pago_referencia: [this.ID],
+      pago_referencia: [sessionStorage.MasterID],
       pago_montoapagar: [''],
       pago_usuaid: [sessionStorage.getItem('usuID')],
-      metodoPago: ['', Validators.required],
+    //  metodoPago: ['', Validators.required],
       pago_estatus: ['P']
     });
   }
 
+generarEntidad(): any {
 
-    // Limpieza segura en Angular (poner justo antes de configurar Checkout)
-  clearHostedCheckoutSessionStorage() {
-    const keys = ['HostedCheckout_sessionId','HostedCheckout_embedContainer','HostedCheckout_merchantState'];
-    keys.forEach(k => {
-      if (sessionStorage.getItem(k) !== null) {
-        console.log('Borrando sessionStorage key:', k);
-        sessionStorage.removeItem(k);
+    const pagoOnline: PagoOnline = (this.forma.getRawValue() as PagoOnline);
+
+    const detalle: Array<DetPagoOnlineDTO> = this.det.map((e: Carrito) => {
+      return {
+        idingreso: e.dpago_idingreso,
+        cantidad: e.dpago_cantidad,
+        punit: e.dpago_punit,
+        descto: e.descto, 
+        dtoPagar:e.dto_pagar,
+        regidescto:e.regidescto
       }
     });
-  }
-
-  // Mostrar overlay con clase 'open' y forzar change detection
-  private showEvoOverlay(): void {
-    const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
-    if (!overlay) { console.error('Overlay no encontrado'); return; }
-    overlay.classList.add('open');
-    document.body.style.overflow = 'hidden';
-    // forzar reflow para evitar problemas de stacking
-    void overlay.offsetHeight;
-  }
-
-  // Cerrar
-  public closeEvoModal(event?: Event): void {
-    if (event) event.stopPropagation();
-    const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
-    if (overlay) overlay.classList.remove('open');
-    const container = document.getElementById('evo-embed-container');
-    if (container) container.innerHTML = '';
-    document.body.style.overflow = '';
-    this.clearHostedCheckoutSessionStorage();
-  }
-
-
-  Pagar(){
-    this.blockUI.start();
-    if (this.forma.invalid){
-      return Object.values( this.forma.controls ).forEach( control =>{
-        control.markAsTouched();
-        this.blockUI.stop();
-      })
-    }else{
-     
+    const entity: PagoOnlineDTO = {
+      usuaid: pagoOnline.pago_usuaid,
+      concepto: pagoOnline.pago_concepto,
+      montoapagar: pagoOnline.pago_montoapagar,
+      user: pagoOnline.pago_usuaid,
+      detalle: detalle,
+      foldescto :pagoOnline.pago_foldescto,
+      referencia:this.pago_referencia.value
     }
-  
+    console.info('pagoOnline', pagoOnline)
+    console.info('detalle', detalle)
+    console.warn('entity', entity)
+    return entity;
+  }
+
+
+  Pagar() {
+    this.blockUI.start();
+    console.log('forma',this.forma)
+    if (this.forma.invalid) {
+      this.blockUI.stop();
+       alert('Faltan campos por completar');
+      return Object.values(this.forma.controls).forEach(control => {
+        control.markAsTouched();
+        
+      })
+     
+      return;
+    } else {
+      //*** esto lo nuevo */
+      const entity = this.generarEntidad();
+      console.warn('forma', this.forma.getRawValue())
+      this.mostrarEvo(this.total, entity)
+    }
+
+  }
+  get pago_referencia() {
+    return this.forma.get('pago_referencia') as FormControl;
+  }
+
+  public closeEvoModal(event?: Event): void {
+    this._evo.closeEvoModal();
+  }
+
+     mostrarEvo(total:number,entity:any) {//(this.ID, this.total)
+        console.warn('forma', this.forma.getRawValue())
+        //let referencia = this.forma.get('referencia').value;
+        
+        this._evo.getEvo(this.total, entity).subscribe({
+          next: (response: any) => {
+            this.blockUI.stop();
+            console.warn('response', response)
+           
+       
+            sessionStorage.MasterID = response.referencia;
+            this.pago_referencia.setValue(response.referencia);
+            this.showEvoOverlay();
+            setTimeout(() => {
+              try {
+                const checkout: EvoCheckout | any = (window as any).Checkout;
+                if (!checkout) {
+                  throw new Error('El SDK de Checkout no está cargado.');
+                }
+                checkout.configure({
+                  session: {
+                    id: response.session_id
+                  },
+                });
+                setTimeout(() => {
+                  //checkout.showPaymentPage();
+                  // checkout.showLightbox();
+                  if (checkout) {
+                    this._evo.startPolling(this.pago_referencia.value)
+                    checkout.showEmbeddedPage('#evo-embed-container');
+                  }
+                  //checkout.showEmbeddedPage('#evo-embed-container');
+                }, 700);
+    
+                console.log(checkout);
+              } catch (e) {
+                console.error('Error invocando showEmbeddedPage:', e);
+                Swal.fire({ title: 'AVISO!!!', text: JSON.stringify(e), icon: 'error' });
+                this.closeEvoModal();
+              }
+            }, 2000); // 200ms es suficiente si el overlay ya está visible
+    
+          },
+          error: (e) => {
+            this.blockUI.stop();
+            console.error('e.getEvo', e)
+            Swal.fire({
+              title: 'ERROR!!!',
+              text: JSON.stringify(e),
+              icon: 'error'
+            });
+          },
+          complete: () => {
+            console.log('complete')
+            this.blockUI.stop();
+          }
+        })
+      }
+
+
+  private showEvoOverlay(): void {
+    this._evo.showEvoOverlay();
   }
 }

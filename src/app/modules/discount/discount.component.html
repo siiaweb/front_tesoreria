@@ -46,7 +46,7 @@
                         <input type="hidden" formControlName="pago_estatus" value="P">
                     </td>
                 </tr>
-                <tr style="text-align: left;">
+                <!-- <tr style="text-align: left;">
                     <th colspan="6">
                         <small *ngIf="metodoPagoNovalido" class="text-danger">
                             Selecciona un metodo de pago
@@ -57,7 +57,7 @@
                             <option value="TC">Tarjeta de Dédito</option>
                         </select>
                     </th>
-                </tr>
+                </tr> -->
             </tbody>
         </table>
         Agrege una descripción para que pueda diferenciar este pago en el apartado de Recibos
@@ -79,14 +79,14 @@
 
     <ng-container *ngIf="descuentos?.length > 0">
         <div style="text-align: right">
-            <button class="btn btn-blue" [disabled]="!forma.valid">Pagar</button>
+            <button type="submit" class="btn btn-blue">Pagar</button>
         </div>
         <!--
         <p><strong>session_id:</strong> {{ session_id }}</p>
         <p><strong>successIndicator:</strong> {{ successIndicator }}</p>
         -->
     </ng-container>
-<br><br>
+    <pre>{{forma.getRawValue() | json }}</pre>
 </form>
 
 <div id="evo-embed-overlay" class="evo-overlay">

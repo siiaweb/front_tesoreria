@@ -51,14 +51,14 @@ export class SettingsComponent implements OnInit {
         control.markAsTouched();
       })
     }else{
-      //console.log(this.forma.value);
+   
       this._reg.changePassword(this.forma.value).subscribe(usr => {
         this.router.navigate(['']);
           Swal.fire('Password Guardado', '', 'success');
           //this.cargarUsers();
       },
       error => {
-        console.log(error);
+     
           Swal.fire({
             title: 'ERROR!!!',
             text: error.error.message,

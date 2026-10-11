@@ -24,7 +24,7 @@ export class FaqsComponent implements OnInit {
     this.subscription = this._fs.getFaqs().subscribe(
       (faqs) => {
         this.tfaqs = faqs;
-        //console.log(this.tfaqs);
+    
       }
     )
   }
@@ -44,13 +44,13 @@ export class FaqsComponent implements OnInit {
           this.subscription = this._fs.getFaqs().subscribe(
             (faqs) => {
               this.tfaqs = faqs;
-              //console.log(this.tfaqs);
+            
             }
           )
           Swal.fire({icon: 'success',title: 'Noticia Eliminada',showConfirmButton: false,timer: 3000});
         },
         error => {
-          console.log(error);
+        
           Swal.fire({
             title: 'ERROR!!!',
             text: error.error.message,

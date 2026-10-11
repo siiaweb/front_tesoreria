@@ -1,70 +1,86 @@
-import { Component, OnInit } from '@angular/core';
-import { DescuentosService } from '../../services/dashboard/descuentos/descuentos.service'; 
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { DescuentosService } from '../../services/dashboard/descuentos/descuentos.service';
+import { FormGroup, Validators, FormBuilder, FormControl } from '@angular/forms';
 import Swal from 'sweetalert2';
-import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
-import { Subscription } from 'rxjs';
 import { Descuentos } from '../../services/dashboard/descuentos/descuentos';
-import {Router, ActivatedRoute} from '@angular/router';
+import { Router } from '@angular/router';
 import { EvoService } from '../../services/dashboard/evo.service';
-import { Tvdescuentos } from './tvdescuentos';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
+import { Carrito, DetPagoOnlineDTO, PagoOnline, PagoOnlineDTO } from '../shoppingcart/shoppingcart.model';
 
-declare const Checkout:any
+declare const Checkout: any
 
 @Component({
   selector: 'app-discount',
   templateUrl: './discount.component.html',
-  styleUrls: ['./discount.component.scss']
+  styleUrls: ['./discount.component.scss', '../../../assets/css/login.css']
 })
-export class DiscountComponent implements OnInit {
-
+export class DiscountComponent implements OnInit, OnDestroy {
   @BlockUI() blockUI!: NgBlockUI;
-
   det: any[] = [];
-  
-  public Checkout() {
-    let body = <HTMLDivElement> document.body;
-    let script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.innerHTML = "Checkout.configure({"+
-      //"merchant: 'TEST1143891',"+
-      "merchant: '1143891',"+
-        "order: {description: 'Pago de servicios',amount: '"+this.forma.get('pago_montoapagar')!.value+"',currency: 'MXN',id: '"+this.ID+"'},"+
-        "interaction: {merchant: {name: 'UJED',address: {line1: 'Calle Constitución 404, Zona Centro, 34100 Durango, Dgo.'}},"+
-            "displayControl : {billingAddress : 'HIDE'},},"+
-		    "session: {id:  '"+this.session_id+"'},"+
-      "});";
-    script.async = false;
-    script.defer = true;
-    body.appendChild(script);
-  }
-  
-  private subscription!: Subscription;
-
   descuentos!: Descuentos[];
   descuentosdet!: Descuentos[];
-
-  session_id!:string;
-  successIndicator!:string;
-  ID!:string;
-
   public items: any = "";
-
-  forma!: FormGroup;
-
+  forma: FormGroup = new FormGroup({});
   total = 0;
+  constructor(private _ds: DescuentosService,
+    private fb: FormBuilder,
+    private renderer: Renderer2,
+    public router: Router,
+    private _evo: EvoService
+  ) {
 
-  constructor( private _ds: DescuentosService, private fb: FormBuilder, private _ps: PagoServiciosService,
-               public router: Router, private _evo: EvoService ) { }
+    (window as any).errorCallback = (error: any) => {
+      console.error('EVO error:', error);
+      if (error.explanation.includes('expired')) {
 
+      }
+    };
+    (window as any).cancelCallback = () => {
+     
+    };
+    (window as any).completeCallback = (resultIndicator: string, sessionVersion: string) => {
+     
+      const referencia = sessionStorage.getItem('MasterID');
+  
+      this._evo.handleCompletado(resultIndicator['resultIndicator'], resultIndicator['sessionVersion'], referencia)
+    };
+
+  }
+  ngOnDestroy(): void {
+    //this.stopPolling();
+    delete (window as any).errorCallback;
+    delete (window as any).cancelCallback;
+    delete (window as any).completeCallback;
+  }
+  prepararEvo(): void {
+    const scriptUrl =
+      'https://evopaymentsmexico.gateway.mastercard.com/static/checkout/checkout.min.js';
+
+    const existente = Array.from(document.scripts)
+      .find(script => script.src === scriptUrl);
+
+    if (existente) {
+      
+      return;
+    } else {
+    
+    }
+
+    const script = this.renderer.createElement('script') as HTMLScriptElement;
+
+    this.renderer.setAttribute(script, 'src', scriptUrl);
+    this.renderer.setAttribute(script, 'data-error', 'errorCallback');
+    this.renderer.setAttribute(script, 'data-cancel', 'cancelCallback');
+    this.renderer.setAttribute(script, 'data-complete', 'completeCallback');
+
+    script.onerror = () => console.error('Error cargando Checkout.js');
+
+    this.renderer.appendChild(document.head, script);
+  }
   ngOnInit() {
 
-    this.subscription = this._ps.getTsqpagosonline()
-    .subscribe((data: any) => {
-      this.ID = data;
-      //console.log(data);
-      })	
+    this.prepararEvo();
 
     window.scroll(0, 0);
     this.crearFormulario();
@@ -72,185 +88,157 @@ export class DiscountComponent implements OnInit {
     this._ds.getDescuento().subscribe(
       (descuentos) => {
         this.descuentos = descuentos
-        //console.log(descuentos);
+        
       }
     )
 
   }
 
-  valuesSelect(values: any){
-    //console.log(values);
-    this.forma.get('pago_foldescto')!.setValue(values);
-    this._ds.getDescuentoDet(values).subscribe(
-      (descuentosdet) => {
-        this.descuentosdet = descuentosdet
-        console.log(descuentosdet);
+  valuesSelect(value: number) {
+    
+    this.forma.get('pago_foldescto')!.setValue(value);
+    this._ds.getDescuentoDet(value).subscribe(
+      (responseDETALLE) => {
+        this.descuentosdet = responseDETALLE
+        
         this.totalPrice(this.descuentosdet);
+        this.det=[];
+        for (var i = 0; i < this.descuentosdet.length; i++) {
+          const descuento: Descuentos = this.descuentosdet[i];
+          const rowDetalle: Carrito = {
+            dpago_idingreso: descuento.vdes_id,
+            dpago_cantidad: descuento.vdes_cantidad,
+            dpago_punit: descuento.vdes_punit,
+            regidescto: descuento.vdes_regid,
+            descto: descuento.vdes_porc,
+            dto_pagar: descuento.vdes_a_pagar,
+            Mount: descuento.vdes_a_pagar,
+            Descrip: descuento.vdes_concepto,
+            paquete:null
+          }
+          console.warn('test', rowDetalle)
+          this.det.push(rowDetalle)
+        }
 
-      for (var i=0;i<this.descuentosdet.length;i++){
-      //console.log(items[i]);
-      this.det.push(this.descuentosdet[i].vdes_id+'_'+
-                    //this.descuentosdet[i].vdes_concepto+'_'+
-                    this.descuentosdet[i].vdes_cantidad+'_'+
-                    this.descuentosdet[i].vdes_punit+'_'+
-                    this.descuentosdet[i].vdes_regid+'_'+
-                    this.descuentosdet[i].vdes_porc+'_'+
-                    this.descuentosdet[i].vdes_a_pagar);
-      }
-      //console.log(this.det);
-      
       }
     )
   }
 
   totalPrice(datosdet: any) {
     this.total = 0;
-    for(let data of datosdet){
+    for (let data of datosdet) {
       this.total += parseFloat(data.vdes_a_pagar);
     }
     this.forma.get('pago_montoapagar')!.setValue(this.total);
     return this.total;
   }
 
-  get conceptoNovalido(){
+  get conceptoNovalido() {
     return this.forma.get('pago_concepto')!.invalid && this.forma.get('pago_concepto')!.touched
   }
 
-  get metodoPagoNovalido(){
+  get metodoPagoNovalido() {
     return this.forma.get('metodoPago')!.invalid && this.forma.get('metodoPago')!.touched
   }
 
-  getdescuentosNovalido(){
+  getdescuentosNovalido() {
     return this.forma.get('descuentos')!.invalid && this.forma.get('descuentos')!.touched
   }
 
-  crearFormulario(){
+  crearFormulario() {
 
     this.forma = this.fb.group({
-      descuentos: ['', Validators.required],
-      pago_concepto: ['', [Validators.required,Validators.maxLength(150)]],
-      pago_foldescto: [''],
-      pago_referencia: [this.ID],
+     // descuentos: ['', Validators.required],
+      pago_concepto: ['', [Validators.required, Validators.maxLength(150)]],
+      pago_foldescto: [null,Validators.required],
+      pago_referencia: [sessionStorage.MasterID],
       pago_montoapagar: [''],
       pago_usuaid: [sessionStorage.getItem('usuID')],
-      metodoPago: ['', Validators.required],
       pago_estatus: ['P']
     });
   }
 
+  generarEntidad(): any {
 
-    // Limpieza segura en Angular (poner justo antes de configurar Checkout)
-  clearHostedCheckoutSessionStorage() {
-    const keys = ['HostedCheckout_sessionId','HostedCheckout_embedContainer','HostedCheckout_merchantState'];
-    keys.forEach(k => {
-      if (sessionStorage.getItem(k) !== null) {
-        console.log('Borrando sessionStorage key:', k);
-        sessionStorage.removeItem(k);
+    const pagoOnline: PagoOnline = (this.forma.getRawValue() as PagoOnline);
+
+    const detalle: Array<DetPagoOnlineDTO> = this.det.map((e: Carrito) => {
+      return {
+        idingreso: e.dpago_idingreso,
+        cantidad: e.dpago_cantidad,
+        punit: e.dpago_punit,
+        descto: e.descto,
+        dtoPagar: e.dto_pagar,
+        regidescto: e.regidescto
       }
     });
-  }
-
-  // Mostrar overlay con clase 'open' y forzar change detection
-  private showEvoOverlay(): void {
-    const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
-    if (!overlay) { console.error('Overlay no encontrado'); return; }
-    overlay.classList.add('open');
-    document.body.style.overflow = 'hidden';
-    // forzar reflow para evitar problemas de stacking
-    void overlay.offsetHeight;
-  }
-
-  // Cerrar
-  public closeEvoModal(event?: Event): void {
-    if (event) event.stopPropagation();
-    const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
-    if (overlay) overlay.classList.remove('open');
-    const container = document.getElementById('evo-embed-container');
-    if (container) container.innerHTML = '';
-    document.body.style.overflow = '';
-    this.clearHostedCheckoutSessionStorage();
+    const entity: PagoOnlineDTO = {
+      usuaid: pagoOnline.pago_usuaid,
+      concepto: pagoOnline.pago_concepto,
+      montoapagar: pagoOnline.pago_montoapagar,
+      user: pagoOnline.pago_usuaid,
+      detalle: detalle,
+      foldescto: pagoOnline.pago_foldescto,
+      referencia: this.pago_referencia.value
+    }
+    console.info('pagoOnline', pagoOnline)
+    console.info('detalle', detalle)
+    console.warn('entity', entity)
+    return entity;
   }
 
 
-  Pagar(){
+  Pagar() {
     this.blockUI.start();
-    if (this.forma.invalid){
-      return Object.values( this.forma.controls ).forEach( control =>{
+    
+    if (this.forma.invalid) {
+      this.blockUI.stop();
+      alert('Faltan campos por completar');
+      return Object.values(this.forma.controls).forEach(control => {
         control.markAsTouched();
-        this.blockUI.stop();
+
       })
-    }else{
-      console.log(this.forma);
-      this._ps.create(this.forma.value).subscribe(master => {
 
-        this._ps.createDetalle(master.pago_folpago.toString(),this.det).subscribe(detalle =>{
+      return;
+    } else {
+      //*** esto lo nuevo */
+      const entity = this.generarEntidad();
+      console.warn('forma', this.forma.getRawValue())
+      this._evo.mostrarEvo(this.total, entity).subscribe({
+        next: (r) => {
+         
+          this.pago_referencia.setValue(r.referencia);
           this.blockUI.stop();
-          Swal.fire({icon: 'success',title: 'Datos Guardados',text: 'Se te redireccionara al portal de pago',showConfirmButton: false,timer: 3000});
-          sessionStorage.removeItem('shoppingCart');
-          this._evo.getEvo(this.ID,this.total).subscribe(
-            (variables) => {
-              this.session_id = variables.session_id;
-              this.successIndicator = variables.successIndicator;
-              //this.router.navigate(['dashboard']);
-                    
-              
-              this.clearHostedCheckoutSessionStorage();
-
-              const ck = (window as any).Checkout;
-              if (!ck) {
-                console.error('Checkout no disponible en window');
-              } else {
-                ck.configure({ session: { id: this.session_id } });
-                console.log('Checkout configurado con:', this.session_id);
-
-                // 1) mostrar overlay primero
-                this.showEvoOverlay();
-
-                // 2) esperar un tick para que Angular pinte el overlay y el contenedor
-                setTimeout(() => {
-                  try {
-                    // pasar height: '100%' no siempre funciona; el contenedor controla la altura
-                    const res = ck.showEmbeddedPage('#evo-embed-container');
-                    if (res && typeof res.then === 'function') {
-                      res.then(() => console.log('showEmbeddedPage completado')).catch((e:any) => {
-                        console.error('Error showEmbeddedPage:', e);
-
-                        this.closeEvoModal();
-                      });
-                    }
-                    
-                  } catch (e) {
-                    console.error('Error invocando showEmbeddedPage:', e);
-                    this.closeEvoModal();
-                  }
-                }, 200); // 200ms es suficiente si el overlay ya está visible
-              }
-
-              sessionStorage.MasterID = master.pago_referencia.toString()
-
-            }
-          )
-
         },
-        error => {
-          console.log(error);
+        error: (e) => {
+          if (sessionStorage.MasterID) {
+            this.pago_referencia.setValue(sessionStorage.MasterID);
+          }
           this.blockUI.stop();
+          console.error('e.getEvo', e)
           Swal.fire({
             title: 'ERROR!!!',
-            text: error.error.message,
-            icon: 'error'});
-        });
-
-      },
-      error => {
-        console.log(error);
-        this.blockUI.stop();
-        Swal.fire({
-          title: 'ERROR!!!',
-          text: error.error.message,
-          icon: 'error'});
-      })
+            text: JSON.stringify(e),
+            icon: 'error'
+          });
+        },
+        complete: () => {
+         
+          this.blockUI.stop();
+        }
+      });
+      //this.mostrarEvo(this.total, entity)
     }
-    
+
+  }
+  get pago_referencia() {
+    return this.forma.get('pago_referencia') as FormControl;
+  }
+
+  public closeEvoModal(event?: Event): void {
+    this._evo.closeEvoModal();
+  }
+  private showEvoOverlay(): void {
+    this._evo.showEvoOverlay();
   }
 }

@@ -28,7 +28,7 @@ export class DialogBodyComponent implements OnInit {
  
 
   enviarPass() {
-    //console.log(this.recupera);
+    
     this.usuario=this.recupera.usua_usuario;
     this.email=this.recupera.usua_email;
     if (!this.usuario||!this.email){
@@ -38,7 +38,7 @@ export class DialogBodyComponent implements OnInit {
       this.rec.getUsuariosEmail(this.recupera).subscribe(
         (dato)=>{
           this.datos=dato;
-          console.log(this.datos);
+       
           if(this.datos.length>0){
             swal.fire('Password enviado', `Su password se envio a su correo registrado`, 'success');
             document.getElementById("cerrar").click();

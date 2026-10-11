@@ -32,10 +32,10 @@ export class ServiciosService {
     }
 
     create(servicios: Tservicios): Observable<Tservicios> {
-        //console.log(servicios);
+      
         return this.http.post<Tservicios>(`${environment.rutaAPI + '/tservicios'}`, servicios).pipe(
           map((response: any) => {
-            //console.log(response);
+         
             return response;
             })
         );
@@ -43,10 +43,10 @@ export class ServiciosService {
     }
     
     update(id: number, servicios: Tservicios): Observable<Tservicios> { 
-        //console.log(servicios);
+       
         return this.http.put<Tservicios>(`${environment.rutaAPI + '/tservicios/'+id}`,servicios).pipe(
           map((response: any) => {
-            //console.log(response);
+           
             return response;
             })
         );
@@ -55,7 +55,7 @@ export class ServiciosService {
     delete(id: number): Observable<Tservicios> { 
         return this.http.delete<Tservicios>(`${environment.rutaAPI + '/tservicios/'+id}`).pipe(
           map((response: any) => {
-            //console.log(response);
+        
             return response;
             })
         );

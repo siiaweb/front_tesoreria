@@ -30,9 +30,9 @@ export class ListausuarioComponent implements OnInit, AfterViewInit {
 
     this.subscription = this._lu.getListaUsuarios().subscribe(
       (tvusuario) => {
-        //this.tvusuario = tvusuario;
+  
         this.dataSource.data = tvusuario as Tvusuario[];
-        //console.log(this.dataSource);
+       
       }
     )
 

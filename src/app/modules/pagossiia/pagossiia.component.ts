@@ -33,9 +33,9 @@ export class PagossiiaComponent implements OnInit {
 
     this.subscription = this._psi.getPagos().subscribe(
       (tvpagossiia) => {
-        console.log(tvpagossiia);
+       
         this.dataSource.data = tvpagossiia as Tvpagossiia[];
-        console.log(this.dataSource);
+  
       }
     )
 
@@ -62,7 +62,7 @@ export class PagossiiaComponent implements OnInit {
         
       },
       error => {
-        console.log(error);
+      
         this.blockUI.stop();
         Swal.fire({
           title: 'ERROR!!!',
@@ -79,7 +79,7 @@ export class PagossiiaComponent implements OnInit {
       },
       error => {
         this.blockUI.stop();
-        console.log(error);
+       
         Swal.fire({
           title: 'ERROR!!!',
           text: error.error.message,
@@ -89,14 +89,14 @@ export class PagossiiaComponent implements OnInit {
   }
 
   generarCartaNoAdeudo(id, ref){
-    console.log(id);
+   
     this._ps.getCartaNoAdeudo(id, ref).subscribe(resp =>{
       let blob = new Blob([resp], { type: 'application/pdf' });
       const fileURL = URL.createObjectURL(blob);
       window.open(fileURL);
     },error => {
       this.blockUI.stop();
-      console.log(error);
+    
       Swal.fire({
         title: 'AVISO!!', text: "Error al cargar carta, inténtelo de nuevo", icon: 'error'
       });

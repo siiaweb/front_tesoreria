@@ -32,15 +32,13 @@ export class EvoService {
 
   handleCompletado(resultIndicator: string, sessionVersion: string, referencia: string) {
     this.stopPolling();
-    console.log('Pago completado con éxito:', resultIndicator);
-    console.log('sessionVersion', sessionVersion)
-    console.log('referencia', referencia)
+  
     //alert('pago completado ' + referencia)
     this.insertarRespuestaConPdf(referencia, resultIndicator)
       .subscribe({
         next: (response) => {
           const disposition = response.headers.get('Content-Disposition');
-          console.log('Content-Disposition recibido:', response.headers.get('Content-Disposition'));
+        
           const coincidencia = disposition.match(/filename\*?=(?:UTF-8''|")?([^";]+)/i);
           let nombre = coincidencia && coincidencia[1]
             ? coincidencia[1].replace(/"/g, '')
@@ -71,7 +69,7 @@ export class EvoService {
           this.router.navigate(['/recibos'], {
             queryParams: { resultIndicator, sessionVersion }
           }).then(navigated => {
-            console.log('Navegación completada:', navigated);
+         
            // this.cdr.detectChanges();
            if(navigated){
             window.location.reload();
@@ -79,14 +77,14 @@ export class EvoService {
           }).catch(error => {
             console.error('Error de navegación:', error);
           });
-          console.log('response success', blob)
+        
 
         },
         error: (e) => {
           console.error('e.handleComplete', e)
         },
         complete: () => {
-          console.log('complete handlecomplete')
+        
         }
       })
     // Tu lógica para validar el pago contra tu backend usando el resultIndicator
@@ -143,7 +141,7 @@ export class EvoService {
               //checkout.showEmbeddedPage('#evo-embed-container');
             }, 700);
 
-            console.log(checkout);
+         
           } catch (e) {
             console.error('Error invocando showEmbeddedPage:', e);
             Swal.fire({ title: 'AVISO!!!', text: JSON.stringify(e), icon: 'error' });
@@ -174,12 +172,9 @@ export class EvoService {
       )
       .subscribe({
         next: (response: any) => {
-          console.log('Estado de la transacción:', response);
-
+        
           // Sustituye esta condición por el campo/estados que devuelve tu API.
           if (response && this.transaccionTerminada(response)) {
-            //sessionStorage.removeItem("MasterID");
-            // sessionStorage.removeItem("shoppingCart");
             this.stopPolling();
           }
         },

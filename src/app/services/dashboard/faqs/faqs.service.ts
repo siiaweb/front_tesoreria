@@ -33,10 +33,10 @@ export class FaqsService {
     }
 
     create(noticias: Tfaqs): Observable<Tfaqs> {
-        //console.log(noticias);
+       
         return this.http.post<Tfaqs>(`${environment.rutaAPI + '/tfaqs'}`, noticias).pipe(
           map((response: any) => {
-            //console.log(response);
+          
             return response;
             })
         );
@@ -44,10 +44,10 @@ export class FaqsService {
       }
 
     update(id: number, noticia: Tfaqs): Observable<Tfaqs> { 
-        console.log(noticia);
+       
         return this.http.put<Tfaqs>(`${environment.rutaAPI + '/tfaqs/'+id}`,noticia).pipe(
           map((response: any) => {
-            //console.log(response);
+           
             return response;
             })
         );
@@ -56,7 +56,7 @@ export class FaqsService {
     delete(id: number): Observable<Tfaqs> { 
         return this.http.delete<Tfaqs>(`${environment.rutaAPI + '/tfaqs/'+id}`).pipe(
           map((response: any) => {
-            //console.log(response);
+            
             return response;
             })
         );

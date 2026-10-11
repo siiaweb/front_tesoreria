@@ -60,14 +60,12 @@ export class ShoppingcartComponent implements OnInit,OnDestroy {
       console.log('EVO cancelado');
     };
     (window as any).completeCallback = (resultIndicator: string, sessionVersion: string) => {
-      console.log('EVO complete');
+     
       const referencia = sessionStorage.getItem('MasterID');
-      console.log('resultIndicator:', resultIndicator);
-      console.log('sessionVersion:', sessionVersion);
-      console.log('referencia:', referencia);
+ 
       this._evo.handleCompletado(resultIndicator['resultIndicator'], resultIndicator['sessionVersion'], referencia)
     };
-    console.log('construido')
+
 
   }
 
@@ -79,10 +77,10 @@ export class ShoppingcartComponent implements OnInit,OnDestroy {
       .find(script => script.src === scriptUrl);
 
     if (existente) {
-      console.log('Checkout.js ya está agregado; no se insertará otra vez.');
+     
       return;
     } else{
-      console.log('no existe')
+     
     }
 
     const script = this.renderer.createElement('script') as HTMLScriptElement;
@@ -150,7 +148,7 @@ export class ShoppingcartComponent implements OnInit,OnDestroy {
 
   deleteItem(dpago_idingreso: any) {
     let items = this.ecomServices;
-    console.log('item', items);
+ 
     for (let i = 0; i < items.length; i++) {
       if (items[i].dpago_idingreso == dpago_idingreso) {
         items.splice(i, 1);
@@ -176,7 +174,7 @@ export class ShoppingcartComponent implements OnInit,OnDestroy {
     const keys = ['HostedCheckout_sessionId', 'HostedCheckout_embedContainer', 'HostedCheckout_merchantState'];
     keys.forEach(k => {
       if (sessionStorage.getItem(k) !== null) {
-        console.log('Borrando sessionStorage key:', k);
+       
         sessionStorage.removeItem(k);
       }
     });
@@ -203,7 +201,7 @@ export class ShoppingcartComponent implements OnInit,OnDestroy {
 
   async Pagar() {
     this.blockUI.start();
-    //console.log(this.forma);
+   
     if (this.forma.invalid) {
       return Object.values(this.forma.controls).forEach(control => {
         control.markAsTouched();
@@ -212,7 +210,7 @@ export class ShoppingcartComponent implements OnInit,OnDestroy {
     } else {
       /**/
       const items = this.ecomServices;
-      console.log('items', items)
+     
       this.det = [];
       for (var i = 0; i < items.length; i++) {
         const row:Carrito =items[i];
@@ -225,13 +223,12 @@ export class ShoppingcartComponent implements OnInit,OnDestroy {
         this.det.push(rowDetalle);
       }
 
-      console.log('test', this.det)
       const entity = this.generarEntidad();
       console.warn('forma', this.forma.getRawValue())
       //this.mostrarEvo(this.total, entity)
       this._evo.mostrarEvo(this.total, entity).subscribe({
         next: (r) => {
-          console.log('r',r)
+         
           this.pago_referencia.setValue(r.referencia);
           this.blockUI.stop();
         },
@@ -248,7 +245,7 @@ export class ShoppingcartComponent implements OnInit,OnDestroy {
           });
         },
         complete: () => {
-          console.log('complete')
+     
           this.blockUI.stop();
         }
       });

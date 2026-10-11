@@ -24,7 +24,7 @@ export class ServicesComponent implements OnInit {
     this.subscription = this._ss.getServicios().subscribe(
       (tservicios) => {
         this.tservicios = tservicios;
-        //console.log(this.tservicios);
+        
       }
     )
   }
@@ -49,7 +49,7 @@ export class ServicesComponent implements OnInit {
           Swal.fire({icon: 'success',title: 'Servicio Eliminado',showConfirmButton: false,timer: 3000});
         },
         error => {
-          console.log(error);
+      
           Swal.fire({
             title: 'ERROR!!!',
             text: error.error.message,

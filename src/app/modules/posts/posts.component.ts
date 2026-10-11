@@ -52,26 +52,11 @@ export class PostsComponent implements OnInit {
 
     window.scroll(0, 0);
     this.crearFormulario();
-    /*
-        this.concepto.valueChanges.pipe(startWith(null)).subscribe((value:Concepto)=>{
-          if(value){
-            console.log('has value',+value.punit)
-            if(+value.punit==1){
-              console.log('es igual a 1')
-              this.punit.enable();
-            } else{
-              console.log('no tiene 1 ')
-              this.punit.disable();
-            }
-          } else{
-            console.log('has not value')
-            this.punit.disable();
-          }
-        })*/
+   
     this._cp.getCatalogoPagoTipoUser(sessionStorage.getItem('Tipo').toString()).subscribe(
       (catalogoPagoTipoUser) => {
         this.catalogoPagoTipoUser = catalogoPagoTipoUser;
-        //console.log(catalogoPagoTipoUser);
+   
       }
     )
 
@@ -81,14 +66,12 @@ export class PostsComponent implements OnInit {
 
   textSelect() {
     const concepto: Concepto = this.concepto.value
-    console.log('evento', concepto)
-    console.log('asignando', concepto.punit)
+
     this.punit.setValue(concepto.punit);
     if (+concepto.punit == 1) {
-      console.log('es igual a 1')
       this.punit.enable();
     } else {
-      console.log('no tiene 1 ')
+   
       this.punit.disable();
     }
 
@@ -151,8 +134,7 @@ this.isSubmitted=true;
           paquete: null
         });
 
-        console.log('p_unitario deshabilitado:', this.punit.disabled);
-
+        
       }
     });
 

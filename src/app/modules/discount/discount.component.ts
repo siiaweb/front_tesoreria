@@ -31,23 +31,21 @@ export class DiscountComponent implements OnInit, OnDestroy {
   ) {
 
     (window as any).errorCallback = (error: any) => {
-      console.log('EVO error:', error);
+      console.error('EVO error:', error);
       if (error.explanation.includes('expired')) {
 
       }
     };
     (window as any).cancelCallback = () => {
-      console.log('EVO cancelado');
+     
     };
     (window as any).completeCallback = (resultIndicator: string, sessionVersion: string) => {
-      console.log('EVO complete');
+     
       const referencia = sessionStorage.getItem('MasterID');
-      console.log('resultIndicator:', resultIndicator);
-      console.log('sessionVersion:', sessionVersion);
-      console.log('referencia:', referencia);
+  
       this._evo.handleCompletado(resultIndicator['resultIndicator'], resultIndicator['sessionVersion'], referencia)
     };
-    console.log('construido')
+
   }
   ngOnDestroy(): void {
     //this.stopPolling();
@@ -63,10 +61,10 @@ export class DiscountComponent implements OnInit, OnDestroy {
       .find(script => script.src === scriptUrl);
 
     if (existente) {
-      console.log('Checkout.js ya está agregado; no se insertará otra vez.');
+      
       return;
     } else {
-      console.log('checkout no existe')
+    
     }
 
     const script = this.renderer.createElement('script') as HTMLScriptElement;
@@ -90,19 +88,19 @@ export class DiscountComponent implements OnInit, OnDestroy {
     this._ds.getDescuento().subscribe(
       (descuentos) => {
         this.descuentos = descuentos
-        //console.log(descuentos);
+        
       }
     )
 
   }
 
   valuesSelect(value: number) {
-    console.log('VALUES',value);
+    
     this.forma.get('pago_foldescto')!.setValue(value);
     this._ds.getDescuentoDet(value).subscribe(
       (responseDETALLE) => {
         this.descuentosdet = responseDETALLE
-        console.log(responseDETALLE);
+        
         this.totalPrice(this.descuentosdet);
         this.det=[];
         for (var i = 0; i < this.descuentosdet.length; i++) {
@@ -115,12 +113,12 @@ export class DiscountComponent implements OnInit, OnDestroy {
             descto: descuento.vdes_porc,
             dto_pagar: descuento.vdes_a_pagar,
             Mount: descuento.vdes_a_pagar,
-            Descrip: descuento.vdes_concepto
+            Descrip: descuento.vdes_concepto,
+            paquete:null
           }
           console.warn('test', rowDetalle)
           this.det.push(rowDetalle)
         }
-        //console.log(this.det);
 
       }
     )
@@ -192,7 +190,7 @@ export class DiscountComponent implements OnInit, OnDestroy {
 
   Pagar() {
     this.blockUI.start();
-    console.log('forma', this.forma)
+    
     if (this.forma.invalid) {
       this.blockUI.stop();
       alert('Faltan campos por completar');
@@ -208,7 +206,7 @@ export class DiscountComponent implements OnInit, OnDestroy {
       console.warn('forma', this.forma.getRawValue())
       this._evo.mostrarEvo(this.total, entity).subscribe({
         next: (r) => {
-          console.log('r', r)
+         
           this.pago_referencia.setValue(r.referencia);
           this.blockUI.stop();
         },
@@ -225,7 +223,7 @@ export class DiscountComponent implements OnInit, OnDestroy {
           });
         },
         complete: () => {
-          console.log('complete')
+         
           this.blockUI.stop();
         }
       });

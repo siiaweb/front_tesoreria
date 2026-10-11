@@ -29,7 +29,7 @@ export class HeaderComponent implements OnInit {
       (usuarios) => {
         //this.usuarios = usuarios;
         this.nombre = usuarios.usua_nombre;
-        //console.log(this.nombre);
+    
       }
     )
 

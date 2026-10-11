@@ -31,8 +31,7 @@ export class LoginComponent implements OnInit {
   login() {
     this.subscription = this._log.getLogin(this.log)
       .subscribe((data: any) => {
-        //console.log(data);
-        
+      
         if ( typeof data !== 'undefined' && data.length > 0) {
           swal.fire({
             icon: 'success',
@@ -54,7 +53,7 @@ export class LoginComponent implements OnInit {
         }	
       },
       error => {
-        //console.log(error.error.Message);
+        
         swal.fire({
           title: 'ERROR!!!',
           text: error.error.Message,

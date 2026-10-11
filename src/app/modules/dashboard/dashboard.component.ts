@@ -35,14 +35,14 @@ export class DashboardComponent implements OnInit {
     this._reg.getTipouser().subscribe(
       (tusuario) => {
         this.tusuario = tusuario;
-        //console.log(tusuario);
+     
       }
     )
 
     this._ds.getDescuento().subscribe(
       (descuentos) => {
         this.descuentos = descuentos
-        //console.log(descuentos);
+
         this.count = this.descuentos.length;
       }
     )

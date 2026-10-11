@@ -44,10 +44,10 @@ export class ListaUsuariosService {
 }
 
 updatePassword(data:DialogData): Observable<DialogData> { 
-  //console.log(equipo);
+
   return this.http.put<DialogData>(`${environment.rutaAPI + '/actPassUser/'+data.id}`,data.password).pipe(
     map((response: any) => {
-      //console.log(response);
+      
       return response;
       })
   );

@@ -9,14 +9,7 @@ export class AppComponent implements OnInit {
 
 
   constructor(  ) {
-/*
-    if (sessionStorage.getItem('Login') != null) {
-      console.log("si entra");
-    }else{
-      console.log("no deberia de entrar");
-      window.location.href = `${environment.rutaPortal}`;
-    }
-*/
+
    }
 
   ngOnInit(): void {

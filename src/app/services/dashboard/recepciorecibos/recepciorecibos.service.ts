@@ -34,39 +34,15 @@ export class RecepcionRecibosService {
     }
 
     update(Folio: Number, FolioDet: Number, epagoRecibo: EpagoRecibo): Observable<EpagoRecibo>{ 
-      console.log(Folio, FolioDet, epagoRecibo);
+    
       
-      //return this.http.put(`${environment.rutaAPI + '/epagorecibo/'+Folio+'/'+FolioDet+'/'+sessionStorage.getItem('Login')+'/'+Comentario}`,Tvreciboalumno).pipe(
-        //return this.http.put<Tvreciboalumno>(`${environment.rutaAPI + '/epagorecibo/'+Folio+'/'+FolioDet}`,Tvreciboalumno).pipe(
-        //return this.http.put<Tvreciboalumno>(`${environment.rutaAPI + '/epagorecibo/'}`+Folio+'/'+FolioDet,Tvreciboalumno).pipe(
         return this.http.put<EpagoRecibo>(`${environment.rutaAPI + '/epagorecibo/'+FolioDet+'/'+Folio}`,epagoRecibo).pipe(
         map((response: any) => {
-          //console.log(response);
+       
           return response;
           })
       );
     }
 
-  /*
-  create(noticias: Tnoticias): Observable<Tnoticias> {
-    //console.log(noticias);
-    return this.http.post<Tnoticias>(`${environment.rutaAPI + '/tnoticias'}`, noticias).pipe(
-      map((response: any) => {
-        //console.log(response);
-        return response;
-        })
-    );
-    
-  }
 
-
-  delete(id: number): Observable<Tnoticias> { 
-    return this.http.delete<Tnoticias>(`${environment.rutaAPI + '/tnoticias/'+id}`).pipe(
-      map((response: any) => {
-        //console.log(response);
-        return response;
-        })
-    );
-  }
-  */
 }

@@ -18,14 +18,13 @@ export class RecuperarService {
   email:string;
 
   getUsuariosEmail(recupera: recuperaPass): Observable<recuperaPass[]>  {
-    //console.log(recupera);
+    
     this.usuario=recupera.usua_usuario;
     this.email=recupera.usua_email;
-    //console.log(this.http.get(`${environment.rutaAPI + '/recuperaPass?usua_usuario=' + this.usuario+'&usua_email='+this.email}`));
+
     return this.http.get(`${environment.rutaAPI + '/recuperaPass?usua_usuario=' + this.usuario+'&usua_email='+this.email}`).pipe(
       map(response => response as recuperaPass[])
-      //console.log(response)
-      //response as recuperaPass[]
+    
     );
     //return this.http.get(`${environment.rutaAPI + '/recuperaPass?usua_usuario=' + this.usuario+'&usua_email='+this.email}`);
     

@@ -42,7 +42,8 @@ export class ReceiptComponent implements OnInit {
     console.warn('params', id, ref_banco, bandera)
     this.blockUI.start('Descargando su recibo...');
     if (bandera == null) {
-      this._ps.printReceipt(id, ref_banco).subscribe((response: BlobPart) => {
+      this._ps.printReceipt(id, ref_banco)
+      .subscribe((response: BlobPart) => {
 
         const file = new Blob([response], { type: 'application/pdf' });
         const fileURL = URL.createObjectURL(file);

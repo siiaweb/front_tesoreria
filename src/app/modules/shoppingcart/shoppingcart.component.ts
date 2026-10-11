@@ -45,11 +45,9 @@ export class ShoppingcartComponent implements OnInit,OnDestroy {
 
   constructor(
     private _evo: EvoService,
-    private _ps: PagoServiciosService,
     private fb: FormBuilder,
     public router: Router,
     private renderer: Renderer2,
-    private cdr: ChangeDetectorRef,
   ) {
 
     (window as any).errorCallback = (error: any) => {
@@ -118,7 +116,7 @@ export class ShoppingcartComponent implements OnInit,OnDestroy {
 
     this.forma = this.fb.group({
       pago_concepto: ['', [Validators.required, Validators.maxLength(150)]],
-      // metodoPago: ['', Validators.required],
+
       pago_referencia: [],
       pago_montoapagar: [this.total],
       pago_usuaid: [sessionStorage.getItem('usuID')],
@@ -141,9 +139,12 @@ export class ShoppingcartComponent implements OnInit,OnDestroy {
 
   totalPrice() {
     this.total = 0;
-    for (let data of this.ecomServices) {
+    if(this.ecomServices){
+ for (let data of this.ecomServices) {
       this.total += parseFloat(data.Mount);
     }
+    }
+   
     return this.total;
   }
 
@@ -214,10 +215,12 @@ export class ShoppingcartComponent implements OnInit,OnDestroy {
       console.log('items', items)
       this.det = [];
       for (var i = 0; i < items.length; i++) {
+        const row:Carrito =items[i];
         const rowDetalle = {
-          dpago_idingreso: items[i].dpago_idingreso,
-          dpago_cantidad: items[i].dpago_cantidad,
-          dpago_punit: items[i].dpago_punit
+          dpago_idingreso: row.dpago_idingreso,
+          dpago_cantidad: row.dpago_cantidad,
+          dpago_punit: row.dpago_punit,
+          paquete:row.paquete
         }
         this.det.push(rowDetalle);
       }
@@ -253,70 +256,7 @@ export class ShoppingcartComponent implements OnInit,OnDestroy {
     }
   }
 
-  //se agrega en lugar de 
-
-
-
-  
-    mostrarEvo(total:number,entity:any) {//(this.ID, this.total)
-      console.warn('forma', this.forma.getRawValue())
-      //let referencia = this.forma.get('referencia').value;
-      
-      this._evo.getEvo(this.total, entity).subscribe({
-        next: (response: any) => {
-          this.blockUI.stop();
-          console.warn('response', response)
-         
-     
-          sessionStorage.MasterID = response.referencia;
-          this.pago_referencia.setValue(response.referencia);
-          this.showEvoOverlay();
-          setTimeout(() => {
-            try {
-              const checkout: EvoCheckout | any = (window as any).Checkout;
-              if (!checkout) {
-                throw new Error('El SDK de Checkout no está cargado.');
-              }
-              checkout.configure({
-                session: {
-                  id: response.session_id
-                },
-              });
-              setTimeout(() => {
-                //checkout.showPaymentPage();
-                // checkout.showLightbox();
-                if (checkout) {
-                  this._evo.startPolling(this.pago_referencia.value)
-                  checkout.showEmbeddedPage('#evo-embed-container');
-                }
-                //checkout.showEmbeddedPage('#evo-embed-container');
-              }, 700);
-  
-              console.log(checkout);
-            } catch (e) {
-              console.error('Error invocando showEmbeddedPage:', e);
-              Swal.fire({ title: 'AVISO!!!', text: JSON.stringify(e), icon: 'error' });
-              this.closeEvoModal();
-            }
-          }, 2000); // 200ms es suficiente si el overlay ya está visible
-  
-        },
-        error: (e) => {
-          this.blockUI.stop();
-          console.error('e.getEvo', e)
-          Swal.fire({
-            title: 'ERROR!!!',
-            text: JSON.stringify(e),
-            icon: 'error'
-          });
-        },
-        complete: () => {
-          console.log('complete')
-          this.blockUI.stop();
-        }
-      })
-    }
-  
+ 
   generarEntidad(): any {
 
     const pagoOnline: PagoOnline = (this.forma.getRawValue() as PagoOnline);
@@ -329,7 +269,7 @@ export class ShoppingcartComponent implements OnInit,OnDestroy {
         descto:null,
         dtoPagar:null,
         regidescto:null,
-       
+        paquete:e.paquete
       }
     });
     const entity: PagoOnlineDTO = {

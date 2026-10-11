@@ -12,15 +12,7 @@ import { SharedModule } from './shared/shared.module';
 import { DefaultModule } from './modules/default/default.module';
 import { ServicesModule } from './services/services.module';
 import { ShoppingcartComponent } from './modules/shoppingcart/shoppingcart.component';
-import { DiscountComponent } from './modules/discount/discount.component';
 import { AngularEditorModule } from '@kolkov/angular-editor';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatMenuModule,
-         MatIconModule,
-         MatToolbarModule,
-         MatButtonModule,
-         MatDialogModule,
-         MatTableModule } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import localeEsMx from '@angular/common/locales/es-MX';
@@ -53,8 +45,7 @@ registerLocaleData(localeEsMx, 'es-MX');
 @NgModule({
   declarations: [
     AppComponent,
-    ShoppingcartComponent,
-    DiscountComponent,
+    ShoppingcartComponent,    
     ListausuarioComponent,
     NewformComponent,
     SettingsComponent,
@@ -83,14 +74,7 @@ registerLocaleData(localeEsMx, 'es-MX');
     BlockUIModule.forRoot(),
     NgxPaginationModule,
     AngularEditorModule,
-    MatProgressBarModule,
-    MatMenuModule,
-    MatIconModule,
-    MatToolbarModule,
-    MatButtonModule,
     FlexLayoutModule,
-    MatTableModule,
-    MatDialogModule,
     NgbModule
   ],
   providers: [ { provide: LOCALE_ID, useValue: 'es-MX' }, {provide: LocationStrategy, useClass: HashLocationStrategy} ],

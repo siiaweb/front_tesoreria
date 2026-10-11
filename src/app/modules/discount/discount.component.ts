@@ -2,13 +2,11 @@ import { Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { DescuentosService } from '../../services/dashboard/descuentos/descuentos.service';
 import { FormGroup, Validators, FormBuilder, FormControl } from '@angular/forms';
 import Swal from 'sweetalert2';
-import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
 import { Descuentos } from '../../services/dashboard/descuentos/descuentos';
 import { Router } from '@angular/router';
 import { EvoService } from '../../services/dashboard/evo.service';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { Carrito, DetPagoOnlineDTO, PagoOnline, PagoOnlineDTO } from '../shoppingcart/shoppingcart.model';
-import { EvoCheckout } from '../shoppingcart/shoppingcart.component';
 
 declare const Checkout: any
 
@@ -17,26 +15,22 @@ declare const Checkout: any
   templateUrl: './discount.component.html',
   styleUrls: ['./discount.component.scss', '../../../assets/css/login.css']
 })
-export class DiscountComponent implements OnInit,OnDestroy {
+export class DiscountComponent implements OnInit, OnDestroy {
   @BlockUI() blockUI!: NgBlockUI;
   det: any[] = [];
   descuentos!: Descuentos[];
   descuentosdet!: Descuentos[];
-  session_id!: string;
-  successIndicator!: string;
   public items: any = "";
-  forma!: FormGroup;
+  forma: FormGroup = new FormGroup({});
   total = 0;
-
   constructor(private _ds: DescuentosService,
     private fb: FormBuilder,
-    private _ps: PagoServiciosService,
     private renderer: Renderer2,
     public router: Router,
     private _evo: EvoService
-  ) { 
+  ) {
 
-       (window as any).errorCallback = (error: any) => {
+    (window as any).errorCallback = (error: any) => {
       console.log('EVO error:', error);
       if (error.explanation.includes('expired')) {
 
@@ -56,10 +50,10 @@ export class DiscountComponent implements OnInit,OnDestroy {
     console.log('construido')
   }
   ngOnDestroy(): void {
-      //this.stopPolling();
-      delete (window as any).errorCallback;
-      delete (window as any).cancelCallback;
-      delete (window as any).completeCallback;
+    //this.stopPolling();
+    delete (window as any).errorCallback;
+    delete (window as any).cancelCallback;
+    delete (window as any).completeCallback;
   }
   prepararEvo(): void {
     const scriptUrl =
@@ -71,7 +65,7 @@ export class DiscountComponent implements OnInit,OnDestroy {
     if (existente) {
       console.log('Checkout.js ya está agregado; no se insertará otra vez.');
       return;
-    } else{
+    } else {
       console.log('checkout no existe')
     }
 
@@ -102,15 +96,15 @@ export class DiscountComponent implements OnInit,OnDestroy {
 
   }
 
-  valuesSelect(values: any) {
-    //console.log(values);
-    this.forma.get('pago_foldescto')!.setValue(values);
-    this._ds.getDescuentoDet(values).subscribe(
-      (descuentosdet) => {
-        this.descuentosdet = descuentosdet
-        console.log(descuentosdet);
+  valuesSelect(value: number) {
+    console.log('VALUES',value);
+    this.forma.get('pago_foldescto')!.setValue(value);
+    this._ds.getDescuentoDet(value).subscribe(
+      (responseDETALLE) => {
+        this.descuentosdet = responseDETALLE
+        console.log(responseDETALLE);
         this.totalPrice(this.descuentosdet);
-
+        this.det=[];
         for (var i = 0; i < this.descuentosdet.length; i++) {
           const descuento: Descuentos = this.descuentosdet[i];
           const rowDetalle: Carrito = {
@@ -123,7 +117,7 @@ export class DiscountComponent implements OnInit,OnDestroy {
             Mount: descuento.vdes_a_pagar,
             Descrip: descuento.vdes_concepto
           }
-          console.warn('test',rowDetalle)
+          console.warn('test', rowDetalle)
           this.det.push(rowDetalle)
         }
         //console.log(this.det);
@@ -156,18 +150,17 @@ export class DiscountComponent implements OnInit,OnDestroy {
   crearFormulario() {
 
     this.forma = this.fb.group({
-      descuentos: ['', Validators.required],
+     // descuentos: ['', Validators.required],
       pago_concepto: ['', [Validators.required, Validators.maxLength(150)]],
-      pago_foldescto: [''],
+      pago_foldescto: [null,Validators.required],
       pago_referencia: [sessionStorage.MasterID],
       pago_montoapagar: [''],
       pago_usuaid: [sessionStorage.getItem('usuID')],
-    //  metodoPago: ['', Validators.required],
       pago_estatus: ['P']
     });
   }
 
-generarEntidad(): any {
+  generarEntidad(): any {
 
     const pagoOnline: PagoOnline = (this.forma.getRawValue() as PagoOnline);
 
@@ -176,9 +169,9 @@ generarEntidad(): any {
         idingreso: e.dpago_idingreso,
         cantidad: e.dpago_cantidad,
         punit: e.dpago_punit,
-        descto: e.descto, 
-        dtoPagar:e.dto_pagar,
-        regidescto:e.regidescto
+        descto: e.descto,
+        dtoPagar: e.dto_pagar,
+        regidescto: e.regidescto
       }
     });
     const entity: PagoOnlineDTO = {
@@ -187,8 +180,8 @@ generarEntidad(): any {
       montoapagar: pagoOnline.pago_montoapagar,
       user: pagoOnline.pago_usuaid,
       detalle: detalle,
-      foldescto :pagoOnline.pago_foldescto,
-      referencia:this.pago_referencia.value
+      foldescto: pagoOnline.pago_foldescto,
+      referencia: this.pago_referencia.value
     }
     console.info('pagoOnline', pagoOnline)
     console.info('detalle', detalle)
@@ -199,43 +192,43 @@ generarEntidad(): any {
 
   Pagar() {
     this.blockUI.start();
-    console.log('forma',this.forma)
+    console.log('forma', this.forma)
     if (this.forma.invalid) {
       this.blockUI.stop();
-       alert('Faltan campos por completar');
+      alert('Faltan campos por completar');
       return Object.values(this.forma.controls).forEach(control => {
         control.markAsTouched();
-        
+
       })
-     
+
       return;
     } else {
       //*** esto lo nuevo */
       const entity = this.generarEntidad();
       console.warn('forma', this.forma.getRawValue())
-       this._evo.mostrarEvo(this.total, entity).subscribe({
-              next: (r) => {
-                console.log('r',r)
-                this.pago_referencia.setValue(r.referencia);
-                this.blockUI.stop();
-              },
-              error: (e) => {
-                if(sessionStorage.MasterID){
-                  this.pago_referencia.setValue(sessionStorage.MasterID);
-                }
-                this.blockUI.stop();
-                console.error('e.getEvo', e)
-                Swal.fire({
-                  title: 'ERROR!!!',
-                  text: JSON.stringify(e),
-                  icon: 'error'
-                });
-              },
-              complete: () => {
-                console.log('complete')
-                this.blockUI.stop();
-              }
-            });
+      this._evo.mostrarEvo(this.total, entity).subscribe({
+        next: (r) => {
+          console.log('r', r)
+          this.pago_referencia.setValue(r.referencia);
+          this.blockUI.stop();
+        },
+        error: (e) => {
+          if (sessionStorage.MasterID) {
+            this.pago_referencia.setValue(sessionStorage.MasterID);
+          }
+          this.blockUI.stop();
+          console.error('e.getEvo', e)
+          Swal.fire({
+            title: 'ERROR!!!',
+            text: JSON.stringify(e),
+            icon: 'error'
+          });
+        },
+        complete: () => {
+          console.log('complete')
+          this.blockUI.stop();
+        }
+      });
       //this.mostrarEvo(this.total, entity)
     }
 
@@ -247,67 +240,6 @@ generarEntidad(): any {
   public closeEvoModal(event?: Event): void {
     this._evo.closeEvoModal();
   }
-
-     mostrarEvo(total:number,entity:any) {//(this.ID, this.total)
-        console.warn('forma', this.forma.getRawValue())
-        //let referencia = this.forma.get('referencia').value;
-        
-        this._evo.getEvo(this.total, entity).subscribe({
-          next: (response: any) => {
-            this.blockUI.stop();
-            console.warn('response', response)
-           
-       
-            sessionStorage.MasterID = response.referencia;
-            this.pago_referencia.setValue(response.referencia);
-            this.showEvoOverlay();
-            setTimeout(() => {
-              try {
-                const checkout: EvoCheckout | any = (window as any).Checkout;
-                if (!checkout) {
-                  throw new Error('El SDK de Checkout no está cargado.');
-                }
-                checkout.configure({
-                  session: {
-                    id: response.session_id
-                  },
-                });
-                setTimeout(() => {
-                  //checkout.showPaymentPage();
-                  // checkout.showLightbox();
-                  if (checkout) {
-                    this._evo.startPolling(this.pago_referencia.value)
-                    checkout.showEmbeddedPage('#evo-embed-container');
-                  }
-                  //checkout.showEmbeddedPage('#evo-embed-container');
-                }, 700);
-    
-                console.log(checkout);
-              } catch (e) {
-                console.error('Error invocando showEmbeddedPage:', e);
-                Swal.fire({ title: 'AVISO!!!', text: JSON.stringify(e), icon: 'error' });
-                this.closeEvoModal();
-              }
-            }, 2000); // 200ms es suficiente si el overlay ya está visible
-    
-          },
-          error: (e) => {
-            this.blockUI.stop();
-            console.error('e.getEvo', e)
-            Swal.fire({
-              title: 'ERROR!!!',
-              text: JSON.stringify(e),
-              icon: 'error'
-            });
-          },
-          complete: () => {
-            console.log('complete')
-            this.blockUI.stop();
-          }
-        })
-      }
-
-
   private showEvoOverlay(): void {
     this._evo.showEvoOverlay();
   }

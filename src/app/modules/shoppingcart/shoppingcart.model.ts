@@ -8,6 +8,7 @@ export interface Carrito {
   descto:number;
   dto_pagar:number;
   regidescto:number;
+  paquete:number | null;
 }
 
 export interface PagoOnline {

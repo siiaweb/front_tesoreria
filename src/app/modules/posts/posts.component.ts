@@ -85,14 +85,31 @@ export class PostsComponent implements OnInit {
 
     this.forma = this.fb.group({
       concepto: [null, Validators.required],
-      cantidad: [1, [Validators.required, Validators.max(999), Validators.min(1)]],
-      p_unitario: [0, [Validators.required, Validators.max(99999), Validators.min(1)]],
+  cantidad: [
+    1,
+    [
+      Validators.required,
+      Validators.pattern(/^\d+$/),
+      Validators.min(1),
+      Validators.max(999)
+    ]
+  ],
+  p_unitario: [
+    { value: 0, disabled: true },
+    [
+      Validators.required,
+      Validators.pattern(/^\d+(\.\d{1,2})?$/),
+      Validators.min(0.01),
+      Validators.max(99999)
+    ]
+  ],
       paquete: []
     });
     this.punit.disable();
   }
 
   add() {
+    console.log(this.forma)
 this.isSubmitted=true;
      if (this.forma.invalid) {
        alert('falta capturar campos!');
@@ -127,6 +144,7 @@ this.isSubmitted=true;
     this.arrayLength = this.array.length;
     Swal.fire('Agregado al carrito', `El articulo ${elemento.Descrip} fue agregado exitosamente`, 'success').then(r => {
       if (r.isConfirmed) {
+        this.isSubmitted=false;
         this.forma.reset({
           concepto: null,
           cantidad: 1,

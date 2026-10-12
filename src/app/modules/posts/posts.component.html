@@ -1,7 +1,6 @@
 <block-ui>
   <mat-toolbar color="grey">
     <div fxFlex fxLayout="row" fxLayoutAlign="end center">
-      
       <button mat-icon-button routerLink="/shoppingcart">
         <mat-icon matBadge="{{ arrayLength }}" matBadgeColor="warn">
           shopping_cart</mat-icon
@@ -12,24 +11,21 @@
 
   <form class="container-fluid p-3" [formGroup]="forma">
     <div class="row">
-      <div class=" col-12 " *ngIf="catalogoPagoTipoUser">
+      <div class="col-12" *ngIf="catalogoPagoTipoUser">
         <label>Seleccionar servicio</label>
         <select
           formControlName="concepto"
-          (change)=" textSelect();"
-         class="form-control form-control-sm"
+          (change)="textSelect()"
+          class="form-control form-control-sm"
         >
           <option value="" selected disabled>
             - Seleccione un servicio a pagar -
           </option>
-          <option
-            *ngFor="let cp of catalogoPagoTipoUser"
-            [ngValue]="cp"
-          >
+          <option *ngFor="let cp of catalogoPagoTipoUser" [ngValue]="cp">
             {{ cp.descripcion }} ({{ cp.punit | currency: "MXN" : "symbol" }})
           </option>
         </select>
-         <small *ngIf="concepto.invalid && isSubmitted" class="text-danger">
+        <small *ngIf="concepto.invalid && isSubmitted" class="text-danger">
           Falta seleccionar servicio
         </small>
       </div>
@@ -39,41 +35,41 @@
         <strong>Descripción</strong>
         <h3>{{ concepto.value?.descripcion }}</h3>
         <br />
-        <strong>Precio Unitario</strong><br />
-        <input
-          class="form-control"
-          formControlName="p_unitario"
-         
-        /><br />
-        <strong>Cantidad</strong><br />
-        <small *ngIf="cantidadNovalido" class="text-danger">
-          Ingrese una cantidad
-        </small>
-        <input
-          class="form-control"
-          formControlName="cantidad"
-          type="number"
-          max="999"
-          min="1"
-          value="1"
-          [class.is-invalid]="cantidadNovalido"
-    
-        />
+        <section class="d-flex flex-column">
+          <strong>Precio Unitario</strong>
+          <input class="form-control" formControlName="p_unitario" />
+          <small *ngIf="punit.invalid && isSubmitted" class="text-danger">
+            Precio unitario invalido
+          </small>
+        </section>
+
+        <section>
+          <strong>Cantidad</strong><br />
+
+          <input
+            class="form-control"
+            formControlName="cantidad"
+            type="number"
+            max="999"
+            min="1"
+            value="1"
+            [class.is-invalid]="cantidadNovalido"
+          />
+          <small *ngIf="cantidadNovalido" class="text-danger">
+            Ingrese una cantidad
+          </small>
+        </section>
+
         <strong>Monto a Pagar</strong><br />
-        <h4>{{ importe | currency:'MXN':'symbol' }}</h4>
+        <h4>{{ importe | currency: "MXN" : "symbol" }}</h4>
       </div>
     </div>
 
     <div class="col-sm-4">
-      <button
-      type="button"
-        class="btn btn-blue btn-sm"
-      
-        (click)="add()"
-      >
+      <button type="button" class="btn btn-blue btn-sm" (click)="add()">
         Añadir al carrito
       </button>
     </div>
-   
+    
   </form>
 </block-ui>

@@ -71,7 +71,7 @@ export class NewformComponent implements OnInit {
     this.activatedRoute.params.subscribe(params => {
       this.id = params['id']
       this.acc = params['acc']
-      console.log(this.acc);
+   
       if (this.id !== 0){
         this.subscription = this._ns.getNoticia(this.id).subscribe(
           (noticia) => {
@@ -154,7 +154,7 @@ export class NewformComponent implements OnInit {
         Swal.fire({icon: 'success',title: 'Noticia Guardada',showConfirmButton: false,timer: 3000});
       },
       error => {
-        console.log(error);
+     
         this.blockUI.stop();
         Swal.fire({
           title: 'ERROR!!!',
@@ -172,7 +172,7 @@ export class NewformComponent implements OnInit {
       Swal.fire({icon: 'success',title: 'Noticia Actualizada',showConfirmButton: false,timer: 3000});
     },
     error => {
-      console.log(error);
+      
       this.blockUI.stop();
       Swal.fire({
         title: 'ERROR!!!',
@@ -182,7 +182,7 @@ export class NewformComponent implements OnInit {
   }
 
   DocUpload(event){
-    console.log(event);
+   
   }
 
   onFileSelected(event){
@@ -200,10 +200,10 @@ export class NewformComponent implements OnInit {
     })
       .subscribe(event => {
         if (event.type === HttpEventType.UploadProgress){
-          console.log("Progreso: " + Math.round (event.loaded / event.total * 100)  + "%");
+         
           this.progress = Math.round (event.loaded * 100 / event.total );
         }else if (event.type === HttpEventType.Response){
-          console.log(event);
+        
           if (event.status == 200){
             this.blockUI.stop();
             this.router.navigate(['/noticias']);
@@ -217,7 +217,7 @@ export class NewformComponent implements OnInit {
         
       },
       error => {
-        console.log(error);
+      
         this.blockUI.stop();
         Swal.fire({
           title: 'ERROR!!!',

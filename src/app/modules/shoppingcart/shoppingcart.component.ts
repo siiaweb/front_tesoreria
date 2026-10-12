@@ -1,139 +1,105 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { EvoService } from '../../services/dashboard/evo.service';
 import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
 import { Subscription } from 'rxjs';
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
-import Swal from 'sweetalert2';
-import { Router, ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs/Rx';
-import { promise } from 'protractor';
+import { FormGroup, Validators, FormBuilder, FormControl } from '@angular/forms';
+import { Router } from '@angular/router';
 import { TdpagosOnline } from 'src/app/services/dashboard/pagoServicios/tdpagosonline';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
-import { Console } from 'console';
-import { NgZone } from '@angular/core';
+import { Carrito, DetPagoOnlineDTO, PagoOnline, PagoOnlineDTO } from './shoppingcart.model';
+import Swal from 'sweetalert2';
 
 
+export interface EvoCheckout {
+  configure(options: {
+    session: {
+      id: string;
+    };
+  }): void;
 
-declare var Checkout: any;
+  showPaymentPage(): void;
+  showEmbeddedPage(selector: string): void;
+  showLightbox(): void;
+}
+
+
+//declare var Checkout: any;
 
 @Component({
   selector: 'app-shoppingcart',
   templateUrl: './shoppingcart.component.html',
-  styleUrls: ['./shoppingcart.component.scss']
+  styleUrls: ['./shoppingcart.component.scss', '../../../assets/css/login.css']
 })
-export class ShoppingcartComponent implements OnInit {
-
+export class ShoppingcartComponent implements OnInit,OnDestroy {
   @BlockUI() blockUI!: NgBlockUI;
-
   public pagodet: TdpagosOnline = new TdpagosOnline();
   valores!: String;
   det: any[] = [];
   importe = 0;
-  /*
-  public loadScript() {
-    let body = <HTMLDivElement> document.body;
-    let script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.innerHTML = '';
-    script.src = "https://cdn.jsdelivr.net/npm/sweetalert2@9";
-    script.async = false;
-    script.defer = true;
-    body.appendChild(script);
-  }
-  */
-
-  /*
-  public cancelCallbackScript() {
-    let body = <HTMLDivElement> document.body;
-    let script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.innerHTML = "function cancelCallback() {"+
-                       " console.log('Payment cancelled');}";
-    script.async = false;
-    script.defer = true;
-    body.appendChild(script);
-  }
-
-  public errorCallbackScript() {
-    let body = <HTMLDivElement> document.body;
-    let script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.innerHTML = "function errorCallback(error) {"+
-                       " console.log(JSON.stringify(error));}";
-    script.async = false;
-    script.defer = true;
-    body.appendChild(script);
-  }
-
-  public completeCallbackScript() {
-    let body = <HTMLDivElement> document.body;
-    let script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.innerHTML = "function completeCallback(resultIndicator, sessionVersion) {"+
-                       " console.log('resultIndicator: ' +resultIndicator);"+
-                       " console.log('sessionVersion:' +sessionVersion);"+
-                       " Swal.fire({icon: 'success',title: 'Pago exitoso!!!',text: 'Puedes descargar tu pago en la sección de recibos',showConfirmButton: false,timer: 1500});}";
-    script.async = false;
-    script.defer = true;
-    body.appendChild(script);
-  }
-  */
-
-  /*
-  public Checkout() {
-    let body = <HTMLDivElement> document.body;
-    let script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.innerHTML = "Checkout.configure({"+
-      //"merchant: 'TEST1143891',"+
-      "merchant: '1143891',"+
-        "order: {description: 'Pago de servicios',amount: '"+this.forma.get('pago_montoapagar')!.value+"',currency: 'MXN',id: '"+this.ID+"'},"+
-        "interaction: {merchant: {name: 'UJED',address: {line1: 'Calle Constitución 404, Zona Centro, 34100 Durango, Dgo.'}},"+
-            "displayControl : {billingAddress : 'HIDE'},},"+
-        "session: {id:  '"+this.session_id+"'},"+
-      "});";
-    script.async = false;
-    script.defer = true;
-    body.appendChild(script);
-  }
-  */
-
-
   forma!: FormGroup;
-
   private subscription!: Subscription;
-
   ecomServices!: any[];
-
-  session_id!: string;
-  successIndicator!: string;
+  //session_id!: string;
   ID!: string;
   total = 0;
 
-  constructor(private _evo: EvoService, private _ps: PagoServiciosService, private fb: FormBuilder,
-    public router: Router, private ngZone: NgZone) { }
+  constructor(
+    private _evo: EvoService,
+    private fb: FormBuilder,
+    public router: Router,
+    private renderer: Renderer2,
+  ) {
+
+    (window as any).errorCallback = (error: any) => {
+      console.log('EVO error:', error);
+      if (error.explanation.includes('expired')) {
+
+      }
+    };
+    (window as any).cancelCallback = () => {
+      console.log('EVO cancelado');
+    };
+    (window as any).completeCallback = (resultIndicator: string, sessionVersion: string) => {
+     
+      const referencia = sessionStorage.getItem('MasterID');
+ 
+      this._evo.handleCompletado(resultIndicator['resultIndicator'], resultIndicator['sessionVersion'], referencia)
+    };
+
+
+  }
+
+  prepararEvo(): void {
+    const scriptUrl =
+      'https://evopaymentsmexico.gateway.mastercard.com/static/checkout/checkout.min.js';
+
+    const existente = Array.from(document.scripts)
+      .find(script => script.src === scriptUrl);
+
+    if (existente) {
+     
+      return;
+    } else{
+     
+    }
+
+    const script = this.renderer.createElement('script') as HTMLScriptElement;
+
+    this.renderer.setAttribute(script, 'src', scriptUrl);
+    this.renderer.setAttribute(script, 'data-error', 'errorCallback');
+    this.renderer.setAttribute(script, 'data-cancel', 'cancelCallback');
+    this.renderer.setAttribute(script, 'data-complete', 'completeCallback');
+
+    script.onerror = () => console.error('Error cargando Checkout.js');
+
+    this.renderer.appendChild(document.head, script);
+  }
 
   ngOnInit() {
-
-    this.subscription = this._ps.getTsqpagosonline()
-      .subscribe((data: any) => {
-        this.ID = data;
-        //console.log(data);
-      })
-
-    //this.cancelCallbackScript();
-    //this.errorCallbackScript();
-
+    this.prepararEvo();
     this.ecomServices = JSON.parse(sessionStorage.getItem('shoppingCart')!);
-
     this.totalPrice();
-
     this.crearFormulario();
-
-    //console.log(sessionStorage.getItem('shoppingCart'));
-    // var items = JSON.parse(sessionStorage.getItem('shoppingCart')!);
-
-
   }
 
   get conceptoNovalido() {
@@ -148,8 +114,8 @@ export class ShoppingcartComponent implements OnInit {
 
     this.forma = this.fb.group({
       pago_concepto: ['', [Validators.required, Validators.maxLength(150)]],
-      metodoPago: ['', Validators.required],
-      pago_referencia: [this.ID],
+
+      pago_referencia: [],
       pago_montoapagar: [this.total],
       pago_usuaid: [sessionStorage.getItem('usuID')],
       pago_estatus: ['P']
@@ -161,27 +127,31 @@ export class ShoppingcartComponent implements OnInit {
     if (this.subscription !== undefined) {
       this.subscription.unsubscribe();
     }
+      this
+     // ..stopPolling();
+      delete (window as any).errorCallback;
+      delete (window as any).cancelCallback;
+      delete (window as any).completeCallback;
   }
+
 
   totalPrice() {
     this.total = 0;
-    for (let data of this.ecomServices) {
+    if(this.ecomServices){
+ for (let data of this.ecomServices) {
       this.total += parseFloat(data.Mount);
     }
+    }
+   
     return this.total;
   }
 
   deleteItem(dpago_idingreso: any) {
-    //console.log("ID: "+dpago_idingreso);
-    //const storage= sessionStorage.getItem('shoppingCart');
-    // let items = storage?JSON.parse(storage):[];
     let items = this.ecomServices;
-    console.log('item', items);
+ 
     for (let i = 0; i < items.length; i++) {
       if (items[i].dpago_idingreso == dpago_idingreso) {
         items.splice(i, 1);
-
-
       }
     }
     sessionStorage["shoppingCart"] = JSON.stringify(items);
@@ -204,7 +174,7 @@ export class ShoppingcartComponent implements OnInit {
     const keys = ['HostedCheckout_sessionId', 'HostedCheckout_embedContainer', 'HostedCheckout_merchantState'];
     keys.forEach(k => {
       if (sessionStorage.getItem(k) !== null) {
-        console.log('Borrando sessionStorage key:', k);
+       
         sessionStorage.removeItem(k);
       }
     });
@@ -213,12 +183,7 @@ export class ShoppingcartComponent implements OnInit {
 
   // Mostrar overlay con clase 'open' y forzar change detection
   private showEvoOverlay(): void {
-    const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
-    if (!overlay) { console.error('Overlay no encontrado'); return; }
-    overlay.classList.add('open');
-    document.body.style.overflow = 'hidden';
-    // forzar reflow para evitar problemas de stacking
-    void overlay.offsetHeight;
+    this._evo.showEvoOverlay();
   }
 
   // Cerrar
@@ -236,7 +201,7 @@ export class ShoppingcartComponent implements OnInit {
 
   async Pagar() {
     this.blockUI.start();
-    //console.log(this.forma);
+   
     if (this.forma.invalid) {
       return Object.values(this.forma.controls).forEach(control => {
         control.markAsTouched();
@@ -245,96 +210,87 @@ export class ShoppingcartComponent implements OnInit {
     } else {
       /**/
       const items = this.ecomServices;
+     
       this.det = [];
       for (var i = 0; i < items.length; i++) {
-        //console.log(items[i]);
-        //this.det.push(items[i].dpago_idingreso+'_'+items[i].Descrip+'_'+items[i].dpago_cantidad+'_'+items[i].dpago_punit+'_null');
-        this.det.push(items[i].dpago_idingreso + '_' + items[i].dpago_cantidad + '_' + items[i].dpago_punit + '_null');
+        const row:Carrito =items[i];
+        const rowDetalle = {
+          dpago_idingreso: row.dpago_idingreso,
+          dpago_cantidad: row.dpago_cantidad,
+          dpago_punit: row.dpago_punit,
+          paquete:row.paquete
+        }
+        this.det.push(rowDetalle);
       }
-      /**/
 
-
-      this._ps.create(this.forma.value).subscribe(master => {
-
-        this._ps.createDetalle(master.pago_folpago.toString(), this.det).subscribe(detalle => {
+      const entity = this.generarEntidad();
+      console.warn('forma', this.forma.getRawValue())
+      //this.mostrarEvo(this.total, entity)
+      this._evo.mostrarEvo(this.total, entity).subscribe({
+        next: (r) => {
+         
+          this.pago_referencia.setValue(r.referencia);
           this.blockUI.stop();
-          Swal.fire({ icon: 'success', title: 'Datos Guardados', text: 'Se te redireccionara al portal de pago', showConfirmButton: false, timer: 3000 });
-          sessionStorage.removeItem('shoppingCart');
-          //this._evo.getEvo(this.ID,master.pago_montoapagar).subscribe(
-          this._evo.getEvo(this.ID, this.total).subscribe(
-            (variables) => {
-              console.log(variables);
-              this.session_id = variables.session_id;
-              this.successIndicator = variables.successIndicator;
-              //this.router.navigate(['/dashboard']);
-
-
-              this.clearHostedCheckoutSessionStorage();
-
-              const ck = (window as any).Checkout;
-              if (!ck) {
-                console.error('Checkout no disponible en window');
-              } else {
-                ck.configure({ session: { id: this.session_id } });
-                console.log('Checkout configurado con:', this.session_id);
-
-                // 1) mostrar overlay primero
-                this.showEvoOverlay();
-
-                // 2) esperar un tick para que Angular pinte el overlay y el contenedor
-                setTimeout(() => {
-                  try {
-                    // pasar height: '100%' no siempre funciona; el contenedor controla la altura
-                    const res = ck.showEmbeddedPage('#evo-embed-container');
-                    if (res && typeof res.then === 'function') {
-                      res.then(() => console.log('showEmbeddedPage completado')).catch((e: any) => {
-                        console.error('Error showEmbeddedPage:', e);
-
-                        this.closeEvoModal();
-                      });
-                    }
-
-                  } catch (e) {
-                    console.error('Error invocando showEmbeddedPage:', e);
-                    this.closeEvoModal();
-                  }
-                }, 200); // 200ms es suficiente si el overlay ya está visible
-              }
-
-
-
-
-
-              sessionStorage.MasterID = master.pago_referencia.toString();
-
-
-            }
-          )
-
         },
-          error => {
-            console.log(error);
-            this.blockUI.stop();
-            Swal.fire({
-              title: 'ERROR!!!',
-              text: error.error.message,
-              icon: 'error'
-            });
-          });
-
-      },
-        error => {
-          console.log(error);
+        error: (e) => {
+          if(sessionStorage.MasterID){
+            this.pago_referencia.setValue(sessionStorage.MasterID);
+          }
           this.blockUI.stop();
+          console.error('e.getEvo', e)
           Swal.fire({
             title: 'ERROR!!!',
-            text: error.error.message,
+            text: JSON.stringify(e),
             icon: 'error'
           });
-        })
-    }
+        },
+        complete: () => {
+     
+          this.blockUI.stop();
+        }
+      });
 
+    }
   }
+
+ 
+  generarEntidad(): any {
+
+    const pagoOnline: PagoOnline = (this.forma.getRawValue() as PagoOnline);
+
+    const detalle: Array<DetPagoOnlineDTO> = this.det.map((e: Carrito) => {
+      return {
+        idingreso: e.dpago_idingreso,
+        cantidad: e.dpago_cantidad,
+        punit: e.dpago_punit,
+        descto:null,
+        dtoPagar:null,
+        regidescto:null,
+        paquete:e.paquete
+      }
+    });
+    const entity: PagoOnlineDTO = {
+      usuaid: pagoOnline.pago_usuaid,
+      concepto: pagoOnline.pago_concepto,
+      montoapagar: pagoOnline.pago_montoapagar,
+      user: pagoOnline.pago_usuaid,
+      detalle: detalle,
+      foldescto:null,
+       referencia:pagoOnline.pago_referencia
+    }
+    console.info('pagoOnline', pagoOnline)
+    console.info('detalle', detalle)
+    console.warn('entity', entity)
+    return entity;
+  }
+
+
+
+  get pago_referencia() {
+    return this.forma.get('pago_referencia') as FormControl;
+  }
+  //
+
 
 
 }

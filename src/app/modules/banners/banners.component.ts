@@ -21,7 +21,7 @@ export class BannersComponent implements OnInit {
     this.subscription = this._bs.getBanners().subscribe(
       (tbanners) => {
         this.tbanners = tbanners;
-        //console.log(this.tbanners);
+      
       }
     )
   }

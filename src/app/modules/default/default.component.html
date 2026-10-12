@@ -5,7 +5,9 @@
         <app-sidebar></app-sidebar>
     </mat-drawer>
     <mat-drawer-content>
-        <router-outlet></router-outlet>
+        <block-ui name="global">
+            <router-outlet></router-outlet>
+        </block-ui>
     </mat-drawer-content>
 </mat-drawer-container>
 

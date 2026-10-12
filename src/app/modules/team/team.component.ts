@@ -24,7 +24,7 @@ export class TeamComponent implements OnInit {
     this.subscription = this._es.getEquipos().subscribe(
       (tequipo) => {
         this.tequipo = tequipo;
-        //console.log(this.tequipo);
+    
       }
     )
   }
@@ -49,7 +49,7 @@ export class TeamComponent implements OnInit {
           Swal.fire({icon: 'success',title: 'Registro Eliminado',showConfirmButton: false,timer: 3000});
         },
         error => {
-          console.log(error);
+       
           Swal.fire({
             title: 'ERROR!!!',
             text: error.error.message,

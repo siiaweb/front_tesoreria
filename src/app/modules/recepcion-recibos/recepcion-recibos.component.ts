@@ -60,7 +60,7 @@ export class RecepcionRecibosComponent implements OnInit {
      
       },
       error => {
-        console.log(error);
+        
         this.blockUI.stop();
         Swal.fire({
           title: 'ERROR!!!',
@@ -91,7 +91,7 @@ export class RecepcionRecibosComponent implements OnInit {
   } 
 
   Guardar(Comentario, Concepto, Folio, FolioDet){
-    console.log(Comentario);
+  
     
     Comentario = Comentario.trim();
     if (Comentario.trim() == "" || Comentario.trim() == null){
@@ -120,7 +120,7 @@ export class RecepcionRecibosComponent implements OnInit {
             Swal.fire({icon: 'success',title: 'Registro guardado',showConfirmButton: false,timer: 3000});
           },
           error => {
-            console.log(error);
+           
             this.blockUI.stop();
             Swal.fire({
               title: 'ERROR!!!',
@@ -145,7 +145,7 @@ export class RecepcionRecibosComponent implements OnInit {
         
       },
       error => {
-        console.log(error);
+    
         this.blockUI.stop();
         Swal.fire({
           title: 'ERROR!!!',
@@ -162,7 +162,7 @@ export class RecepcionRecibosComponent implements OnInit {
       },
       error => {
         this.blockUI.stop();
-        console.log(error);
+        
         Swal.fire({
           title: 'ERROR!!!',
           text: error.error.message,

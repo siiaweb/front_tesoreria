@@ -43,9 +43,9 @@ export class ResetpassComponent implements OnInit, AfterViewInit {
 
     this.subscription = this._lu.getListaUsuariosFiltro().subscribe(
       (tusuario) => {
-        //this.tvusuario = tvusuario;
+      
         this.dataSource.data = tusuario as any[];
-        //console.log(this.dataSource);
+       
       }
     )
 
@@ -61,7 +61,7 @@ export class ResetpassComponent implements OnInit, AfterViewInit {
   }
 
   ActPass(data:DialogData){
-    //console.log(data);
+    
   }
 
   openDialog(id:number): void {
@@ -72,7 +72,7 @@ export class ResetpassComponent implements OnInit, AfterViewInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+    
       this.animal = result;
     });
   }
@@ -99,7 +99,7 @@ export class DialogOverviewExampleDialog {
   }
 
   ActPass(data:DialogData){
-   // console.log(data);
+   
       this._lu.updatePassword(data).subscribe(
       (dato)=>{
         if(dato){

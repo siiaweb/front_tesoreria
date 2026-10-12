@@ -66,7 +66,7 @@ export class FaqsformComponent implements OnInit {
     this.activatedRoute.params.subscribe(params => {
       this.id = params['id']
       this.acc = params['acc']
-      console.log(this.acc);
+  
       if (this.id !== 0){
         this.subscription = this._fs.getFaq(this.id).subscribe(
           (fqas) => {
@@ -116,7 +116,7 @@ export class FaqsformComponent implements OnInit {
         Swal.fire({icon: 'success',title: 'FAQs Guardada',showConfirmButton: false,timer: 3000});
       },
       error => {
-        console.log(error);
+       
         this.blockUI.stop();
         Swal.fire({
           title: 'ERROR!!!',
@@ -134,7 +134,7 @@ export class FaqsformComponent implements OnInit {
       Swal.fire({icon: 'success',title: 'FAQs Actualizada',showConfirmButton: false,timer: 3000});
     },
     error => {
-      console.log(error);
+   
       this.blockUI.stop();
       Swal.fire({
         title: 'ERROR!!!',

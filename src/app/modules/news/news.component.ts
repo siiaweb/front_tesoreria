@@ -24,14 +24,14 @@ export class NewsComponent implements OnInit {
     this.subscription = this._ns.getNoticias().subscribe(
       (noticias) => {
         this.tnoticias = noticias;
-        //console.log(this.tnoticias);
+       
       }
     )
 
   }
 
   subirImagen(id){
-    console.log(id);
+   
   }
 
   delete(id, tituloNoticia){
@@ -54,7 +54,7 @@ export class NewsComponent implements OnInit {
           Swal.fire({icon: 'success',title: 'Noticia Eliminada',showConfirmButton: false,timer: 3000});
         },
         error => {
-          console.log(error);
+        
           Swal.fire({
             title: 'ERROR!!!',
             text: error.error.message,

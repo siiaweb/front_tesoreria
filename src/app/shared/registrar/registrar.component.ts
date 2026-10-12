@@ -45,32 +45,32 @@ export class RegistrarComponent implements OnInit {
     this._reg.getTtipouser().subscribe(
       (ttipouser) => {
         this.ttipouser = ttipouser;
-        //console.log(this.ttipouser);
+    
       }
     )
 
     this._reg.getTnivelures().subscribe(
       (tnivelures) => {
         this.tnivelures = tnivelures;
-        //console.log(this.tnivelures);
+    
       }
     )
 
     this._reg.getUres().subscribe(
       (ures) => {
         this.ures = ures;
-        //console.log(this.ures);
+       
       }
     )
     this.blockUI.stop();
   }
 
   Programas(valueUres){
-    //console.log(valueUres);
+    
     this._reg.getPrograma(valueUres).subscribe(
       (programas: any) => {
         this.programas = programas;
-        //console.log(this.programas);
+      
       }
     )
   }
@@ -204,9 +204,7 @@ guardar() {
       this.forma.reset();
     },
     error => {
-      console.log(error);
-
-      // Caso específico: usuario ya existe
+   
       if (error.error && typeof error.error === 'string' && error.error.includes('usuario ya existe')) {
         Swal.fire({
           title: 'ERROR',
@@ -236,7 +234,7 @@ guardar() {
     }else{
       this.subscription = this._reg.getBuscaNombre(this.forma.get('usua_tipo_usuario').value,this.forma.get('usua_persona').value)
       .subscribe((data: any) => {
-        console.log(data);
+    
         this.forma.get('usua_nombre').setValue(data.Nombre);
         if (data.Nombre === null){
           Swal.fire({title: 'Matrícula o número de persona '+this.forma.get('usua_persona').value+' no encontrada',text:'', icon: 'error'});

@@ -334,10 +334,10 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
 
 .table-header {
   display: flex;
-  justify-content: space-between; 
-  padding: 1rem 1.25rem; 
-  background: rgba(248, 250, 252, 0.5); 
-  border-bottom: 1px solid $color-border; 
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  background: rgba(248, 250, 252, 0.5);
+  border-bottom: 1px solid $color-border;
 }
 
 .table-responsive thead th {
@@ -347,12 +347,12 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   background: rgb(241, 245, 249);
 }
 
-.count-pill { 
-  background: $color-border; 
-  padding: 0.125rem 0.5rem; 
-  border-radius: 1rem; 
-  font-size: 0.6875rem; 
-  font-weight: 700; 
+.count-pill {
+  background: $color-border;
+  padding: 0.125rem 0.5rem;
+  border-radius: 1rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
 }
 
 .concepts-table {
@@ -372,7 +372,7 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   td {
     padding: 0.75rem;
     border-bottom: 1px solid $color-border;
-    
+
     .item-code { font-size: 0.5625rem; font-weight: 700; color: $color-text-light; display: block; }
     .item-name { font-weight: 700; color: $color-text-main; }
   }
@@ -418,7 +418,7 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
 
 .button-pdf{
   float: left;
-  margin-right: 10px; 
+  margin-right: 10px;
   margin-left: 10px;
   text-align: center;
   background-color: #D2112C;
@@ -460,4 +460,8 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
 .text-end{
   text-align: end ;
   font-family: 'Roboto';
+}
+
+.fila-destacada {
+  background-color: #fff3cd;
 }

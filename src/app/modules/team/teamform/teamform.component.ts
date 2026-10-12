@@ -70,7 +70,6 @@ export class TeamformComponent implements OnInit {
     this.activatedRoute.params.subscribe(params => {
       this.id = params['id']
       this.acc = params['acc']
-      console.log(this.acc);
       if (this.id !== 0){
         this.subscription = this._es.getEquipo(this.id).subscribe(
           (tequipo) => {
@@ -124,7 +123,7 @@ export class TeamformComponent implements OnInit {
         Swal.fire({icon: 'success',title: 'Registro Guardado',showConfirmButton: false,timer: 3000});
       },
       error => {
-        console.log(error);
+     
         this.blockUI.stop();
         Swal.fire({title: 'ERROR!!!',text: error.error.message,icon: 'error'});
       })
@@ -139,7 +138,7 @@ export class TeamformComponent implements OnInit {
       Swal.fire({icon: 'success',title: 'Registro Actualizado',showConfirmButton: false,timer: 3000});
     },
     error => {
-      console.log(error);
+    
       this.blockUI.stop();
       Swal.fire({title: 'ERROR!!!',text: error.error.message,icon: 'error'});
     })
@@ -160,10 +159,10 @@ export class TeamformComponent implements OnInit {
     })
       .subscribe(event => {
         if (event.type === HttpEventType.UploadProgress){
-          console.log("Progreso: " + Math.round (event.loaded / event.total * 100)  + "%");
+          
           this.progress = Math.round (event.loaded * 100 / event.total );
         }else if (event.type === HttpEventType.Response){
-          console.log(event);
+        
           if (event.status == 200){
             this.blockUI.stop();
             this.router.navigate(['/team']);
@@ -177,7 +176,7 @@ export class TeamformComponent implements OnInit {
         
       },
       error => {
-        console.log(error);
+       
         this.blockUI.stop();
         Swal.fire({title: 'ERROR!!!',text: error.message, icon: 'error'});
       });

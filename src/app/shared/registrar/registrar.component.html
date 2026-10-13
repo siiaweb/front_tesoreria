@@ -118,7 +118,7 @@
                                         <div class="div-error" *ngIf="forma.get('usua_nombre').hasError('required') && forma.get('usua_nombre').touched">* campo obligatorio</div>
                                     </div>
                                 </div>
-                                <div class="div-twoinput" style="flex-direction: column !important;" *ngIf="forma.get('usua_tipo_usuario').value === '50'">
+                                <div class="div-twoinput" style="flex-direction: column !important; gap: 0 !important;" *ngIf="forma.get('usua_tipo_usuario').value === '50'">
                                     <mat-form-field class="custom-form-field" appearance="outline" [ngClass]="{ 'custom-form-field-invalid': forma.get('usua_nombre').invalid && forma.get('usua_nombre').touched }">
                                         <mat-label>NOMBRE</mat-label>
                                         <input

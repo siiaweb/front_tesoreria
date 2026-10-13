@@ -13,6 +13,7 @@ import { ErroresService } from '../../services/manejo_errores/errores.service';
 import { environment } from 'src/environments/environment';
 import { fieldIdValidation, matchWithField } from '../dialog-body/validators/validators.dialog';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { erroresFormulario } from 'src/app/modules/componentes-genericos/manejo-errores-forma/errores';
 
 
 @Component({
@@ -76,6 +77,7 @@ export class RegistrarComponent implements OnInit {
         this.forma.get('usua_ures').setValue('5300');
         this.forma.get('usua_prog').setValue('510002');
         this.forma.get('usua_persona').setValue('999999');
+        this.forma.get('ures_desc').clearValidators();
         break;
       default:
         Swal.fire({
@@ -181,44 +183,60 @@ export class RegistrarComponent implements OnInit {
     });
   }
 
+  diccionario: any = {
+    usua_tipo_usuario: 'Tipo de usuario',
+    ures_desc: 'URES',
+    usua_usuario: 'Usuario',
+    usua_persona: 'Matrícula / No. Persona',
+    usua_nombre: 'Nombre',
+    usua_tel: 'Teléfono',
+    usua_email: 'Correo',
+    validemail:'Validación de correo',
+    usua_paswd: 'Contraseña',
+    repassword: 'Validación de contraseña',
+  }
+
   guardar() {
     if (this.forma.invalid) {
       this.forma.markAllAsTouched();
-    }
-
-    this._reg.create(this.forma.value).subscribe(
-      usr => {
-        this.router.navigate(['']);
-        Swal.fire(
-          'Nuevo usuario',
-          `Usuario ${usr.usua_usuario} creado con éxito!`,
-          'success'
-        );
-        this.forma.reset();
-      },
-      error => {
-        console.log(error);
-
-        // Caso específico: usuario ya existe
-        if (error.error && typeof error.error === 'string' && error.error.includes('usuario ya existe')) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Hay errores en los campos.',
+        html: erroresFormulario.traerErroresFormularios(this.forma, null, this.diccionario),
+      });
+    }else{
+      this._reg.create(this.forma.value).subscribe(
+        usr => {
+          this.router.navigate(['']);
+          Swal.fire(
+            'Nuevo usuario',
+            `Usuario ${usr.usua_usuario} creado con éxito!`,
+            'success'
+          );
+          this.forma.reset();
+        },
+        error => {
+          console.log(error);
+  
+          // Caso específico: usuario ya existe
+          if (error.error && typeof error.error === 'string' && error.error.includes('usuario ya existe')) {
+            Swal.fire({
+              title: 'ERROR',
+              text: 'El nombre de usuario ya existe. Intenta con otro nombre.',
+              icon: 'error'
+            });
+            return;
+          }
+  
+          // Caso genérico
           Swal.fire({
             title: 'ERROR',
-            text: 'El nombre de usuario ya existe. Intenta con otro nombre.',
+            text: 'Error inesperado',
             icon: 'error'
           });
-          return;
-        }
-
-        // Caso genérico
-        Swal.fire({
-          title: 'ERROR',
-          text: 'Error inesperado',
-          icon: 'error'
+  
         });
-
-      }
-
-    );
+    }
   }
 
 

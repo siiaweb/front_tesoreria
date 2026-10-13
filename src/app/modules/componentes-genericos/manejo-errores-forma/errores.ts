@@ -56,7 +56,8 @@ export class erroresFormulario{
         maxlength: `Supera el número de caracteres permitidos (${errorValue.requiredLength}).`,
         isNaN: `Necesita ser valor númerico.`,
         fieldsDoNotMatch: `No coincide con ${errorValue.field}`,
-        email: `Necesita tener formato de correo.`
+        email: `Necesita tener formato de correo.`,
+        pattern: `El formato no es correcto.`
       };
       return messages[errorKey] || `Error de validación: ${errorKey}`;
     }

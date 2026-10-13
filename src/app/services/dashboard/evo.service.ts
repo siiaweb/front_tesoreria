@@ -21,7 +21,7 @@ export class EvoService {
     private http: HttpClient,
     public router: Router,
     private blockUIService: BlockUIService) { }
-  
+
 
   public stopPolling(): void {
     if (this.pollingSubscription) {
@@ -30,15 +30,22 @@ export class EvoService {
     }
   }
 
+  cortar(referencia: string, causa: string, comentario: string) {
+    return this.http.post(`${this.urlEndPoint}/logoutsesion/${referencia}`, {
+      'error.cause': causa,
+      'error.explanation': comentario
+    })
+  }
+
   handleCompletado(resultIndicator: string, sessionVersion: string, referencia: string) {
     this.stopPolling();
-  
+
     //alert('pago completado ' + referencia)
     this.insertarRespuestaConPdf(referencia, resultIndicator)
       .subscribe({
         next: (response) => {
           const disposition = response.headers.get('Content-Disposition');
-        
+
           const coincidencia = disposition.match(/filename\*?=(?:UTF-8''|")?([^";]+)/i);
           let nombre = coincidencia && coincidencia[1]
             ? coincidencia[1].replace(/"/g, '')
@@ -50,6 +57,7 @@ export class EvoService {
           }
           sessionStorage.removeItem("MasterID");
           sessionStorage.removeItem("shoppingCart");
+         
           const blob = new Blob([response.body], { type: 'application/pdf' });
           if (!blob) {
             console.error('La respuesta no contiene el PDF.');
@@ -64,33 +72,33 @@ export class EvoService {
           enlace.remove();
 
           setTimeout(() => URL.revokeObjectURL(url), 1000);
-         // this.closeEvoModal();
+          // this.closeEvoModal();
 
           this.router.navigate(['/recibos'], {
             queryParams: { resultIndicator, sessionVersion }
           }).then(navigated => {
-         
-           // this.cdr.detectChanges();
-           if(navigated){
-            window.location.reload();
-           }
+
+            // this.cdr.detectChanges();
+            if (navigated) {
+              window.location.reload();
+            }
           }).catch(error => {
             console.error('Error de navegación:', error);
           });
-        
+
 
         },
         error: (e) => {
           console.error('e.handleComplete', e)
         },
         complete: () => {
-        
+
         }
       })
     // Tu lógica para validar el pago contra tu backend usando el resultIndicator
   }
 
- public showEvoOverlay(): void {
+  public showEvoOverlay(): void {
     const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
     if (!overlay) { console.error('Overlay no encontrado'); return; }
     overlay.classList.add('open');
@@ -98,29 +106,54 @@ export class EvoService {
     // forzar reflow para evitar problemas de stacking
     void overlay.offsetHeight;
   }
-
-    public closeEvoModal(event?: Event): void {
+  clearHostedCheckoutSessionStorage() {
+    const keys = ['HostedCheckout_sessionId', 'HostedCheckout_embedContainer', 'HostedCheckout_merchantState'];
+    keys.forEach(k => {
+      if (sessionStorage.getItem(k) !== null) {
+       
+        sessionStorage.removeItem(k);
+      }
+    });
+  }
+  public closeEvoModal(event: Event,referencia:string): void {
+    console.log('closing evo')
     if (event) event.stopPropagation();
     const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
     if (overlay) overlay.classList.remove('open');
     const container = document.getElementById('evo-embed-container');
     if (container) container.innerHTML = '';
     document.body.style.overflow = '';
-    //this.clearHostedCheckoutSessionStorage();
+    this.clearHostedCheckoutSessionStorage();
+    this.cortar(
+      referencia,
+      'INVALID_REQUEST',
+      'EL USUARIO CERRO EL MODAL'
+    ).subscribe({
+      next: response => {
+        console.log('Respuesta de cortar:', response);
+
+      },
+      error: error => {
+        console.error('Error en cortar:', error);
+      },
+      complete: () => {
+        console.log('Solicitud cortar completada');
+      }
+    });
   }
 
-   mostrarEvo(total:number,entity:any) {//(this.ID, this.total)
-   
+  mostrarEvo(total: number, entity: any) {//(this.ID, this.total)
+
     //let referencia = this.forma.get('referencia').value;
-    
+
     return this.getEvo(total, entity).pipe(
-      map(response=>{
+      map(response => {
         //this.blockUIService.stop('global');
         console.warn('response', response)
         sessionStorage.MasterID = response.referencia;
-       
+
         //this.pago_referencia.setValue(response.referencia);
-       
+        this.clearHostedCheckoutSessionStorage();
         this.showEvoOverlay();
         setTimeout(() => {
           try {
@@ -141,22 +174,23 @@ export class EvoService {
               //checkout.showEmbeddedPage('#evo-embed-container');
             }, 700);
 
-         
+
           } catch (e) {
             console.error('Error invocando showEmbeddedPage:', e);
             Swal.fire({ title: 'AVISO!!!', text: JSON.stringify(e), icon: 'error' });
-            this.closeEvoModal();
+            this.closeEvoModal(null,response.referencia);
           }
         }, 2000); // 200ms es suficiente si el overlay ya está visible
         return response;
-    })
-  )
-    
-  
+      })
+    )
+
+
   }
 
   public startPolling(referencia: string): void {
     this.stopPolling();
+    console.log('START POLLING')
     this.pollingSubscription = interval(30000)
       .pipe(
         startWith(0),
@@ -172,7 +206,7 @@ export class EvoService {
       )
       .subscribe({
         next: (response: any) => {
-        
+
           // Sustituye esta condición por el campo/estados que devuelve tu API.
           if (response && this.transaccionTerminada(response)) {
             this.stopPolling();
@@ -193,7 +227,7 @@ export class EvoService {
   //----------------------------------------------------------
 
 
-  getEvo(amount: number, entity: any):Observable<any> {
+  getEvo(amount: number, entity: any): Observable<any> {
 
     return this.http.post(`${this.urlEndPoint}/evo/${amount}`, entity);
     //return this.http.get(this.urlEndPoint + '/evo/'+referencia+'/'+mount,entity);

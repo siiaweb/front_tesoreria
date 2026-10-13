@@ -1,6 +1,5 @@
 import { RouterModule, Routes } from '@angular/router';
 
-import { LoginGuard } from '../../services/guards/login.guard';
 
 import { DefaultComponent } from './default.component';
 import { DashboardComponent } from 'src/app/modules/dashboard/dashboard.component';
@@ -21,7 +20,6 @@ import { TeamComponent } from '../team/team.component';
 import { TeamformComponent } from '../team/teamform/teamform.component';
 import { ServicesComponent } from '../services/services.component';
 import { ServicesformComponent } from '../services/servicesform/servicesform.component';
-import { PagosSiiaService } from 'src/app/services/services.index';
 import { PagossiiaComponent } from '../pagossiia/pagossiia.component';
 import { RecepcionRecibosComponent } from '../recepcion-recibos/recepcion-recibos.component';
 import { ConsultaPagoRecibidoComponent } from '../consulta-pago-recibido/consulta-pago-recibido.component';
@@ -29,7 +27,6 @@ const pagesRoutes: Routes = [
 	{
 		path: '',
 		component: DefaultComponent,
-		//canActivate: [ LoginGuard ],
 		children: [
 			{ path: 'dashboard', component: DashboardComponent },
 			{ path: 'posts', component: PostsComponent },

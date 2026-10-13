@@ -1,13 +1,14 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { EvoService } from '../../services/dashboard/evo.service';
 import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
-import { Subscription } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { FormGroup, Validators, FormBuilder, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TdpagosOnline } from 'src/app/services/dashboard/pagoServicios/tdpagosonline';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { Carrito, DetPagoOnlineDTO, PagoOnline, PagoOnlineDTO } from './shoppingcart.model';
 import Swal from 'sweetalert2';
+import { switchMap } from 'rxjs-compat/operator/switchMap';
 
 
 export interface EvoCheckout {
@@ -77,10 +78,10 @@ export class ShoppingcartComponent implements OnInit,OnDestroy {
       .find(script => script.src === scriptUrl);
 
     if (existente) {
-     
+      console.log('ya existe')
       return;
     } else{
-     
+     console.log('else no existente')
     }
 
     const script = this.renderer.createElement('script') as HTMLScriptElement;
@@ -188,21 +189,26 @@ export class ShoppingcartComponent implements OnInit,OnDestroy {
 
   // Cerrar
   public closeEvoModal(event?: Event): void {
-    if (event) event.stopPropagation();
+    this._evo.closeEvoModal(event,this.pago_referencia.value);
+    /*if (event) event.stopPropagation();
     const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
     if (overlay) overlay.classList.remove('open');
     const container = document.getElementById('evo-embed-container');
     if (container) container.innerHTML = '';
     document.body.style.overflow = '';
     this.clearHostedCheckoutSessionStorage();
+ 
+    */
   }
 
 
 
   async Pagar() {
+    console.log('pagando')
     this.blockUI.start();
    
     if (this.forma.invalid) {
+      alert('Faltan campos por capturar');
       return Object.values(this.forma.controls).forEach(control => {
         control.markAsTouched();
         this.blockUI.stop();

@@ -1,0 +1,26 @@
+RewriteEngine On
+
+# Si una solicitud coincide con un archivo o directorio existente, no hagas nada
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Redirige todas las demás solicitudes a index.html para que Angular las maneje
+RewriteRule ^ /index.html [L]
+
+# Configuración de encabezado para evitar el almacenamiento en caché
+<IfModule mod_headers.c>
+  Header set Cache-Control "no-cache, no-store, must-revalidate"
+  Header set Pragma "no-cache"
+  Header set Expires 0
+</IfModule>
+
+<FilesMatch "\.(html|htm|js|css)$">
+  FileETag None
+  <IfModule mod_headers.c>
+    Header unset ETag
+    Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "Wed, 12 Jan 1980 05:00:00 GMT"
+  </IfModule>
+</FilesMatch>

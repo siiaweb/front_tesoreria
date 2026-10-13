@@ -77,7 +77,9 @@ registerLocaleData(localeEsMx, 'es-MX');
     FlexLayoutModule,
     NgbModule
   ],
-  providers: [ { provide: LOCALE_ID, useValue: 'es-MX' }, {provide: LocationStrategy, useClass: HashLocationStrategy} ],
+  providers: [ { provide: LOCALE_ID, useValue: 'es-MX' },
+  //   {provide: LocationStrategy, useClass: HashLocationStrategy} 
+    ],
   bootstrap: [AppComponent],
   //entryComponents: [DialogBodyComponent],
 })

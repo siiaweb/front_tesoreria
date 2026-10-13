@@ -235,8 +235,8 @@ export class DiscountComponent implements OnInit, OnDestroy {
     return this.forma.get('pago_referencia') as FormControl;
   }
 
-  public closeEvoModal(event?: Event): void {
-    this._evo.closeEvoModal();
+  public closeEvoModal(event: Event): void {
+    this._evo.closeEvoModal(event,this.pago_referencia.value);
   }
   private showEvoOverlay(): void {
     this._evo.showEvoOverlay();

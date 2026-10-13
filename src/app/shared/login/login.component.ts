@@ -8,6 +8,7 @@ import { environment } from '../../../environments/environment';
 import {MatDialog,MatDialogConfig} from '@angular/material/dialog';
 import { DialogBodyComponent } from '../dialog-body/dialog-body.component';
 import { BlockUIService } from 'ng-block-ui';
+import { erroresFormulario } from 'src/app/modules/componentes-genericos/manejo-errores-forma/errores';
 
 @Component({
   selector: 'app-login',
@@ -37,7 +38,13 @@ export class LoginComponent implements OnInit {
   login() {
     this.blockUIService.start('global','cargando login')
     console.warn('ingresando')
-    this.subscription = this._log.getLogin(this.log)
+    if(this.log.user === undefined || this.log.password === undefined){
+      swal.fire({
+        icon: 'info',
+        title: 'Ingrese sus datos'
+      });
+    }else{
+      this.subscription = this._log.getLogin(this.log)
       .subscribe((data: any) => {
         this.blockUIService.stop('global')
         console.log('DATA',data);
@@ -47,7 +54,7 @@ export class LoginComponent implements OnInit {
             icon: 'success',
             title: 'Usuario Logeado',
             text: 'Bienvenido ' + data.usua_nombre,
-            timer: 2000
+            timer: 1000
           });
           sessionStorage.Login = this.log.user.toString();
           sessionStorage.Tipo = data.usua_tipo_usuario.toString();
@@ -67,12 +74,10 @@ export class LoginComponent implements OnInit {
       error => {
         this.blockUIService.stop('global')
         console.error('error',error)
-        swal.fire({
-          title: 'ERROR!!!',
-          text: error?.error?.Message??JSON.stringify(error),
-          icon: 'error'});
-      });
+        erroresFormulario.handleErrorMessageVentana(error);
+      })
     }
+  }
 
     portal(){
       window.location.href = `${environment.rutaPortal}`;
@@ -87,3 +92,4 @@ export class LoginComponent implements OnInit {
     }
 
 }
+

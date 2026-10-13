@@ -135,8 +135,15 @@ export class EvoService {
             });
             setTimeout(() => {
               if (checkout) {
+                this.clearHostedCheckoutSessionStorage();
                 this.startPolling(response.referencia)
-                checkout.showEmbeddedPage('#evo-embed-container');
+                if(this.esDispositivoMovil){
+                    checkout.showPaymentPage();
+                   //  checkout.showEmbeddedPage('#evo-embed-container');
+                } else{
+                    checkout.showEmbeddedPage('#evo-embed-container');
+                }
+                
               }
               //checkout.showEmbeddedPage('#evo-embed-container');
             }, 700);
@@ -155,6 +162,20 @@ export class EvoService {
     
   
   }
+  clearHostedCheckoutSessionStorage() {
+    const keys = ['HostedCheckout_sessionId', 'HostedCheckout_embedContainer', 'HostedCheckout_merchantState'];
+    keys.forEach(k => {
+      if (sessionStorage.getItem(k) !== null) {
+        console.log('Borrando sessionStorage key:', k);
+        sessionStorage.removeItem(k);
+      }
+    });
+  }
+esDispositivoMovil(): boolean {
+  
+  return /Android|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i
+    .test(navigator.userAgent);
+}
 
   public startPolling(referencia: string): void {
     this.stopPolling();

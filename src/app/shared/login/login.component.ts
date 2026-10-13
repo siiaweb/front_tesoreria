@@ -7,6 +7,7 @@ import { LoginService } from '../../services/login.service';
 import { environment } from '../../../environments/environment';
 import {MatDialog,MatDialogConfig} from '@angular/material/dialog';
 import { DialogBodyComponent } from '../dialog-body/dialog-body.component';
+import { BlockUIService } from 'ng-block-ui';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +21,9 @@ export class LoginComponent implements OnInit {
   constructor( 
     private router: Router, 
     private _log: LoginService ,
-    private dialog: MatDialog,) { }
+    private dialog: MatDialog,
+    private blockUIService: BlockUIService,
+  ) { }
 
   ngOnInit() {
   }
@@ -32,8 +35,11 @@ export class LoginComponent implements OnInit {
   }
   
   login() {
+    this.blockUIService.start('global','cargando login')
+    console.warn('ingresando')
     this.subscription = this._log.getLogin(this.log)
       .subscribe((data: any) => {
+        this.blockUIService.stop('global')
         console.log('DATA',data);
         console.warn(typeof data !== 'undefined',data)
         if ( typeof data !== 'undefined' && data['token']) {
@@ -59,9 +65,11 @@ export class LoginComponent implements OnInit {
         }	
       },
       error => {
+        this.blockUIService.stop('global')
+        console.error('error',error)
         swal.fire({
           title: 'ERROR!!!',
-          text: error.error.Message,
+          text: error?.error?.Message??JSON.stringify(error),
           icon: 'error'});
       });
     }

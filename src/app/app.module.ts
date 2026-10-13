@@ -24,7 +24,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import localeEsMx from '@angular/common/locales/es-MX';
 import { registerLocaleData } from '@angular/common';
 registerLocaleData(localeEsMx, 'es-Mx');
-import {LocationStrategy, HashLocationStrategy} from '@angular/common';
+
 
 import {NgxPaginationModule} from 'ngx-pagination';
 import { SettingsComponent } from './modules/settings/settings.component';
@@ -32,8 +32,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { ReceiptComponent } from './modules/receipt/receipt.component';
-import { PostsComponent } from './modules/posts/posts.component';
 
 
 @NgModule({
@@ -67,7 +65,6 @@ import { PostsComponent } from './modules/posts/posts.component';
         MatAutocompleteModule
     ],
     providers: [{ provide: LOCALE_ID, useValue: 'es-MX' }, 
-        //{ provide: LocationStrategy, useClass: HashLocationStrategy }
     ],
     bootstrap: [AppComponent]
 })

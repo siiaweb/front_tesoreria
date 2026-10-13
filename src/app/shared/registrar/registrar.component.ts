@@ -38,7 +38,7 @@ export class RegistrarComponent implements OnInit {
 
   ngOnInit(): void {
     window.scroll(0, 0);
-    this.blockUI.start();
+    this.blockUI.start('cargando registrar');
     this.crearFormulario();
 
     this._reg.getTtipouser().subscribe(

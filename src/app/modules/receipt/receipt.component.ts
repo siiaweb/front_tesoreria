@@ -3,6 +3,9 @@ import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pag
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import Swal from 'sweetalert2';
 import { ActivatedRoute } from '@angular/router';
+import { switchMap } from 'rxjs/operators';
+import { EMPTY } from 'rxjs';
+import { EvoService } from 'src/app/services/dashboard/evo.service';
 
 @Component({
   selector: 'app-receipt',
@@ -16,26 +19,113 @@ export class ReceiptComponent implements OnInit {
   p: number = 1;
 
   recibos: any;
-  constructor(private _ps: PagoServiciosService, private route: ActivatedRoute) { }
+  constructor(private _ps: PagoServiciosService, private route: ActivatedRoute, private _evo: EvoService) { }
 
   ngOnInit() {
 
     const usuario = sessionStorage.getItem('usuID');
-   this.resultIndicator =
+    this.resultIndicator =
       this.route.snapshot.queryParamMap.get('resultIndicator');
 
     if (!usuario) {
       console.error('No existe usuID en sessionStorage');
       return;
     }
-    this._ps.getRecibosPagosOnline(usuario).subscribe(
-      (recibos) => {
-        this.recibos = recibos
-        //console.log(recibos);
+    const referencia = sessionStorage.getItem('MasterID');
+    const resultIndicator =
+      this.route.snapshot.queryParamMap.get('resultIndicator');
+
+    this.resultIndicator = resultIndicator;
+
+    if (!usuario) {
+      console.error('Faltan datos para procesar el recibo:', {
+        usuario
+      });
+      return;
+    }
+    this.blockUI.start('cargando...<espere por favor>')
+    this._ps.getRecibosPagosOnline(usuario).pipe(
+
+      switchMap((recibos: Array<any>) => {
+        this.recibos = recibos;
+
+        if (!resultIndicator) {
+          return EMPTY;
+        }
+        const recibo = this.recibos.slice().find(
+          item => {
+            // console.log('item', item, item.resultIndicator === resultIndicator, item.estatus == 'P')
+            return item.successIndicator === resultIndicator && item.estatus == 'P'
+          }
+        );
+
+        // alert('wait')
+
+        if (!recibo) {
+          this.blockUI.stop();
+          console.log('No se encontró un recibo pendiente para este resultIndicator.');
+          return EMPTY;
+        }
+
+        if (!referencia) {
+          this.blockUI.stop();
+          console.error('No existe MasterID en sessionStorage.');
+          return EMPTY;
+        }
+        return this._evo.insertarRespuestaConPdf(referencia, resultIndicator);
+      })
+    ).subscribe({
+      next: response => {
+       
+        this.blockUI.stop();
+        console.warn('cambiando')
+        const disposition = response.headers.get('Content-Disposition');
+        this.recibos = this.recibos.map((item: any) =>
+          item.successIndicator === resultIndicator
+            ? { ...item, estatus: 'A' }
+            : item
+        );
+        const coincidencia = disposition.match(/filename\*?=(?:UTF-8''|")?([^";]+)/i);
+        let nombre = coincidencia && coincidencia[1]
+          ? coincidencia[1].replace(/"/g, '')
+          : 'reporte.pdf';
+        try {
+          nombre = decodeURIComponent(nombre);
+        } catch {
+          // Conserva el nombre original si no tiene codificación URL válida.
+        }
+        sessionStorage.removeItem("MasterID");
+        sessionStorage.removeItem("shoppingCart");
+        // alert('test')
+        const blob = new Blob([response.body], { type: 'application/pdf' });
+        if (!blob) {
+          console.error('La respuesta no contiene el PDF.');
+          return;
+        }
+        //alert('?')
+        const url = URL.createObjectURL(blob);
+        const enlace = document.createElement('a');
+        enlace.href = url;
+        enlace.download = decodeURIComponent(nombre);
+        document.body.appendChild(enlace);
+        enlace.click();
+        enlace.remove();
+
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        this._evo.stopPolling();
+      },
+      error: error => {
+        alert('err'+JSON.stringify(error))
+        this.blockUI.stop();
+        console.error('Error en el flujo:', error)
+      },
+      complete: () => {
+        this.blockUI.stop();
       }
-    )
+    });
 
   }
+
 
 
 

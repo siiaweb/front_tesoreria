@@ -432,10 +432,12 @@ export class PostsComponent implements OnInit, OnDestroy {
 
     this._evo.mostrarEvo(entity).subscribe({
       next: (resp) => {
+        this.blockUIService.stop('global')
         this.forma.get('referencia').setValue(resp.referencia);
 
       },
       error: (error) => {
+        this.blockUIService.stop('global')
         Swal.fire({
           title: 'ERROR!!!',
           text: JSON.stringify(error),
@@ -450,90 +452,12 @@ export class PostsComponent implements OnInit, OnDestroy {
   }
 
 
-  mostrarEvo(entity: any) {
-    this._evo.getEvo(entity).subscribe({
-      next: (response: any) => {
-        this.blockUI.stop();
-        console.warn('response', response)
-        this.session_id = response.session_id;
-        this.successIndicator = response.successIndicator;
-        sessionStorage.MasterID = response.referencia;
-        this.showEvoOverlay();
-        setTimeout(() => {
-          try {
-            const checkout: EvoCheckout | any = (window as any).Checkout;
-            if (!checkout) {
-              throw new Error('El SDK de Checkout no está cargado.');
-            }
-            checkout.configure({
-              session: {
-                id: response.session_id
-              },
-            });
-            setTimeout(() => {
-              //checkout.showPaymentPage();
-              // checkout.showLightbox();
-              if (checkout) {
-                this.startPolling(response.referencia)
-                checkout.showEmbeddedPage('#evo-embed-container');
-              }
-              //checkout.showEmbeddedPage('#evo-embed-container');
-            }, 700);
 
-            console.log(checkout);
-          } catch (e) {
-            console.error('Error invocando showEmbeddedPage:', e);
-            this.ngZone.run(() => this.handleError(e));
-            this.closeEvoModal();
-          }
-        }, 2000); // 200ms es suficiente si el overlay ya está visible
-
-      },
-      error: (e) => {
-        this.blockUIService.stop('global');
-        console.error('e.getEvo', e)
-        Swal.fire({
-          title: 'ERROR!!!',
-          text: JSON.stringify(e),
-          icon: 'error'
-        });
-      },
-      complete: () => {
-        console.log('complete')
-        this.blockUIService.stop('global');
-      }
-    })
-  }
   
-  clearHostedCheckoutSessionStorage() {
-    const keys = ['HostedCheckout_sessionId', 'HostedCheckout_embedContainer', 'HostedCheckout_merchantState'];
-    keys.forEach(k => {
-      if (sessionStorage.getItem(k) !== null) {
-        console.log('Borrando sessionStorage key:', k);
-        sessionStorage.removeItem(k);
-      }
-    });
-  }
-
-  // Mostrar overlay con clase 'open' y forzar change detection
-  private showEvoOverlay(): void {
-    const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
-    if (!overlay) { console.error('Overlay no encontrado'); return; }
-    overlay.classList.add('open');
-    document.body.style.overflow = 'hidden';
-    void overlay.offsetHeight;
-  }
 
   // Cerrar
   public closeEvoModal(event?: Event): void {
-    this.blockUI.stop();
-    if (event) event.stopPropagation();
-    const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
-    if (overlay) overlay.classList.remove('open');
-    const container = document.getElementById('evo-embed-container');
-    if (container) container.innerHTML = '';
-    document.body.style.overflow = '';
-    this.clearHostedCheckoutSessionStorage();
+    this._evo.closeEvoModal();
   }
 
   getCatalogoServicios(tipo: string) {
@@ -607,19 +531,11 @@ export class PostsComponent implements OnInit, OnDestroy {
     }
   }
 
-
-
-  // @HostListener('window:pagehide', ['$event'])
-  // onPageHide(event: PageTransitionEvent): void {
-  //   alert('usuario saliendo de la página')
-  //   console.log('La página está saliendo o entrando en BFCache', {
-  //     persisted: event.persisted
-  //   });
-  // }
   @HostListener('window:pageshow', ['$event'])
   onPageShow(event: PageTransitionEvent): void {
     if (event.persisted) {
       console.log('La página fue restaurada desde BFCache');
+      window.location.reload()
       // Consulta aquí el estado de la transacción al backend.
     }
   }

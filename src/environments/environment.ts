@@ -5,13 +5,13 @@
 export const environment = {
   production: false,
 
-  rutaPortal: 'http://localhost:4500/',
+  rutaPortal: 'http://172.20.11.123:4500/',
 
   //rutaAPI: 'http://192.168.1.190:8090/api'
   //rutaAPI: 'http://192.168.10.38:8090/api'
   //rutaAPI: 'https://tesoreria.ujed.mx/api'
-  rutaAPI: 'http://localhost:8090/api',
-  //rutaAlumno:'http://localhost:8085/SIIAWEB'
+  rutaAPI: 'http://172.20.11.123:8090/api',
+  //rutaAlumno:'http://127.0.0.0.1:8085/SIIAWEB'
   rutaAlumno:'https://sistemas.ujed.mx/SIIA'
 };
 

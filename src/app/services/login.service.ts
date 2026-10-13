@@ -18,7 +18,9 @@ export class LoginService {
 
 
   getLogin(login: Login) {
-    return this.http.post(this.urlEndPoint + '/tusuarios/' + login.user + '/' + login.password, login).pipe(
+    const urlLogin = this.urlEndPoint + '/tusuarios/' + login.user + '/' + login.password;
+    console.log('urllogin',urlLogin)
+    return this.http.post(urlLogin, login).pipe(
       map((response: any) => {
         return response;
       })

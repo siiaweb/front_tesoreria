@@ -18,7 +18,6 @@ export class FooterComponent implements OnInit {
       (usuario) => {
         this.tipoUsuario = usuario[0].tipo_usuario;
         this.uresUsuario = usuario[0].unidad_responsable;
-  
       }
     )
   }

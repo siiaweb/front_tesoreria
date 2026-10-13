@@ -40,8 +40,18 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   padding: 10px !important;
 }
 
+.titulos-container{
+  display: flex;
+  flex-direction: column;
+  gap: 10px !important;
+}
+
 @media (min-width: 1024px) {
   .main-container {
+    flex-direction: row; 
+  }
+
+  .titulos-container {
     flex-direction: row; 
   }
 

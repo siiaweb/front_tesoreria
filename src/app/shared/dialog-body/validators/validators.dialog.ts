@@ -18,4 +18,21 @@ export function matchWithField(originalFieldKey: string): ValidatorFn {
   
       return null;
     };
+}
+
+export function fieldIdValidation(otherField: string): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    if (!control.parent) {
+      return null;
+    }
+
+    if(control.value == null || control.value === '') {
+      return null;
+    }
+
+    const otherControl = control.parent.get(otherField)?.value;
+    return (otherControl == null || otherControl == '') 
+    ? {noId: true}
+    : null;
   }
+}

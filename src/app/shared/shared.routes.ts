@@ -6,7 +6,7 @@ import { RegistrarComponent } from './registrar/registrar.component';
 
 const sharedRoutes: Routes = [
   { path: '', component: LoginComponent },
-  { path: 'registrar', component: RegistrarComponent },
+  { path: 'registrar/:tipo', component: RegistrarComponent },
   //{ path: '**', pathMatch: 'full', redirectTo: '' }
 ];
 

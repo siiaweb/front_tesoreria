@@ -234,6 +234,8 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
 
   .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mat-mdc-form-field-infix {
     padding: 3px 8px 0px 8px !important;
+    max-height: 30px!important;
+    min-height: 30px!important;
   } 
 
   .mdc-text-field--outlined {
@@ -280,7 +282,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
     width: 24px;
     height: 24px;
     padding: 0px;
-    margin-bottom: 24px;
   }
 }
 

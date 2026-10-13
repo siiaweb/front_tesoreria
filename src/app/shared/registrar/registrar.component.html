@@ -1,125 +1,241 @@
 <block-ui>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-
-<section class="d-flex align-items-center justify-content-center" style="height: 100vh;">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-11 mx-auto">
-                <div class="signup">
-                    <div class="row">
-                        <div class="col-md-6 signup-greeting overlay" style="background-image: url(assets/images/background/signup.jpg);">
-                            <img src="assets/images/logo.png" alt="logo">
-                          <h4>Bienvenido!</h4>
-                          <div class="justify-content-space-around" style="text-align:justify">
-                            <p>Para tener acceso a los servicios en línea de la Tesorería de la UJED, es necesario generar usuario y contraseña. 
-                             <br>Para <b> <u>Alumnos</u></b>  es necesario que conozcan su número de matrícula (asignada en servicios escolares), unidad académica y carrera. 
-                            <br>Para <b> <u>Empleados</u></b> es necesario conozcan su número de matrícula y la unidad académica o administrativa a la qur pertenecen. 
-                            <br>Para <u><b>URES</b> (unidades académicas)</u> y <b>escuelas incorporadas</b>, es necesario  que conozcan su número de persona (esta se proporciona en la Tesorería en la coordinación de ingresos
-                            <br>6188271257  Ext. 3930)
-                            <br>Para <u>público en general</u>, sólo es necesario el nombre. 
-                            Dudas: ( 6188271257 Ext. 3930 )</p>
-                            
-                        </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="signup-form">
-                                <form class="row" [formGroup]="forma" (ngSubmit)="guardar()">
-                                    <div class="col-lg-12">
-                                        <h4>Registro</h4>
-                                        <p class="float-sm-right">¿Ya tienes una cuenta?
-                                            <a routerLink="">Inicia Sesión</a>
-                                        </p>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <small *ngIf="tipoUsuarioNovalido" class="text-danger">
-                                            Selecciona un tipo de usuario
-                                        </small>
-                                        <select formControlName="usua_tipo_usuario" class="form-control" (change)="Hidden($event.target.value);" [class.is-invalid]="tipoUsuarioNovalido">
-                                            <option selected disabled value="">- Selecciona un tipo de usuario -</option>
-                                            <option *ngFor="let t of ttipouser" value="{{ t.tipo_userid }}">{{ t.tipo_descrip }}</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-lg-12" *ngIf="!isHidden">
-                                        <small *ngIf="uresNovalido" class="text-danger">
-                                            Selecciona una ures
-                                        </small>
-                                        <select formControlName="usua_ures" class="form-control" (change)="Programas($event.target.value);" [class.is-invalid]="uresNovalido">
-                                            <option selected disabled value="">- Selecciona una ures-</option>
-                                            <option *ngFor="let u of ures" value="{{ u.ures_ures }}">{{ u.ures_uresdesc }}</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-lg-12" *ngIf="!isHidden">
-                                        <select formControlName="usua_prog" class="form-control">
-                                            <option selected disabled value="">- Selecciona un programa -</option>
-                                            <option *ngFor="let p of programas" value="{{ p.prog_prog }}">{{ p.prog_progdesc }}</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-lg-12" *ngIf="!isHidden">
-                                        <select formControlName="usua_nivel" class="form-control">
-                                            <option selected disabled value="">- Selecciona un nivel academico -</option>
-                                            <option *ngFor="let tn of tnivelures" value="{{ tn.nive_nivel }}">{{ tn.nive_descrip }}</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <small *ngIf="userNovalido" class="text-danger">
-                                            Ingrese un Usuario
-                                        </small>
-                                        <input type="text" class="form-control" formControlName="usua_usuario" maxlength="20" placeholder="Usuario" autocomplete="off" oninput="this.value = this.value.toUpperCase()" [class.is-invalid]="userNovalido">
-                                    </div>
-                                    <div class="col-lg-12" *ngIf="!isHiddenMatricula">
-                                        <small *ngIf="matriculaNovalido" class="text-danger">
-                                            Ingrese una matirucla o numero de persona
-                                        </small>
-                                        <input  type="text" 
-                                                class="form-control" 
-                                                formControlName="usua_persona" 
-                                                maxlength="10" 
-                                                placeholder="Matricula o No. Persona" 
-                                                autocomplete="off" 
-                                                oninput="this.value = this.value.toUpperCase()" 
-                                                [class.is-invalid]="matriculaNovalido"
-                                                (blur)="buscaNombre()">
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <small *ngIf="nombreNovalido" class="text-danger">
-                                            Ingrese un Nombre
-                                        </small>
-                                        <input type="text" class="form-control" formControlName="usua_nombre" maxlength="100" placeholder="Nombre completo" autocomplete="off" oninput="this.value = this.value.toUpperCase()" [class.is-invalid]="nombreNovalido">
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <small *ngIf="telefonoNovalido" class="text-danger">
-                                            Ingrese un numero de telefono
-                                        </small>
-                                        <input type="text" class="form-control" formControlName="usua_tel" maxlength="10" placeholder="Telefono (Solo numeros ej. 6181234567)" autocomplete="off" [class.is-invalid]="telefonoNovalido">
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <small *ngIf="emailNovalido" class="text-danger">
-                                            Ingrese un correo electornico
-                                        </small>
-                                        <input type="email" class="form-control" formControlName="usua_email" maxlength="50" placeholder="Email" autocomplete="off" [class.is-invalid]="emailNovalido">
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <small *ngIf="passwordNovalido" class="text-danger">
-                                            Ingrese un password
-                                        </small>
-                                        <input type="password" class="form-control" formControlName="usua_paswd" maxlength="50" placeholder="Password" autocomplete="off" [class.is-invalid]="passwordNovalido">
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <input type="password" class="form-control" formControlName="repassword" maxlength="50" placeholder="Confirmar Password" autocomplete="off" [class.is-invalid]="repasswordNovalido">
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <button class="btn btn-primary btn-sm" [disabled]="!forma.valid">Registrar</button>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <button class="btn btn-secondary btn-sm" routerLink="">Regresar</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+    <form [formGroup]="forma">
+        <div class="contenedor-general">
+            <header class="header">
+                <div class="header-container">
+                    <div class="logo-section">
+                        <img (click)='portal()' src="assets/images/Logo UJED vertical negro transparencia.png" class="logo">
+                    </div>
+                    <div class="header-divider"></div>
+                    <div class="portal-title-section">
+                        <h2>PORTAL DE PAGOS</h2>
+                        <h3>Tesorería UJED</h3>
+                        <p>Bienvenido(a)</p>
                     </div>
                 </div>
-            </div>
+            </header>
+    
+            <main class="main-container">
+                <div class="card-wrapper-reg">
+                    <section class="login-section">
+                        <div class="titulo_registro"> 
+                            <h3 class="section-title">{{titulo}}</h3>
+                            <button type="button" class="btn-regresar" (click)='portal()'>
+                                <i class="bi bi-arrow-left-short"></i>
+                                Regresar
+                            </button>
+                        </div>
+                        <div class="login-form">
+                            <section *ngIf="tipo == 'URESINC'">
+                                <h3 class="normal-title" style="margin-bottom: 10px;">Seleccione el tipo de usuario a registrar</h3>
+                                <div class="radio-container" (change)="cambioUresPersonal()">
+                                    <input id="superUsN" type="radio" value = "30" formControlName="usua_tipo_usuario"/>
+                                    <label for = "superUsN"> URES </label>
+                                    <input id="superUsS" type="radio" value = "40" formControlName="usua_tipo_usuario"/>
+                                    <label for = "superUsS"> Incorporadas </label>
+                                </div>
+                                <div class="div-error" *ngIf="forma.get('usua_tipo_usuario').invalid && forma.get('usua_tipo_usuario').touched">* campo obligatorio</div>
+                            </section>
+                            <section *ngIf="forma.get('usua_tipo_usuario').value === '30' || forma.get('usua_tipo_usuario').value === '10'">
+                                <mat-form-field class="custom-form-field" appearance="outline" [ngClass]="{ 'custom-form-field-invalid': forma.get('ures_desc').invalid && forma.get('ures_desc').touched }">
+                                    <mat-label>URES</mat-label>
+                                    <input
+                                        type="text"
+                                        matInput
+                                        formControlName="ures_desc"
+                                        [matAutocomplete]="autoUres"
+                                        onfocus="this.select()"
+                                        (input)="buscarUres()"
+                                        (blur)="validarUres()">
+                                        <button
+                                            type="button"
+                                            mat-icon-button
+                                            matSuffix
+                                            matTooltip="Limpiar Selección"
+                                            *ngIf="forma.get('ures_desc')?.value"
+                                            (click)="deseleccionarUres()"
+                                        >
+                                            <i class="bi bi-x"></i>
+                                        </button>
+                                        <mat-autocomplete #autoUres="matAutocomplete" autoActiveFirstOption="true"  panelClass="autocomplete-dropdown" (optionSelected)="seleccionarUres($event)">
+                                            <mat-option *ngFor="let selected of filteredUres" [value]="selected">
+                                              <div class="dropdown-item">
+                                                <div>
+                                                  <div class="item-title">{{selected.uresdesc}}</div>
+                                                </div>
+                                                <span class="item-code">{{selected.ures}}</span>
+                                              </div>
+                                            </mat-option>
+                                        </mat-autocomplete>
+                                </mat-form-field>
+                                <div class="div-error" *ngIf="forma.get('ures_desc').hasError('required') && forma.get('ures_desc').touched">* campo obligatorio</div>
+                                <div class="div-error" *ngIf="forma.get('ures_desc').hasError('noId') && forma.get('ures_desc').touched">seleccione una opción valida</div>
+                                <mat-form-field class="custom-form-field" appearance="outline" style="margin-top: 10px;">
+                                    <mat-label>PROGRAMA</mat-label>
+                                    <mat-select formControlName="usua_prog" panelClass="autocomplete-dropdown">
+                                        <mat-option *ngFor="let option of programas" [value]="option.prog_prog">
+                                            <div class="dropdown-item">
+                                              <div class="item-title">{{ option.prog_progdesc }}</div>
+                                            </div>
+                                        </mat-option>
+                                        <mat-option *ngIf="!forma.get('usua_ures').value && programas?.length === 0">
+                                            <div class="dropdown-item">
+                                                <div class="item-error">Seleccione una URES</div>
+                                              </div>
+                                        </mat-option>
+                                        <mat-option *ngIf="forma.get('usua_ures').value && programas?.length === 0">
+                                            <div class="dropdown-item">
+                                                <div class="item-error">No hay datos para esta URES</div>
+                                              </div>
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </section>
+                            <section>
+                                <h3 class="normal-title" style="margin-bottom: 10px;">Datos personales</h3>
+                                <div class="div-twoinput" *ngIf="forma.get('usua_tipo_usuario').value !== '50'">
+                                    <div class="id-input">
+                                        <mat-form-field class="custom-form-field" appearance="outline" [ngClass]="{ 'custom-form-field-invalid': forma.get('usua_persona').invalid && forma.get('usua_persona').touched }">
+                                            <mat-label>MATRÍCULA / NO. PERSONA</mat-label>
+                                            <input
+                                            type="text"
+                                            matInput
+                                            formControlName="usua_persona"
+                                            maxlength="10"
+                                            (blur)="buscaNombre()">
+                                        </mat-form-field>
+                                        <div class="div-error" *ngIf="forma.get('usua_persona').hasError('required') && forma.get('usua_persona').touched">* campo obligatorio</div>
+                                    </div>
+                                    <div class="desc-input">
+                                        <mat-form-field class="custom-form-field" appearance="outline" [ngClass]="{ 'custom-form-field-invalid': forma.get('usua_nombre').invalid && forma.get('usua_nombre').touched }">
+                                            <mat-label>NOMBRE</mat-label>
+                                            <input
+                                            type="text"
+                                            matInput
+                                            formControlName="usua_nombre"
+                                            maxlength="100">
+                                        </mat-form-field>
+                                        <div class="div-error" *ngIf="forma.get('usua_nombre').hasError('required') && forma.get('usua_nombre').touched">* campo obligatorio</div>
+                                    </div>
+                                </div>
+                                <div class="div-twoinput" style="flex-direction: column !important;" *ngIf="forma.get('usua_tipo_usuario').value === '50'">
+                                    <mat-form-field class="custom-form-field" appearance="outline" [ngClass]="{ 'custom-form-field-invalid': forma.get('usua_nombre').invalid && forma.get('usua_nombre').touched }">
+                                        <mat-label>NOMBRE</mat-label>
+                                        <input
+                                        type="text"
+                                        matInput
+                                        formControlName="usua_nombre"
+                                        maxlength="100">
+                                    </mat-form-field>
+                                    <div class="div-error" *ngIf="forma.get('usua_nombre').hasError('required') && forma.get('usua_nombre').touched">* campo obligatorio</div>
+                                </div>
+                                <div class="div-twoinput" style="margin-top: 10px;">
+                                    <div class="input-50">
+                                        <mat-form-field class="custom-form-field" appearance="outline" [ngClass]="{ 'custom-form-field-invalid': forma.get('usua_tel').invalid && forma.get('usua_tel').touched }">
+                                            <mat-label>TELÉFONO</mat-label>
+                                            <input
+                                            type="tel"
+                                            matInput
+                                            formControlName="usua_tel"
+                                            maxlength="10">
+                                        </mat-form-field>
+                                        <div class="div-error" *ngIf="forma.get('usua_tel').hasError('required') && forma.get('usua_tel').touched">* campo obligatorio</div>
+                                        <div class="div-error" *ngIf="forma.get('usua_tel').hasError('pattern') && forma.get('usua_tel').touched">Ingrese solo números</div>
+                                    </div>
+                                    <div class="input-50">
+                                        <mat-form-field class="custom-form-field" appearance="outline" [ngClass]="{ 'custom-form-field-invalid': forma.get('usua_usuario').invalid && forma.get('usua_usuario').touched }">
+                                            <mat-label>USUARIO</mat-label>
+                                            <input
+                                            type="text"
+                                            matInput
+                                            formControlName="usua_usuario"
+                                            maxlength="20">
+                                        </mat-form-field>
+                                        <div class="div-error" *ngIf="forma.get('usua_usuario').hasError('required') && forma.get('usua_usuario').touched">* campo obligatorio</div>
+                                    </div>
+                                </div>
+                                <div class="div-twoinput" style="margin-top: 10px;">
+                                    <div class="input-50">
+                                        <mat-form-field class="custom-form-field" appearance="outline" [ngClass]="{ 'custom-form-field-invalid': forma.get('usua_email').invalid && forma.get('usua_email').touched }">
+                                            <mat-label>CORREO</mat-label>
+                                            <input
+                                            type="text"
+                                            matInput
+                                            formControlName="usua_email"
+                                            maxlength="50"
+                                            (input)="updateValidity('validemail')">
+                                        </mat-form-field>
+                                        <div class="div-error" *ngIf="forma.get('usua_email').hasError('required') && forma.get('usua_email').touched">* campo obligatorio</div>
+                                        <div class="div-error" *ngIf="forma.get('usua_email').hasError('email') && forma.get('usua_email').touched">No tiene formato de correo</div>
+                                    </div>
+                                    <div class="input-50">
+                                        <mat-form-field class="custom-form-field" appearance="outline" [ngClass]="{ 'custom-form-field-invalid': forma.get('validemail').invalid && forma.get('validemail').touched }">
+                                            <mat-label>COMPROBAR CORREO</mat-label>
+                                            <input
+                                            type="text"
+                                            matInput
+                                            formControlName="validemail"
+                                            maxlength="50">
+                                        </mat-form-field>
+                                        <div class="div-error" *ngIf="forma.get('validemail').hasError('required') && forma.get('validemail').touched">* campo obligatorio</div>
+                                        <div class="div-error" *ngIf="forma.get('validemail').hasError('email') && forma.get('validemail').touched">No tiene formato de correo</div>
+                                        <div class="div-error" *ngIf="forma.get('validemail').hasError('fieldsDoNotMatch') && forma.get('validemail').touched">Los correos no coinciden</div>
+                                    </div>
+                                </div>
+                                <div class="div-twoinput" style="margin-top: 10px;">
+                                    <div class="input-50">
+                                        <mat-form-field class="custom-form-field" appearance="outline" [ngClass]="{ 'custom-form-field-invalid': forma.get('usua_paswd').invalid && forma.get('usua_paswd').touched }">
+                                            <mat-label>CONTRASEÑA</mat-label>
+                                            <input
+                                            type="password"
+                                            matInput
+                                            formControlName="usua_paswd"
+                                            id="usua_paswd"
+                                            maxlength="50"
+                                            (input)="updateValidity('repassword')">
+                                            <button
+                                                type="button"
+                                                mat-icon-button
+                                                matSuffix
+                                                *ngIf="forma.get('usua_paswd')?.value"
+                                                (click)="togglePassword('usua_paswd')"
+                                            >
+                                                <i class="bi bi-lock-fill" style="font-size: 15px !important;"></i>
+                                            </button>
+                                        </mat-form-field>
+                                        <div class="div-error" *ngIf="forma.get('usua_paswd').hasError('required') && forma.get('usua_paswd').touched">* campo obligatorio</div>
+                                    </div>
+                                    <div class="input-50">
+                                        <mat-form-field class="custom-form-field" appearance="outline" [ngClass]="{ 'custom-form-field-invalid': forma.get('repassword').invalid && forma.get('repassword').touched }">
+                                            <mat-label>COMPROBAR CONTRASEÑA</mat-label>
+                                            <input
+                                            type="password"
+                                            matInput
+                                            formControlName="repassword"
+                                            id="repassword"
+                                            maxlength="50">
+                                            <button
+                                                type="button"
+                                                mat-icon-button
+                                                matSuffix
+                                                *ngIf="forma.get('repassword')?.value"
+                                                (click)="togglePassword('repassword')"
+                                            >
+                                                <i class="bi bi-lock-fill" style="font-size: 15px !important;"></i>
+                                            </button>
+                                        </mat-form-field>
+                                        <div class="div-error" *ngIf="forma.get('repassword').hasError('required') && forma.get('repassword').touched">* campo obligatorio</div>
+                                        <div class="div-error" *ngIf="forma.get('repassword').hasError('fieldsDoNotMatch') && forma.get('repassword').touched">Las contraseñas no coinciden</div>
+                                    </div>
+                                </div>
+                                <div class="div-twoinput" style="margin-top: 10px;">
+                                    <button type="button" class="btn-submit" (click)="guardar()">Registrar</button>
+                                </div>
+                            </section>
+                        </div>
+                    </section>
+                </div>
+            </main>
         </div>
-    </div>
-</section>
+    </form>
 </block-ui>

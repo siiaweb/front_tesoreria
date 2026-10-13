@@ -16,7 +16,7 @@ import { catchError, startWith, switchMap, takeUntil } from 'rxjs/operators';
 import { EMPTY, interval, Subscription, timer } from 'rxjs';
 import { Router } from '@angular/router';
 
-interface EvoCheckout {
+export interface EvoCheckout {
   configure(options: {
     session: {
       id: string;
@@ -422,7 +422,7 @@ export class PostsComponent implements OnInit, OnDestroy {
       usuaid: this.forma.get('user').value,
       montoapagar: this.forma.get('total').value,
       referencia: this.forma.get('referencia').value,
-      concepto: "PAGO DE " + (this.forma.get('nombre').value || this.forma.get('user').value) + " REF: " + this.forma.get('referencia').value + " FOLIO: ",
+      concepto: "PAGO DE " + (this.forma.get('nombre').value || this.forma.get('user').value),
       user: this.forma.get('user').value || null,
       foldescto: this.forma.get('descuento').value || null,
       detalle: detalle
@@ -430,7 +430,23 @@ export class PostsComponent implements OnInit, OnDestroy {
     sessionStorage.removeItem("shoppingCart");
     sessionStorage.shoppingCart = JSON.stringify({ forma: this.forma.getRawValue(), detalles: this.arreglo.getRawValue() });
 
-    this.mostrarEvo(entity)
+    this._evo.mostrarEvo(entity).subscribe({
+      next: (resp) => {
+        this.forma.get('referencia').setValue(resp.referencia);
+
+      },
+      error: (error) => {
+        Swal.fire({
+          title: 'ERROR!!!',
+          text: JSON.stringify(error),
+          icon: 'error'
+        });
+      },
+      complete:() => {
+
+      }
+    })
+    //this.mostrarEvo(entity)
   }
 
 

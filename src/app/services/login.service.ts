@@ -18,13 +18,11 @@ export class LoginService {
 
 
   getLogin(login: Login) {
-
     return this.http.post(this.urlEndPoint + '/tusuarios/' + login.user + '/' + login.password, login).pipe(
       map((response: any) => {
         return response;
       })
     );
-
   }
 
   logout() {

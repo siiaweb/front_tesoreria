@@ -5,11 +5,29 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+$font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+$color-text-main: #0F172A;
+$color-text-muted: #64748B;
+$color-text-light: #94A3B8;
+
+$color-success: #059669;
+$color-success-dark: #047857;
+
 $color-bg-app: #F8FAFC;
 $color-surface: #FFFFFF;
 $color-border: #E2E8F0;
 $color-primary: #2563EB;
+$dark-color: #951823;
+$light-color: #F2F2F2;
+$color-danger: #EF4444;
 $radius-md: 0.75rem;
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+@mixin flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 
 .contenedor-general {
     min-height: 100vh;
@@ -90,11 +108,29 @@ $radius-md: 0.75rem;
     gap: 30px;
 }
 
+.card-wrapper-reg {
+    background-color: #f6f6f6;
+    backdrop-filter: blur(5px);
+    width: 100%;
+    max-width: 960px;
+    border-radius: 16px;
+    padding: 40px;
+    display: flex;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    gap: 30px;
+}
+
 .section-title {
     font-size: 1.5rem;
     font-weight: 400;
     color: #111;
     margin-bottom: 25px;
+}
+
+.normal-title {
+    font-size: 15px;
+    font-weight: 400;
+    color: #111;
 }
 
 .user-types-section {
@@ -214,6 +250,319 @@ $radius-md: 0.75rem;
     text-decoration: underline;
     color: #951823;
 }
+
+.radio-container {
+    background: #fff;
+    border: 1px solid $light-color;
+    border-radius: 3px;
+    display: flex;
+    gap: 10px;
+    padding: 5px;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 8px;
+}
+
+
+
+.radio-container label {
+    background: $light-color;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    height: 40px;
+    line-height: 26px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    transition: .2s all ease-in-out;
+    width: 100% !important;
+    font-size: 15px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.radio-container label:hover{
+    background: #d1d1d1;
+}
+  
+.radio-container input[type="radio"] {
+    display: none;
+}
+
+.radio-container input[type="radio"]:checked + label {
+    background: $dark-color;
+    border: 1px solid $dark-color;
+    color: white;
+    font-size: 15px;
+    font-weight: 400;
+}
+
+.titulo_registro{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-direction: row;
+    width: 100% !important;
+}
+
+.btn-regresar{
+    background-color: $light-color;
+    color: black;
+    border: none;
+    padding: 5px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-regresar:hover{
+    background-color: #d1d1d1;
+}
+
+.div-error{
+    width: 100% !important;
+    color: $color-danger;
+    text-align: left;
+    font-size: 12px !important;
+}
+
+::ng-deep .custom-form-field {
+    width: 100% !important;
+    font-family: $font-sans !important;
+    color: #555;
+    font-size: 10px !important;
+  
+    .mdc-notched-outline__leading {
+      border-radius: $radius-md 0 0 $radius-md !important;
+    }
+  
+    .mdc-notched-outline__trailing {
+      border-radius: 0 $radius-md $radius-md 0 !important;
+    }
+  
+    .mdc-notched-outline__notch {
+      border-radius: 0 !important;
+    }
+  
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: $color-border !important;
+    }
+  
+    .mdc-notched-outline--no-label .mdc-notched-outline__notch {
+      border-top: 1px solid $color-border !important; 
+    }
+  
+    .mat-mdc-text-field-wrapper{
+      height: 30px!important;
+      max-height: 30px!important;
+      background-color: #E9EDF1;
+    }
+  
+    .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mat-mdc-form-field-infix {
+      padding: 3px 8px 0px 8px !important;
+    } 
+  
+    .mdc-text-field--outlined {
+      background-color: $color-bg-app !important;
+      border-radius: $radius-md !important;
+      transition: all 0.2s ease !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+  
+    input.mat-mdc-input-element {
+      font-size: 13px !important;
+      font-family: $font-sans !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0;
+    }
+  
+    .mat-mdc-select{
+      font-size: 13px !important;
+      font-family: $font-sans !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0;
+    }
+  
+    &.mat-focused {
+      .mdc-text-field--outlined {
+        background-color: $color-surface !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+        border-radius: $radius-md !important;
+      }
+  
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-color: $color-primary !important;
+      }
+    }
+  
+    .mat-mdc-form-field-subscript-wrapper {
+      display: none !important;
+    }
+  
+    .mat-mdc-icon-button.mat-mdc-button-base {
+      width: 24px;
+      height: 24px;
+      padding: 0px;
+      margin-bottom: 24px;
+    }
+}
+
+::ng-deep .custom-form-field-invalid {
+    width: 100% !important;
+    font-family: $font-sans !important;
+    color: #555;
+    font-size: 10px !important;
+  
+    .mdc-notched-outline__leading {
+      border-radius: $radius-md 0 0 $radius-md !important;
+    }
+  
+    .mdc-notched-outline__trailing {
+      border-radius: 0 $radius-md $radius-md 0 !important;
+    }
+  
+    .mdc-notched-outline__notch {
+      border-radius: 0 !important;
+    }
+  
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: $color-danger !important;
+    }
+  
+    .mdc-notched-outline--no-label .mdc-notched-outline__notch {
+      border-top: 1px solid $color-danger !important; 
+    }
+  
+    .mat-mdc-text-field-wrapper{
+      height: 30px!important;
+      max-height: 30px!important;
+      background-color: #E9EDF1;
+    }
+  
+    .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mat-mdc-form-field-infix {
+      padding: 3px 8px 0px 8px !important;
+    } 
+  
+    .mdc-text-field--outlined {
+      background-color: $color-bg-app !important;
+      border-radius: $radius-md !important;
+      transition: all 0.2s ease !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+  
+    input.mat-mdc-input-element {
+      font-size: 13px !important;
+      font-family: $font-sans !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0;
+    }
+  
+    .mat-mdc-select{
+      font-size: 13px !important;
+      font-family: $font-sans !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0;
+    }
+  
+    &.mat-focused {
+      .mdc-text-field--outlined {
+        background-color: $color-surface !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+        border-radius: $radius-md !important;
+      }
+  
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-color: $color-primary !important;
+      }
+    }
+  
+    .mat-mdc-form-field-subscript-wrapper {
+      display: none !important;
+    }
+  
+    .mat-mdc-icon-button.mat-mdc-button-base {
+      width: 24px;
+      height: 24px;
+      padding: 0px;
+      margin-bottom: 24px;
+    }
+}
+
+::ng-deep .autocomplete-dropdown {
+    position: absolute;
+    background: $color-surface !important;
+    border: 1px solid $color-border !important;
+    border-radius: $radius-md !important;
+    box-shadow: $shadow-xl !important;
+    max-height: 200px !important;
+    padding: 0 !important;
+}
+  
+::ng-deep .mat-mdc-option .mdc-list-item__primary-text{
+    width: 100% !important;
+}
+  
+::ng-deep .mat-mdc-option{
+    min-height: 40px !important;
+    max-height: 40px !important;
+    height: 40px !important;
+}
+  
+::ng-deep .mat-mdc-option.mdc-list-item--activated,
+::ng-deep .mat-mdc-option.mat-mdc-option-active {
+    min-height: 40px !important;
+    max-height: 40px !important;
+    height: 40px !important;
+}
+  
+::ng-deep .mdc-menu-surface.mat-mdc-autocomplete-panel{
+    padding: 0 !important;
+}
+  
+::ng-deep .dropdown-item {
+    @include flex-between;
+    max-height: 40px !important;
+    min-height: 40px !important;
+    height: 40px !important;
+    padding: 0 !important;
+    border-bottom: 1px solid $color-border !important;
+    cursor: pointer !important;
+  
+    .item-title { font-size: 0.75rem; font-weight: 600; color: $color-text-main; }
+    .item-code { font-size: 0.625rem; color: $color-text-light; }
+    .item-price { font-size: 0.75rem; font-weight: 800; color: $color-success; }
+    
+}
+
+.div-twoinput{
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+}
+
+.id-input{
+    width: 20% !important;
+    margin-right: 10px !important;
+}
+
+.desc-input{
+    width: 80% !important;
+}
   
 
 // //--------------------------------- PANTALLAS ---------------------------------
@@ -235,6 +584,18 @@ $radius-md: 0.75rem;
         align-self: stretch;
     }
     
+    .card-wrapper-reg {
+        flex-direction: column-reverse;
+        padding: 15px;
+    }
+    
+    .div-twoinput{
+        flex-direction: column;
+    }
+
+    .id-input{
+        width: 100% !important;
+    }
 }
 
 // S
@@ -253,6 +614,19 @@ $radius-md: 0.75rem;
         background-color: #d1d1d1;
         align-self: stretch;
     }
+
+    .card-wrapper-reg {
+        flex-direction: column-reverse;
+        padding: 15px;
+    }
+
+    .div-twoinput{
+        flex-direction: column;
+    }
+    
+    .id-input{
+        width: 100% !important;
+    }
 }
 
 // M
@@ -270,6 +644,15 @@ $radius-md: 0.75rem;
         height: auto !important;
         background-color: #d1d1d1;
         align-self: stretch;
+    }
+
+    .card-wrapper-reg {
+        flex-direction: row;
+        padding: 40px;
+    }
+
+    .div-twoinput{
+        flex-direction: row;
     }
 }
 
@@ -290,6 +673,15 @@ $radius-md: 0.75rem;
         background-color: #d1d1d1;
         align-self: stretch;
     }
+
+    .card-wrapper-reg {
+        flex-direction: row;
+        padding: 40px;
+    }
+
+    .div-twoinput{
+        flex-direction: row;
+    }
 }
 
 // XL
@@ -307,5 +699,14 @@ $radius-md: 0.75rem;
         height: auto !important;
         background-color: #d1d1d1;
         align-self: stretch;
+    }
+
+    .card-wrapper-reg {
+        flex-direction: row;
+        padding: 40px;
+    }
+
+    .div-twoinput{
+        flex-direction: row;
     }
 }

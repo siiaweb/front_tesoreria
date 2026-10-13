@@ -35,8 +35,8 @@ export class LoginComponent implements OnInit {
     this.subscription = this._log.getLogin(this.log)
       .subscribe((data: any) => {
         console.log('DATA',data);
-        console.warn(typeof data !== 'undefined',data.length > 0)
-        if ( typeof data !== 'undefined' && data['token'].length > 0) {
+        console.warn(typeof data !== 'undefined',data)
+        if ( typeof data !== 'undefined' && data['token']) {
           swal.fire({
             icon: 'success',
             title: 'Usuario Logeado',
@@ -59,7 +59,6 @@ export class LoginComponent implements OnInit {
         }	
       },
       error => {
-        //console.log(error.error.Message);
         swal.fire({
           title: 'ERROR!!!',
           text: error.error.Message,

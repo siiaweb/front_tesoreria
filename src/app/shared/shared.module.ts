@@ -24,6 +24,11 @@ import { RegistrarComponent } from './registrar/registrar.component';
 import { LoginComponent } from './login/login.component';
 import {NgxPaginationModule} from 'ngx-pagination';
 import { DialogBodyComponent } from './dialog-body/dialog-body.component';
+import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { MatInputModule } from '@angular/material/input';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 
 
 @NgModule({
@@ -52,6 +57,11 @@ import { DialogBodyComponent } from './dialog-body/dialog-body.component';
     BlockUIModule.forRoot(),
     MatBadgeModule,
     NgxPaginationModule,
+    NgbNavModule,
+    MatInputModule,
+    MatAutocompleteModule,
+    MatFormFieldModule,
+    MatSelectModule
   ],
   exports: [
     HeaderComponent,

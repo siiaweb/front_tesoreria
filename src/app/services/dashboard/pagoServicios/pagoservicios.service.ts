@@ -15,10 +15,6 @@ export class PagoServiciosService {
   constructor(private http: HttpClient) { }
   getRecibosPagosOnline(usuario: string) {
     return this.http.get(`${this.urlEndPoint}/pdf/recibos/${usuario}`)
-      .pipe(
-        map((response: any) => response
-        )
-      );
   }
   getPDF(referencia: string): Observable<any> {
     return this.http.get(

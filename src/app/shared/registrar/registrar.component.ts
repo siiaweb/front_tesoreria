@@ -207,6 +207,7 @@ export class RegistrarComponent implements OnInit {
     }else{
       this._reg.create(this.forma.value).subscribe(
         usr => {
+          sessionStorage.clear();
           this.router.navigate(['']);
           Swal.fire(
             'Nuevo usuario',

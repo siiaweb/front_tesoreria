@@ -138,7 +138,7 @@ export class EvoService {
               if (checkout) {
                 this.clearHostedCheckoutSessionStorage();
                 this.startPolling(response.referencia)
-                if(this.esDispositivoMovil){
+                if(this.esDispositivoMovil()){
                     checkout.showPaymentPage();
                    //  checkout.showEmbeddedPage('#evo-embed-container');
                 } else{

@@ -47,9 +47,10 @@ export class LoginComponent implements OnInit {
     }else{
       this.subscription = this._log.ingresar(this.log.user,this.log.password)
       .subscribe((data: any) => {
+        sessionStorage.clear();
         this.blockUIService.stop('global')
-        console.log('DATA',data);
-        console.warn(typeof data !== 'undefined',data)
+        //console.log('DATA',data);
+        //console.warn(typeof data !== 'undefined',data)
         if ( typeof data !== 'undefined' && data['token']) {
           swal.fire({
             icon: 'success',
@@ -63,7 +64,7 @@ export class LoginComponent implements OnInit {
           sessionStorage.Ures = data.usua_ures.toString();
           sessionStorage.Persona = data.usua_persona.toString();
           sessionStorage.Nombre = data.usua_nombre.toString();
-          sessionStorage.token=data.token;
+         // sessionStorage.token=data.token;
           this.router.navigate(['/dashboard']);
         } else{
           swal.fire({

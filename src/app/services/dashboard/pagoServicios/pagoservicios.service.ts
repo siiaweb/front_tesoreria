@@ -44,10 +44,10 @@ export class PagoServiciosService {
   printReceipt(id, ref_banco): any {
     const httpOptions = {
       responseType: 'arraybuffer' as 'json'
-      // 'responseType'  : 'blob' as 'json'        //This also worked
+    //This also worked
     };
 
-    return this.http.get<any>(this.urlEndPoint + '/print/' + id + '/' + ref_banco, httpOptions);
+    return this.http.get<any>(this.urlEndPoint + '/pdf/print/' + id + '/' + ref_banco, httpOptions);
   }
 
   printReceiptDsto(id, ref_banco): any {
@@ -55,11 +55,11 @@ export class PagoServiciosService {
       responseType: 'arraybuffer' as 'json'
       // 'responseType'  : 'blob' as 'json'        //This also worked
     };
-    return this.http.get<any>(this.urlEndPoint + '/printDesc/' + id + '/' + ref_banco, httpOptions);
+    return this.http.get<any>(this.urlEndPoint + '/pdf/printDesc/' + id + '/' + ref_banco, httpOptions);
   }
 
   getCartaNoAdeudo(foliopago: string, ref: string): Observable<any> {
-    return this.http.get<any>(`${environment.rutaAPI}/cartaNA?foliopago=${foliopago}&ref=${ref}&forma=L`, { responseType: 'blob' as 'json' });
+    return this.http.get<any>(`${environment.rutaAPI}/pdf/cartaNA?foliopago=${foliopago}&ref=${ref}&forma=L`, { responseType: 'blob' as 'json' });
   }
 
 }

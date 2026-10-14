@@ -3,12 +3,13 @@ import { Login } from './login';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import swal from 'sweetalert2';
-import { LoginService } from '../../services/login.service';
+
 import { environment } from '../../../environments/environment';
 import {MatDialog,MatDialogConfig} from '@angular/material/dialog';
 import { DialogBodyComponent } from '../dialog-body/dialog-body.component';
 import { BlockUIService } from 'ng-block-ui';
 import { erroresFormulario } from 'src/app/modules/componentes-genericos/manejo-errores-forma/errores';
+import { LoginService } from './login.service';
 
 @Component({
   selector: 'app-login',
@@ -44,7 +45,7 @@ export class LoginComponent implements OnInit {
         title: 'Ingrese sus datos'
       });
     }else{
-      this.subscription = this.loginService.ingresar(this.log.user,this.log.password)
+      this.subscription = this._log.ingresar(this.log.user,this.log.password)
       .subscribe((data: any) => {
         this.blockUIService.stop('global')
         console.log('DATA',data);
@@ -80,7 +81,7 @@ export class LoginComponent implements OnInit {
           icon: 'error'});
       });
     }
-
+  }
     portal(){
       window.location.href = `${environment.rutaPortal}`;
     }

@@ -36,7 +36,7 @@
                                 </div>
                                 <div class="div-error" *ngIf="forma.get('usua_tipo_usuario').invalid && forma.get('usua_tipo_usuario').touched">* campo obligatorio</div>
                             </section>
-                            <section *ngIf="forma.get('usua_tipo_usuario').value === '30' || forma.get('usua_tipo_usuario').value === '10'">
+                            <section *ngIf="forma.get('usua_tipo_usuario').value === '30' || forma.get('usua_tipo_usuario').value === '10' || forma.get('usua_tipo_usuario').value === '20'">
                                 <mat-form-field class="custom-form-field" appearance="outline" [ngClass]="{ 'custom-form-field-invalid': forma.get('ures_desc').invalid && forma.get('ures_desc').touched }">
                                     <mat-label>URES</mat-label>
                                     <input

@@ -65,8 +65,8 @@
                 </mat-select-trigger>
                 <mat-option *ngFor="let selected of catalogoPagoTipoUser" [value]="selected">
                   <div class="dropdown-item">
-                    <div>
-                      <div class="item-title">{{selected.descripcion}}</div>
+                    <div style="display: inline-block; width: 100%; white-space: nowrap; overflow: hidden !important; text-overflow: ellipsis; margin-right: 5px;">
+                      <span class="item-title">{{selected.descripcion}}</span>
                     </div>
                     <span class="item-price">{{selected.punit|currency:"MXN":"symbol"}}</span>
                   </div>

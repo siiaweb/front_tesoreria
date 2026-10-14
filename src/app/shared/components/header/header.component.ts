@@ -25,6 +25,17 @@ export class HeaderComponent implements OnInit {
    }
 
   ngOnInit() {
+
+    this._login.usuario.subscribe({
+      next:(usuario)=>this.nombre=usuario.Nombre,
+      error:(e)=>{
+        console.error('e',e)
+      },
+      complete:()=>{
+        console.error('complete')
+      }
+    })
+
 /*
     this._reg.getUserName(sessionStorage.getItem('Login')).subscribe(
       (usuarios) => {

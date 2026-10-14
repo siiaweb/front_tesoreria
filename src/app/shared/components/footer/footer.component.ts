@@ -17,8 +17,8 @@ export class FooterComponent implements OnInit {
   ngOnInit() {
     this.authService.usuario.subscribe({
       next:(usuario)=>{
-        this.tipoUsuario=usuario.Tipo;
-        this.uresUsuario=usuario.Ures;
+        this.tipoUsuario=usuario.Tipo+' - '+usuario.tipoDescrip;
+        this.uresUsuario=usuario.Ures+' - '+usuario.uresDescrip;
       },
       error:(e)=>{
         console.error('e',e)

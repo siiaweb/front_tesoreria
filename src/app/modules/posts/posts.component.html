@@ -3,7 +3,7 @@
     <h2>Pago de servicios</h2>
 
     <div style="width: 100%; margin-bottom: 10px;">
-      <button mat-button routerLink="/dashboard" style="letter-spacing: 0;">
+      <button type="button" mat-button routerLink="/dashboard" style="letter-spacing: 0;">
         <mat-icon>arrow_back</mat-icon>
         Regresar
       </button>
@@ -17,14 +17,14 @@
         <mat-card appearance="outlined" class="card" *ngIf="descuentos" style="margin-bottom: 10px !important;">
           <mat-card-header class="card-header">
             <mat-card-title class="card-title">
-              <i class="bi bi-currency-dollar"></i>
+              <i class="bi bi-currency-dollar" (click)="dcto.open()"></i>
               <span>Descuentos</span>
             </mat-card-title>
             <mat-card-subtitle class="card-subtitle">Tienes {{descuentos?.length}} {{descuentos?.length != 1 ? 'descuentos disponibles':'descuento disponible'}}.</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content style="padding: 0 !important;">
             <mat-form-field class="custom-form-field" appearance="outline">
-              <mat-select formControlName="dsctodescrip" panelClass="autocomplete-dropdown" (selectionChange)="seleccionarDescuento($event)">
+              <mat-select #dcto formControlName="dsctodescrip" panelClass="autocomplete-dropdown" (selectionChange)="seleccionarDescuento($event)">
                 <mat-select-trigger>
                   {{ forma.get('dsctodescrip')?.value?.vdes_descdescrip }}
                 </mat-select-trigger>
@@ -42,14 +42,14 @@
         <mat-card appearance="outlined" class="card" *ngIf="!forma.get('descuento').value">
           <mat-card-header class="card-header">
             <mat-card-title class="card-title">
-              <i class="bi bi-search"></i>
+              <i class="bi bi-search" (click)="servicios.open()"></i>
               <span>Busqueda de servicios</span>
             </mat-card-title>
             <mat-card-subtitle class="card-subtitle">Selecciona de la lista los articulos que deseas pagar.</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content style="padding: 0 !important;">
             <mat-form-field class="custom-form-field" appearance="outline">
-              <mat-select formControlName="servicio" panelClass="autocomplete-dropdown" (selectionChange)="seleccionarServicio($event)">
+              <mat-select #servicios formControlName="servicio" panelClass="autocomplete-dropdown" (selectionChange)="seleccionarServicio($event)">
                 <mat-select-trigger>
                   {{ forma.get('servicio')?.value?.descripcion }}
                 </mat-select-trigger>
@@ -67,21 +67,24 @@
             <div class="selected-card" *ngIf="forma.get('idingreso').value">
               <div class="preview-header">
                 <div>
-                  <span class="badge" *ngIf="forma.get('cambiaPrecio').value === 'S'">Editable</span>
-                  <h4 class="preview-title">{{forma.get('servicio')?.value}}</h4>
+                  <h4 class="preview-title">{{forma.get('servicio')?.value.descripcion}}</h4>
                   <p class="preview-code">ID: {{forma.get('idingreso')?.value}}</p>
                 </div>
                 <span class="preview-price" *ngIf="forma.get('cambiaPrecio').value === 'N'">${{forma.get('punit')?.value}}</span>
-                <mat-form-field class="custom-form-field" appearance="outline" *ngIf="forma.get('cambiaPrecio').value === 'S'" style="width: 40% !important;">
-                  <input 
-                    type="text"
-                    matInput  
-                    style="text-align: right;"
-                    formControlName="punit"
-                    [ngClass]="{'custom-form-field-error': forma.get('punit')?.invalid && forma.get('punit')?.touched}"
-                    (blur)="formatearPrecio()">
-                    <span class="input-moneda">$</span>
-                </mat-form-field>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; width: 100%;" *ngIf="forma.get('cambiaPrecio').value === 'S'">
+                  <span class="badge">Puede editar el precio</span>
+                  <mat-form-field class="custom-form-field" appearance="outline" style="width: 50% !important;">
+                    <input 
+                      type="text"
+                      matInput  
+                      style="text-align: right;"
+                      formControlName="punit"
+                      [ngClass]="{'custom-form-field-error': forma.get('punit')?.invalid && forma.get('punit')?.touched}"
+                      (blur)="formatearPrecio()">
+                      <span class="input-moneda">$</span>
+                  </mat-form-field>
+                </div>
+                
               </div>
             </div>
 

@@ -1,4 +1,4 @@
-import { Component, HostListener, NgZone, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { CatalogoPagoService } from '../../services/dashboard/catalogoPago.service';
 import { CatalogoPago } from '../../services/dashboard/catalogoPago';
 import { CatalogoPagoTipoUser } from '../../services/dashboard/catalogoPagoTipoUser';
@@ -9,12 +9,8 @@ import { DescuentosService } from 'src/app/services/dashboard/descuentos/descuen
 import { Descuentos } from 'src/app/services/dashboard/descuentos/descuentos';
 import { erroresFormulario } from '../componentes-genericos/manejo-errores-forma/errores';
 import { EvoService } from '../../services/dashboard/evo.service';
-import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
 import { MatSelectChange } from '@angular/material/select';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { catchError, startWith, switchMap, takeUntil } from 'rxjs/operators';
-import { EMPTY, interval, Subscription, timer } from 'rxjs';
-import { Router } from '@angular/router';
+import { maxValidator, minValidator } from './validators/validators.post';
 
 export interface EvoCheckout {
   configure(options: {
@@ -221,11 +217,11 @@ export class PostsComponent implements OnInit, OnDestroy {
 
   seleccionarServicio(event: MatSelectChange) {
     let value: CatalogoPagoTipoUser = event.value;
-    this.forma.get('servicio').setValue(value.descripcion);
     this.forma.get('idingreso').setValue(value.concepto);
     this.forma.get('punit').setValue(parseFloat(value.punit).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
     this.forma.get('paquete').setValue(value.paquete);
     if (parseFloat(value.punit) === 1) this.forma.get('cambiaPrecio').setValue('S');
+    else this.forma.get('cambiaPrecio').setValue('N');
   }
 
   formatearPrecio() {
@@ -274,7 +270,7 @@ export class PostsComponent implements OnInit, OnDestroy {
         encontrada.controls['subtotal'].setValue((cantactual + cant) * punit);
       } else {
         element.controls['idingreso'].setValue(id);
-        element.controls['concepto'].setValue(this.forma.get('servicio').value);
+        element.controls['concepto'].setValue(this.forma.get('servicio')?.value.descripcion);
         element.controls['cantidad'].setValue(cant);
         element.controls['punit'].setValue(punit);
         element.controls['subtotal'].setValue(cant * punit);
@@ -311,8 +307,8 @@ export class PostsComponent implements OnInit, OnDestroy {
     this.forma = this.fb.group({
       idingreso: ['', Validators.required],
       servicio: '',
-      cantidad: [1, [Validators.required, Validators.max(999), Validators.min(1)]],
-      punit: ['', [Validators.required, Validators.max(99999), Validators.min(0.01)]],
+      cantidad: [1, [Validators.required, maxValidator(999), minValidator(1)]],
+      punit: ['', [Validators.required, maxValidator(99999), minValidator(0.01)]],
       cambiaPrecio: 'N',
       user: sessionStorage.getItem('usuID'),
       nombre: sessionStorage.getItem('Nombre'),

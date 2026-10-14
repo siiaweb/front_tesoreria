@@ -358,11 +358,7 @@ export class PostsComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         this.blockUIService.stop('global')
-        Swal.fire({
-          title: 'ERROR!!!',
-          text: JSON.stringify(error),
-          icon: 'error'
-        });
+        erroresFormulario.handleErrorMessageVentana(error);
       },
       complete:() => {
 

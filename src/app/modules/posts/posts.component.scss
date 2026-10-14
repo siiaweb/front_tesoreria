@@ -18,6 +18,7 @@ $color-success-dark: #047857;
 
 $color-danger: #EF4444;
 $color-danger-light: #f09191;
+$color-danger-dark: #d23535;
 $color-warning: #fff5d6;
 $color-warning-border: #ffbf00;
 $color-border: #E2E8F0;
@@ -440,6 +441,7 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
 
 .boton-primary { background: $color-text-main; color: $color-surface; &:hover { background: #1E293B; } }
 .boton-success { background: $color-success; color: $color-surface; height: 50px !important; font-size: 1rem; &:hover { background: $color-success-dark; } }
+.boton-delete { background: $color-danger; color: $color-surface; height: 40px !important; font-size: 15px; &:hover { background: $color-danger-dark; } }
 .boton-icon-danger { background: transparent; border: none; color: $color-text-light; cursor: pointer; &:hover { color: $color-danger; } }
 
 .pill-group {

@@ -76,23 +76,30 @@ export class LoginComponent implements OnInit {
       error => {
         this.blockUIService.stop('global')
         console.error('error',error)
-        swal.fire({
-          title: 'ERROR!!!',
-          text: error?.error?.Message??JSON.stringify(error),
-          icon: 'error'});
+        erroresFormulario.handleErrorMessageVentana(error);
       });
     }
   }
-    portal(){
-      window.location.href = `${environment.rutaPortal}`;
+
+  togglePassword(elementId:string) {
+    const input = (<HTMLInputElement>document.getElementById(elementId));
+    if (input.type === "password") {
+      input.type = "text";
+    } else {
+      input.type = "password";
     }
+  }
+
+  portal(){
+    window.location.href = `${environment.rutaPortal}`;
+  }
 
 
-    openDialog() {
-      const dialogRef = this.dialog.open(DialogBodyComponent, {
-        panelClass: 'dialogo-responsivo',
-        maxWidth: "100vw"
-      });
-    }
+  openDialog() {
+    const dialogRef = this.dialog.open(DialogBodyComponent, {
+      panelClass: 'dialogo-responsivo',
+      maxWidth: "100vw"
+    });
+  }
 
 }

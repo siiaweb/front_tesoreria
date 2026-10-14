@@ -75,7 +75,6 @@ public urlEndPointPUBLICO = `${environment.rutaPublica}`;
   }
 
   create(usuario: Usuarios): Observable<Usuarios> {
-    //const user = sessionStorage.Login;
     return this.http.post<Usuarios>(`${environment.rutaPublica + '/tusuarios'}`, usuario);
   }
 

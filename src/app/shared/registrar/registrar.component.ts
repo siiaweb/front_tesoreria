@@ -172,7 +172,7 @@ export class RegistrarComponent implements OnInit {
       usua_ures: '',
       ures_desc: ['', [Validators.required, fieldIdValidation('usua_ures')]],
       usua_prog: [''],
-      usua_usuario: ['', [Validators.required,Validators.maxLength(20)]],
+      usua_usuario: ['', [Validators.required,Validators.maxLength(20),Validators.pattern(/^\S+$/)]],
       usua_persona: ['', [Validators.required,Validators.maxLength(10)]],
       usua_nombre: ['', [Validators.required,Validators.maxLength(100)]],
       usua_tel: ['', [Validators.required,Validators.maxLength(10),Validators.pattern(/^[0-9]\d*$/)]],
@@ -205,7 +205,8 @@ export class RegistrarComponent implements OnInit {
         html: erroresFormulario.traerErroresFormularios(this.forma, null, this.diccionario),
       });
     }else{
-      this._reg.create(this.forma.value).subscribe(
+      this.forma.get('usua_usuario').setValue(this.forma.get('usua_usuario').value?.toString().toUpperCase());
+      this._reg.create(this.forma.getRawValue()).subscribe(
         usr => {
           sessionStorage.clear();
           this.router.navigate(['']);

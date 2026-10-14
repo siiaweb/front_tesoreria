@@ -339,9 +339,12 @@ export class PostsComponent implements OnInit, OnDestroy {
         html: erroresFormulario.traerErroresFormularios(this.forma, null, this.diccionario),
       });
     } else {
-      const element = this.fb.group({ ...this.detalle });
       let id = this.forma.get('idingreso').value;
-      let encontrada = this.Detalles.find(a => a.get('idingreso').value === id);
+      let encontrada = null;
+      if(this.forma.get('cambiaPrecio').value !== 'S'){
+        encontrada = this.Detalles.find(a => a.get('idingreso').value === id);
+      }
+      const element = this.fb.group({ ...this.detalle });
       let cant = parseInt(this.forma.get('cantidad').value);
       let punit = parseFloat(this.forma.get('punit').value.toString().replace(/,/g, ''));
       if (encontrada) {

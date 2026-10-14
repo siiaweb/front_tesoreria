@@ -201,6 +201,7 @@ export class PostsComponent implements OnInit, OnDestroy {
   limpiarCamposDescuento() {
     this.forma.controls['descuento'].setValue('');
     this.forma.controls['dsctodescrip'].setValue('');
+    this.limparDetalle();
   }
 
   deseleccionarServicio() {

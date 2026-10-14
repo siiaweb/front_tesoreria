@@ -152,39 +152,12 @@
                                             maxlength="20">
                                         </mat-form-field>
                                         <div class="div-error" *ngIf="forma.get('usua_usuario').hasError('required') && forma.get('usua_usuario').touched">* campo obligatorio</div>
+                                        <div class="div-error" *ngIf="forma.get('usua_usuario').hasError('pattern') && forma.get('usua_usuario').touched">No puede llevar espacios</div>
                                     </div>
                                 </div>
                                 <div class="div-twoinput" style="margin-top: 10px;">
                                     <div class="input-50">
-                                        <mat-form-field class="custom-form-field" appearance="outline" [ngClass]="{ 'custom-form-field-invalid': forma.get('usua_email').invalid && forma.get('usua_email').touched }">
-                                            <mat-label>CORREO</mat-label>
-                                            <input
-                                            type="text"
-                                            matInput
-                                            formControlName="usua_email"
-                                            maxlength="50"
-                                            (input)="updateValidity('validemail')">
-                                        </mat-form-field>
-                                        <div class="div-error" *ngIf="forma.get('usua_email').hasError('required') && forma.get('usua_email').touched">* campo obligatorio</div>
-                                        <div class="div-error" *ngIf="forma.get('usua_email').hasError('email') && forma.get('usua_email').touched">No tiene formato de correo</div>
-                                    </div>
-                                    <div class="input-50">
-                                        <mat-form-field class="custom-form-field" appearance="outline" [ngClass]="{ 'custom-form-field-invalid': forma.get('validemail').invalid && forma.get('validemail').touched }">
-                                            <mat-label>COMPROBAR CORREO</mat-label>
-                                            <input
-                                            type="text"
-                                            matInput
-                                            formControlName="validemail"
-                                            maxlength="50">
-                                        </mat-form-field>
-                                        <div class="div-error" *ngIf="forma.get('validemail').hasError('required') && forma.get('validemail').touched">* campo obligatorio</div>
-                                        <div class="div-error" *ngIf="forma.get('validemail').hasError('email') && forma.get('validemail').touched">No tiene formato de correo</div>
-                                        <div class="div-error" *ngIf="forma.get('validemail').hasError('fieldsDoNotMatch') && forma.get('validemail').touched">Los correos no coinciden</div>
-                                    </div>
-                                </div>
-                                <div class="div-twoinput" style="margin-top: 10px;">
-                                    <div class="input-50">
-                                        <mat-form-field class="custom-form-field" appearance="outline" [ngClass]="{ 'custom-form-field-invalid': forma.get('usua_paswd').invalid && forma.get('usua_paswd').touched }">
+                                        <mat-form-field class="custom-form-field-nuc" appearance="outline" [ngClass]="{ 'custom-form-field-invalid-nuc': forma.get('usua_paswd').invalid && forma.get('usua_paswd').touched }">
                                             <mat-label>CONTRASEÑA</mat-label>
                                             <input
                                             type="password"
@@ -200,13 +173,13 @@
                                                 *ngIf="forma.get('usua_paswd')?.value"
                                                 (click)="togglePassword('usua_paswd')"
                                             >
-                                                <i class="bi bi-lock-fill" style="font-size: 15px !important;"></i>
+                                                <i class="bi bi-eye-fill" style="font-size: 15px !important;"></i>
                                             </button>
                                         </mat-form-field>
                                         <div class="div-error" *ngIf="forma.get('usua_paswd').hasError('required') && forma.get('usua_paswd').touched">* campo obligatorio</div>
                                     </div>
                                     <div class="input-50">
-                                        <mat-form-field class="custom-form-field" appearance="outline" [ngClass]="{ 'custom-form-field-invalid': forma.get('repassword').invalid && forma.get('repassword').touched }">
+                                        <mat-form-field class="custom-form-field-nuc" appearance="outline" [ngClass]="{ 'custom-form-field-invalid-nuc': forma.get('repassword').invalid && forma.get('repassword').touched }">
                                             <mat-label>COMPROBAR CONTRASEÑA</mat-label>
                                             <input
                                             type="password"
@@ -221,11 +194,39 @@
                                                 *ngIf="forma.get('repassword')?.value"
                                                 (click)="togglePassword('repassword')"
                                             >
-                                                <i class="bi bi-lock-fill" style="font-size: 15px !important;"></i>
+                                                <i class="bi bi-eye-fill" style="font-size: 15px !important;"></i>
                                             </button>
                                         </mat-form-field>
                                         <div class="div-error" *ngIf="forma.get('repassword').hasError('required') && forma.get('repassword').touched">* campo obligatorio</div>
                                         <div class="div-error" *ngIf="forma.get('repassword').hasError('fieldsDoNotMatch') && forma.get('repassword').touched">Las contraseñas no coinciden</div>
+                                    </div>
+                                </div>
+                                <div class="div-twoinput" style="margin-top: 10px;">
+                                    <div class="input-50">
+                                        <mat-form-field class="custom-form-field-nuc" appearance="outline" [ngClass]="{ 'custom-form-field-invalid-nuc': forma.get('usua_email').invalid && forma.get('usua_email').touched }">
+                                            <mat-label>CORREO</mat-label>
+                                            <input
+                                            type="text"
+                                            matInput
+                                            formControlName="usua_email"
+                                            maxlength="50"
+                                            (input)="updateValidity('validemail')">
+                                        </mat-form-field>
+                                        <div class="div-error" *ngIf="forma.get('usua_email').hasError('required') && forma.get('usua_email').touched">* campo obligatorio</div>
+                                        <div class="div-error" *ngIf="forma.get('usua_email').hasError('email') && forma.get('usua_email').touched">No tiene formato de correo</div>
+                                    </div>
+                                    <div class="input-50">
+                                        <mat-form-field class="custom-form-field-nuc" appearance="outline" [ngClass]="{ 'custom-form-field-invalid-nuc': forma.get('validemail').invalid && forma.get('validemail').touched }">
+                                            <mat-label>COMPROBAR CORREO</mat-label>
+                                            <input
+                                            type="text"
+                                            matInput
+                                            formControlName="validemail"
+                                            maxlength="50">
+                                        </mat-form-field>
+                                        <div class="div-error" *ngIf="forma.get('validemail').hasError('required') && forma.get('validemail').touched">* campo obligatorio</div>
+                                        <div class="div-error" *ngIf="forma.get('validemail').hasError('email') && forma.get('validemail').touched">No tiene formato de correo</div>
+                                        <div class="div-error" *ngIf="forma.get('validemail').hasError('fieldsDoNotMatch') && forma.get('validemail').touched">Los correos no coinciden</div>
                                     </div>
                                 </div>
                                 <div class="div-twoinput" style="margin-top: 10px;">

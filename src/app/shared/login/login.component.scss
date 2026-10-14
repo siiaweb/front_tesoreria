@@ -332,6 +332,7 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
     font-size: 12px !important;
 }
 
+//----------------- INPUT CON UPPER CASE------------------
 ::ng-deep .custom-form-field {
     width: 100% !important;
     font-family: $font-sans !important;
@@ -505,6 +506,204 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
       font-size: 13px !important;
       font-family: $font-sans !important;
       text-transform: uppercase !important;
+      letter-spacing: 0;
+    }
+  
+    &.mat-focused {
+      .mdc-text-field--outlined {
+        background-color: $color-surface !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+        border-radius: $radius-md !important;
+      }
+  
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-color: $color-primary !important;
+      }
+    }
+  
+    .mat-mdc-form-field-subscript-wrapper {
+      display: none !important;
+    }
+  
+    .mat-mdc-icon-button.mat-mdc-button-base {
+      width: 24px;
+      height: 24px;
+      padding: 0px;
+    }
+}
+
+//----------------- INPUT SIN UPPER CASE------------------
+::ng-deep .custom-form-field-nuc {
+    width: 100% !important;
+    font-family: $font-sans !important;
+    color: #555;
+    font-size: 10px !important;
+  
+    .mdc-notched-outline__leading {
+      border-radius: $radius-md 0 0 $radius-md !important;
+    }
+  
+    .mdc-notched-outline__trailing {
+      border-radius: 0 $radius-md $radius-md 0 !important;
+    }
+  
+    .mdc-notched-outline__notch {
+      border-radius: 0 !important;
+    }
+  
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: $color-border !important;
+    }
+  
+    .mdc-notched-outline--no-label .mdc-notched-outline__notch {
+      border-top: 1px solid $color-border !important; 
+    }
+  
+    .mat-mdc-text-field-wrapper{
+      height: 30px!important;
+      max-height: 30px!important;
+      background-color: #E9EDF1;
+    }
+  
+    .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mat-mdc-form-field-infix {
+      padding: 3px 8px 0px 8px !important;
+      max-height: 30px!important;
+      min-height: 30px!important;
+    } 
+  
+    .mdc-text-field--outlined {
+      background-color: $color-bg-app !important;
+      border-radius: $radius-md !important;
+      transition: all 0.2s ease !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+  
+    input.mat-mdc-input-element {
+      font-size: 13px !important;
+      font-family: $font-sans !important;
+      letter-spacing: 0;
+    }
+  
+    .mat-mdc-select{
+      font-size: 13px !important;
+      font-family: $font-sans !important;
+      letter-spacing: 0;
+    }
+  
+    &.mat-focused {
+      .mdc-text-field--outlined {
+        background-color: $color-surface !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+        border-radius: $radius-md !important;
+      }
+  
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-color: $color-primary !important;
+      }
+    }
+  
+    .mat-mdc-form-field-subscript-wrapper {
+      display: none !important;
+    }
+  
+    .mat-mdc-icon-button.mat-mdc-button-base {
+      width: 24px;
+      height: 24px;
+      padding: 0px;
+    }
+
+    .mat-mdc-floating-label {
+        top: 13px !important;
+        font-size: 11px !important;
+        font-family: $font-sans !important;
+    }
+  
+    &.mat-mdc-form-field-float-above .mat-mdc-floating-label {
+        font-size: 10px !important;
+        transform: translateY(-21.5px) scale(0.85) !important;
+        top: 27px !important;
+    }
+  
+    .mat-mdc-form-field-label {
+        color: #666 !important;
+        top: 27px !important;
+    }
+  
+    &.mat-focused .mat-mdc-floating-label {
+        color: black !important;
+        top: 27px !important;
+    }
+
+    .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mdc-notched-outline--upgraded .mdc-floating-label--float-above{
+        top: 27px !important;
+    }
+    
+}
+
+::ng-deep .custom-form-field-invalid-nuc {
+    width: 100% !important;
+    font-family: $font-sans !important;
+    color: #555;
+    font-size: 10px !important;
+  
+    .mdc-notched-outline__leading {
+      border-radius: $radius-md 0 0 $radius-md !important;
+    }
+  
+    .mdc-notched-outline__trailing {
+      border-radius: 0 $radius-md $radius-md 0 !important;
+    }
+  
+    .mdc-notched-outline__notch {
+      border-radius: 0 !important;
+    }
+  
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: $color-danger !important;
+    }
+  
+    .mdc-notched-outline--no-label .mdc-notched-outline__notch {
+      border-top: 1px solid $color-danger !important; 
+    }
+  
+    .mat-mdc-text-field-wrapper{
+      height: 30px!important;
+      max-height: 30px!important;
+      background-color: #E9EDF1;
+    }
+  
+    .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mat-mdc-form-field-infix {
+      padding: 3px 8px 0px 8px !important;
+      max-height: 30px!important;
+      min-height: 30px!important;
+    } 
+  
+    .mdc-text-field--outlined {
+      background-color: $color-bg-app !important;
+      border-radius: $radius-md !important;
+      transition: all 0.2s ease !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+  
+    input.mat-mdc-input-element {
+      font-size: 13px !important;
+      font-family: $font-sans !important;
+      letter-spacing: 0;
+    }
+  
+    .mat-mdc-select{
+      font-size: 13px !important;
+      font-family: $font-sans !important;
       letter-spacing: 0;
     }
   

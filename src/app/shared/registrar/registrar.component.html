@@ -162,6 +162,7 @@
                                             <input
                                             type="password"
                                             matInput
+                                            #password
                                             formControlName="usua_paswd"
                                             id="usua_paswd"
                                             maxlength="50"
@@ -173,7 +174,7 @@
                                                 *ngIf="forma.get('usua_paswd')?.value"
                                                 (click)="togglePassword('usua_paswd')"
                                             >
-                                                <i class="bi bi-eye-fill" style="font-size: 15px !important;"></i>
+                                                <i [class]="password.type === 'password' ? 'bi bi-eye-fill' : 'bi bi-eye-slash-fill'" style="font-size: 15px !important;"></i>
                                             </button>
                                         </mat-form-field>
                                         <div class="div-error" *ngIf="forma.get('usua_paswd').hasError('required') && forma.get('usua_paswd').touched">* campo obligatorio</div>
@@ -184,6 +185,7 @@
                                             <input
                                             type="password"
                                             matInput
+                                            #repassword
                                             formControlName="repassword"
                                             id="repassword"
                                             maxlength="50">
@@ -194,7 +196,7 @@
                                                 *ngIf="forma.get('repassword')?.value"
                                                 (click)="togglePassword('repassword')"
                                             >
-                                                <i class="bi bi-eye-fill" style="font-size: 15px !important;"></i>
+                                                <i [class]="repassword.type === 'password' ? 'bi bi-eye-fill' : 'bi bi-eye-slash-fill'" style="font-size: 15px !important;"></i>
                                             </button>
                                         </mat-form-field>
                                         <div class="div-error" *ngIf="forma.get('repassword').hasError('required') && forma.get('repassword').touched">* campo obligatorio</div>

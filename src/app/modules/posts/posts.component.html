@@ -49,33 +49,19 @@
           </mat-card-header>
           <mat-card-content style="padding: 0 !important;">
             <mat-form-field class="custom-form-field" appearance="outline">
-              <input
-                type="text"
-                matInput
-                formControlName="servicio"
-                [matAutocomplete]="autoServ"
-                onfocus="this.select()"
-                (input)="buscarServicio()"
-                (blur)="validarServicio()">
-                <button
-                  mat-icon-button
-                  matSuffix
-                  matTooltip="Limpiar Selección"
-                  *ngIf="forma.get('servicio')?.value"
-                  (click)="deseleccionarServicio()"
-                >
-                  <mat-icon>close</mat-icon>
-                </button>
-                <mat-autocomplete #autoServ="matAutocomplete" autoActiveFirstOption="true"  panelClass="autocomplete-dropdown" (optionSelected)="seleccionarServicio($event)">
-                  <mat-option *ngFor="let selected of filteredCatalogoServicios" [value]="selected">
-                    <div class="dropdown-item">
-                      <div>
-                        <div class="item-title">{{selected.descripcion}}</div>
-                      </div>
-                      <span class="item-price">{{selected.punit|currency:"MXN":"symbol"}}</span>
+              <mat-select formControlName="servicio" panelClass="autocomplete-dropdown" (selectionChange)="seleccionarServicio($event)">
+                <mat-select-trigger>
+                  {{ forma.get('servicio')?.value?.descripcion }}
+                </mat-select-trigger>
+                <mat-option *ngFor="let selected of catalogoPagoTipoUser" [value]="selected">
+                  <div class="dropdown-item">
+                    <div>
+                      <div class="item-title">{{selected.descripcion}}</div>
                     </div>
-                  </mat-option>
-                </mat-autocomplete>
+                    <span class="item-price">{{selected.punit|currency:"MXN":"symbol"}}</span>
+                  </div>
+                </mat-option>
+              </mat-select>
             </mat-form-field> 
 
             <div class="selected-card" *ngIf="forma.get('idingreso').value">
@@ -135,7 +121,7 @@
                 <i class="bi bi-list"></i>
                 <span>Conceptos a pagar</span>
               </h3>
-              <span class="count-pill"> {{forma.get('numservicios')?.value}} {{forma.get('numservicios')?.value !== 1 ? 'artículos':'artículo'}}</span>
+              <span class="count-pill"> {{arreglo?.length}} {{arreglo?.length !== 1 ? 'servicios':'servicio'}}</span>
             </div>
 
             <!-- TABLA -->

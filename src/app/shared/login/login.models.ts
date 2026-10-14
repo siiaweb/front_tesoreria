@@ -10,7 +10,8 @@ export class Usuario {
     public Login: string,
     public token: string,
     public exp: number,
-    public tipoDescrip:string
+    public tipoDescrip:string,
+    public uresDescrip:string
   ) {
     this.expiresIn = new Date(exp * 1000);
   }

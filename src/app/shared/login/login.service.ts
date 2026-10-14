@@ -27,6 +27,7 @@ export interface UsuarioResponse {
   usua_id: number;
   token?: string;
   tipoDescrip: string;
+  uresDescrip:string;
   // Login: string;
 }
 
@@ -64,9 +65,10 @@ export class LoginService {
         const Nombre = response.usua_nombre.toString();
         const tipoDescrip = response.tipoDescrip;
         const token = response.token;
+        const uresDescrip = response.uresDescrip;
         const { exp } = jwtDecode<{ exp: number }>(token);
         this.handleAuthentication(
-          Nombre, Persona, Tipo, Ures, usuID, Login, exp, token, tipoDescrip
+          Nombre, Persona, Tipo, Ures, usuID, Login, exp, token, tipoDescrip,uresDescrip
         );
       })
     );
@@ -80,11 +82,12 @@ export class LoginService {
     Login: string,
     exp: number,
     token: string,
-    tipoDescrip: string
+    tipoDescrip: string,
+    uresDescrip:string
   ) {
     console.log('usuario')
 
-    const usuario = new Usuario(Nombre, Persona, Tipo, Ures, usuId, Login, token, exp, tipoDescrip);
+    const usuario = new Usuario(Nombre, Persona, Tipo, Ures, usuId, Login, token, exp, tipoDescrip,uresDescrip);
     this.usuario.next(usuario);
     sessionStorage.setItem('usuario', JSON.stringify(usuario));
     //this.autoLogout(exp);
@@ -147,6 +150,7 @@ export class LoginService {
       token: string;
       exp: number;
       tipoDescrip: string;
+      uresDescrip:string;
     } = JSON.parse(sessionStorage.getItem('usuario'));
 
     if (!userData) {
@@ -163,7 +167,8 @@ export class LoginService {
       userData.Login,
       userData.token,
       userData.exp,
-      userData.tipoDescrip
+      userData.tipoDescrip,
+      userData.uresDescrip
     );
 
     if (loadedUser.token) {

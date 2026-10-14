@@ -75,10 +75,7 @@ export class LoginComponent implements OnInit {
       error => {
         this.blockUIService.stop('global')
         console.error('error',error)
-        swal.fire({
-          title: 'ERROR!!!',
-          text: error?.error?.Message??JSON.stringify(error),
-          icon: 'error'});
+        erroresFormulario.handleErrorMessageVentana(error);
       });
     }
   }

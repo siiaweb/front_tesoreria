@@ -1,4 +1,11 @@
 import { UntypedFormArray, UntypedFormGroup } from "@angular/forms";
+import Swal from "sweetalert2";
+
+export interface tipoMensaje {
+  statusCode?: string;
+  mensajeUsuario: string;
+  mensajeTecnico?: string;
+}
 
 export class erroresFormulario{
 
@@ -56,8 +63,95 @@ export class erroresFormulario{
         maxlength: `Supera el número de caracteres permitidos (${errorValue.requiredLength}).`,
         isNaN: `Necesita ser valor númerico.`,
         fieldsDoNotMatch: `No coincide con ${errorValue.field}`,
-        email: `Necesita tener formato de correo.`
+        email: `Necesita tener formato de correo.`,
+        pattern: `El formato no es correcto.`
       };
       return messages[errorKey] || `Error de validación: ${errorKey}`;
+    }
+
+    static handleErrorMessageVentana(errorResponse: any) {
+      console.error('errorMsg', errorResponse)
+      let err: tipoMensaje;
+      if (!errorResponse.error) {
+        err = {
+          statusCode: '500',
+          mensajeUsuario: JSON.stringify(errorResponse),
+          mensajeTecnico: JSON.stringify(errorResponse)
+        };
+      } else {
+        err = {
+          statusCode: errorResponse?.error?.statusCode,
+          mensajeUsuario: errorResponse?.error?.message,
+          mensajeTecnico: errorResponse?.error?.mensaje_tecnico
+        };
+      }
+  
+  
+      let messageUsuario = err.mensajeUsuario?.replace(/"/g, "");
+      messageUsuario = messageUsuario?.replace(/'/g, "");
+      messageUsuario = messageUsuario?.replace(/\n/g, " ");
+  
+      let messageTecnico = err.mensajeTecnico ? err.mensajeTecnico?.replace(/"/g, "") : err.mensajeUsuario?.replace(/"/g, "");
+      messageTecnico = messageTecnico?.replace(/'/g, " ");
+      messageTecnico = messageTecnico?.replace(/\n/g, " ");
+  
+      return Swal.fire({
+        title: '¡AVISO!',
+        icon: 'error',
+        confirmButtonText: 'Aceptar',
+        html: err.mensajeTecnico !== '' && err.mensajeTecnico !== null && err.mensajeTecnico !== undefined ?
+          `<body>
+                            <div id="info" style='width=100%; margin-bottom: 20px;'>
+                                ${messageUsuario}
+                            </div>
+    
+                            <button 
+                                style='
+                                    width: 150px;
+                                    background-color: #E9EDF1;
+                                    color: #000;
+                                    height: 40px;
+                                    border-radius: .25em;
+                                    border-color: #E9EDF1;
+                                    border: 0;
+                                    box-shadow: none;
+                                    font-size: 1em;
+                                    padding: 0px 10px;
+                                '
+                                onclick='{
+                                    document.getElementById("info").textContent = "${messageUsuario}";
+                                }'
+                            >
+                                Mensaje
+                            </button>
+    
+                            <button 
+                                style='
+                                    width: 150px;
+                                    background-color: #E9EDF1;
+                                    color: #000;
+                                    height: 40px;
+                                    border-radius: .25em;
+                                    border-color: #E9EDF1;
+                                    border: 0;
+                                    box-shadow: none;
+                                    font-size: 1em;
+                                    padding: 0px 10px;
+                                '
+                                onclick='{
+                                    document.getElementById("info").textContent = "${messageTecnico}";
+                                }'
+                            >
+                                Error Técnico
+                            </button>
+                        </body>`
+          :
+          `<body>
+                            <div id="info" style='width=100%; margin-bottom: 20px;'>
+                                ${messageUsuario}
+                            </div>
+                        </body>`
+  
+      });
     }
 }

@@ -11,7 +11,7 @@ export class FooterComponent implements OnInit {
 
   tipoUsuario: string;
   uresUsuario: string;
-  
+
   constructor( private authService: LoginService ) { }
 
   ngOnInit() {
@@ -27,7 +27,7 @@ export class FooterComponent implements OnInit {
 
       }
     })
-   
+
   }
 
 }

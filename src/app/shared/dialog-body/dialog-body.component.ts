@@ -34,7 +34,7 @@ export class DialogBodyComponent implements OnInit {
     this.form = this.fb.group({
       usuario: ['', Validators.required],
       email: ['', [Validators.required, Validators.email,]],
-      confemail: ['', [Validators.required, Validators.email,, matchWithField('email')]]
+      confemail: ['', [Validators.required, Validators.email, matchWithField('email')]]
     })
   }
 

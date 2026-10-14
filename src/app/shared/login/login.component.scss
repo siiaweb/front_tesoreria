@@ -216,6 +216,7 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
 }
 
 .btn-submit {
+    width: 100%;
     background-color: #951823;
     color: #ffffff;
     border: none;
@@ -367,6 +368,8 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   
     .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mat-mdc-form-field-infix {
       padding: 3px 8px 0px 8px !important;
+      max-height: 30px!important;
+      min-height: 30px!important;
     } 
   
     .mdc-text-field--outlined {
@@ -413,8 +416,34 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
       width: 24px;
       height: 24px;
       padding: 0px;
-      margin-bottom: 24px;
     }
+
+    .mat-mdc-floating-label {
+        top: 13px !important;
+        font-size: 11px !important;
+        font-family: $font-sans !important;
+    }
+  
+    &.mat-mdc-form-field-float-above .mat-mdc-floating-label {
+        font-size: 10px !important;
+        transform: translateY(-21.5px) scale(0.85) !important;
+        top: 27px !important;
+    }
+  
+    .mat-mdc-form-field-label {
+        color: #666 !important;
+        top: 27px !important;
+    }
+  
+    &.mat-focused .mat-mdc-floating-label {
+        color: black !important;
+        top: 27px !important;
+    }
+
+    .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mdc-notched-outline--upgraded .mdc-floating-label--float-above{
+        top: 27px !important;
+    }
+    
 }
 
 ::ng-deep .custom-form-field-invalid {
@@ -453,6 +482,8 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   
     .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mat-mdc-form-field-infix {
       padding: 3px 8px 0px 8px !important;
+      max-height: 30px!important;
+      min-height: 30px!important;
     } 
   
     .mdc-text-field--outlined {
@@ -499,7 +530,6 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
       width: 24px;
       height: 24px;
       padding: 0px;
-      margin-bottom: 24px;
     }
 }
 
@@ -544,6 +574,7 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
     cursor: pointer !important;
   
     .item-title { font-size: 0.75rem; font-weight: 600; color: $color-text-main; }
+    .item-error { font-size: 0.75rem; font-weight: 600; color: $color-danger; }
     .item-code { font-size: 0.625rem; color: $color-text-light; }
     .item-price { font-size: 0.75rem; font-weight: 800; color: $color-success; }
     
@@ -552,16 +583,20 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
 .div-twoinput{
     display: flex !important;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
+    gap: 10px;
 }
 
 .id-input{
-    width: 20% !important;
-    margin-right: 10px !important;
+    width: 25%;
 }
 
 .desc-input{
-    width: 80% !important;
+    width: 75%;
+}
+
+.input-50{
+    width: 50%;
 }
   
 
@@ -596,6 +631,14 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
     .id-input{
         width: 100% !important;
     }
+
+    .desc-input{
+        width: 100% !important;
+    }
+
+    .input-50{
+        width: 100%;
+    }
 }
 
 // S
@@ -623,9 +666,17 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
     .div-twoinput{
         flex-direction: column;
     }
-    
+
     .id-input{
         width: 100% !important;
+    }
+
+    .desc-input{
+        width: 100% !important;
+    }
+
+    .input-50{
+        width: 100%;
     }
 }
 
@@ -653,6 +704,18 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
 
     .div-twoinput{
         flex-direction: row;
+    }
+
+    .id-input{
+        width: 25% !important;
+    }
+
+    .desc-input{
+        width: 75% !important;
+    }
+
+    .input-50{
+        width: 50%;
     }
 }
 
@@ -682,6 +745,18 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
     .div-twoinput{
         flex-direction: row;
     }
+
+    .id-input{
+        width: 25% !important;
+    }
+
+    .desc-input{
+        width: 75% !important;
+    }
+
+    .input-50{
+        width: 50%;
+    }
 }
 
 // XL
@@ -708,5 +783,17 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
 
     .div-twoinput{
         flex-direction: row;
+    }
+
+    .id-input{
+        width: 25% !important;
+    }
+
+    .desc-input{
+        width: 75% !important;
+    }
+
+    .input-50{
+        width: 50%;
     }
 }

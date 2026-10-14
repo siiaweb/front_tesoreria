@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RegistrarService } from '../../services/registrar.service';
-import { DescuentosService } from '../../services/dashboard/descuentos/descuentos.service'; 
+import { DescuentosService } from '../../services/dashboard/descuentos/descuentos.service';
 import { Descuentos } from '../../services/dashboard/descuentos/descuentos';
 import { LoginService } from 'src/app/shared/login/login.service';
 import { Usuario } from 'src/app/shared/login/login.models';
@@ -16,7 +16,7 @@ export class DashboardComponent implements OnInit {
 usuario:Usuario;
   //usuarios:Usuarios[];
   //tusuario:Ttipouser[];
-  
+
   descuentos: Descuentos[];
   count: Number;
 
@@ -39,7 +39,7 @@ usuario:Usuario;
       }
     })
     //this.nombre= this.loginService.nombre
-   
+
     // })
     // this._reg.getUserName(sessionStorage.getItem('Login')).subscribe(
     //   (usuarios) => {

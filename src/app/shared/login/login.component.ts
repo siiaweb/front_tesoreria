@@ -3,11 +3,12 @@ import { Login } from './login';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import swal from 'sweetalert2';
+import { LoginService } from '../../services/login.service';
 import { environment } from '../../../environments/environment';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog,MatDialogConfig} from '@angular/material/dialog';
 import { DialogBodyComponent } from '../dialog-body/dialog-body.component';
 import { BlockUIService } from 'ng-block-ui';
-import { LoginService } from './login.service';
+import { erroresFormulario } from 'src/app/modules/componentes-genericos/manejo-errores-forma/errores';
 
 @Component({
   selector: 'app-login',
@@ -17,10 +18,10 @@ import { LoginService } from './login.service';
 export class LoginComponent implements OnInit {
   private subscription: Subscription;
   public log: Login = new Login();
- 
-  constructor( 
-    private router: Router, 
-    private loginService: LoginService ,
+
+  constructor(
+    private router: Router,
+    private _log: LoginService ,
     private dialog: MatDialog,
     private blockUIService: BlockUIService,
   ) { }
@@ -33,11 +34,17 @@ export class LoginComponent implements OnInit {
 			this.subscription.unsubscribe();
 		}
   }
-  
+
   login() {
     this.blockUIService.start('global','cargando login')
     console.warn('ingresando')
-    this.subscription = this.loginService.ingresar(this.log.user,this.log.password)
+    if(this.log.user === undefined || this.log.password === undefined){
+      swal.fire({
+        icon: 'info',
+        title: 'Ingrese sus datos'
+      });
+    }else{
+      this.subscription = this.loginService.ingresar(this.log.user,this.log.password)
       .subscribe((data: any) => {
         this.blockUIService.stop('global')
         console.log('DATA',data);
@@ -47,7 +54,7 @@ export class LoginComponent implements OnInit {
             icon: 'success',
             title: 'Usuario Logeado',
             text: 'Bienvenido ' + data.usua_nombre,
-            timer: 2000
+            timer: 1000
           });
           sessionStorage.Login = this.log.user.toString();
           sessionStorage.Tipo = data.usua_tipo_usuario.toString();
@@ -62,7 +69,7 @@ export class LoginComponent implements OnInit {
             icon: 'error',
             title: 'Usuario y/o contraseña incorrecta'
           });
-        }	
+        }
       },
       error => {
         this.blockUIService.stop('global')

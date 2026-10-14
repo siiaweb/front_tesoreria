@@ -35,6 +35,8 @@ import { MatSortModule } from '@angular/material/sort';
 import { PAGES_ROUTES } from './default.routes';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from 'src/app/shared/login/auth.interceptor';
 
 @NgModule({
     declarations: [
@@ -78,6 +80,8 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
         NgbTypeaheadModule,
         MatAutocompleteModule
     ],
-    providers: []
+    providers: [
+         { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    ]
 })
 export class DefaultModule { }

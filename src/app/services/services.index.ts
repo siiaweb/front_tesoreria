@@ -1,6 +1,6 @@
 // Módulos
 export { ValidadoresService } from './validadores.service';
-export { LoginService } from './login.service';
+//export { LoginService } from './login.service';
 export { RegistrarService } from './registrar.service';
 export { ErroresService } from './manejo_errores/errores.service';
 export { EvoService } from './dashboard/evo.service';

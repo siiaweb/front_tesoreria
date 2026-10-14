@@ -1,9 +1,7 @@
 export const environment = {
   production: true,
-
   rutaPortal: 'https://tesoreria.ujed.mx/',
-  //rutaPortal: 'http://192.168.10.38:8080/portalTesoreria/',
-
-  rutaAPI: 'https://tesoreria.ujed.mx/api',
-  rutaAlumno:'https://sistemas.ujed.mx/SIIA'
+  rutaPublica: 'https://tesoreria.ujed.mx/api',
+  rutaAPI: 'https://tesoreria.ujed.mx/portal',
+  rutaAlumno: 'https://sistemas.ujed.mx/SIIA'
 };

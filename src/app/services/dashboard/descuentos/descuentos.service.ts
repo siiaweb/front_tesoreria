@@ -11,28 +11,25 @@ import { HttpHeaders } from '@angular/common/http';
 })
 export class DescuentosService {
 
-    public urlEndPoint = `${environment.rutaAPI}`;
+  public urlEndPoint = `${environment.rutaAPI}`;
 
-  constructor( private http: HttpClient ) { }
+  constructor(private http: HttpClient) { }
 
 
 
   getDescuento() {
-    return this.http.get(this.urlEndPoint + '/tvdescuentos/'+sessionStorage.getItem('Ures')+'/'+sessionStorage.getItem('Persona')).pipe(
+    return this.http.get(this.urlEndPoint + '/descuentos/tvdescuentos/' + sessionStorage.getItem('Ures') + '/' + sessionStorage.getItem('Persona')).pipe(
       map((response: any) => {
         return response;
-        })
+      })
     );
   }
 
   getDescuentoDet(IDDescuento) {
-    //return this.http.get(this.urlEndPoint + '/tvdescuentosdet/'+sessionStorage.getItem('Ures')+'/'+sessionStorage.getItem('Persona')).pipe(
-      return this.http.get(this.urlEndPoint + '/tvdescuentosdet/'+IDDescuento).pipe(
-  map((response: any) => {
-    return response;
-    })
-);
-
-}
-
+    return this.http.get(this.urlEndPoint + '/descuentos/tvdescuentosdet/' + IDDescuento).pipe(
+      map((response: any) => {
+        return response;
+      })
+    );
+  }
 }

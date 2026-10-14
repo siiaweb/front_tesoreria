@@ -1,8 +1,8 @@
 
     <h3>Bienvenido: </h3>
     <h2><strong>{{ this.nombre }}</strong></h2>
-    <span fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="space-between center" *ngFor="let tu of tusuario">
-      <h4>{{ tu.tipo_descrip }}</h4>
+    <span fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="space-between center" >
+      <h4>{{ usuario?.tipoDescrip }}</h4>
       <h4>{{today | date:'fullDate':'':'es-MX'}}</h4>
     </span>
 
@@ -25,3 +25,8 @@
     </mat-card>
   </div>
 </div>
+
+<pre>
+  <!-- {{usuario.expiresIn | date:'dd/MM/yyyy HH:mm:ss'}}
+  {{ loginService.remainingSeconds$ | async }} s restantes -->
+</pre>

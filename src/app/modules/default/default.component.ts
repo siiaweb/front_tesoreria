@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 
-import { LoginService } from '../../services/login.service'
+
 import { filter } from 'rxjs/operators';
+import { LoginService } from 'src/app/shared/login/login.service';
 
 @Component({
   selector: 'app-default',

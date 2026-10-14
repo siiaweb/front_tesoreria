@@ -15,7 +15,7 @@ export interface DialogData {
 export class ListaUsuariosService {
 
   public urlEndPoint = `${environment.rutaAPI}`;
-
+ public urlEndPointPUBLICO = `${environment.rutaPublica}`;
   constructor(private http: HttpClient) { }
 
 
@@ -23,7 +23,7 @@ export class ListaUsuariosService {
 
 
   getListaUsuario() {
-    return this.http.get(this.urlEndPoint + '/tvusuarios/' + sessionStorage.getItem('usuID')).pipe(
+      return this.http.get(this.urlEndPointPUBLICO + '/tvusuarios/' + sessionStorage.getItem('usuID')).pipe(
       map((response: any) => {
         return response;
       })

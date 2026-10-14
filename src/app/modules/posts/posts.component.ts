@@ -80,10 +80,7 @@ export class PostsComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private _ds: DescuentosService,
     private _evo: EvoService,
-    private _ps: PagoServiciosService,
     private blockUIService: BlockUIService,
-    private ngZone: NgZone,
-    private router: Router,
     private renderer: Renderer2
   ) {
 
@@ -103,14 +100,14 @@ export class PostsComponent implements OnInit, OnDestroy {
       console.log('resultIndicator:', resultIndicator);
       console.log('sessionVersion:', sessionVersion);
       console.log('referencia:', referencia);
-      this.handleCompletado(resultIndicator['resultIndicator'], resultIndicator['sessionVersion'], referencia)
+      this._evo.handleCompletado(resultIndicator['resultIndicator'], resultIndicator['sessionVersion'], referencia)
     };
     console.log('construido')
   }
   ngOnDestroy(): void {
     // alert('ondestroy')
     //throw new Error('Method not implemented.');
-    this.stopPolling();
+      //this._evo.stopPolling();
       delete (window as any).errorCallback;
       delete (window as any).cancelCallback;
       delete (window as any).completeCallback;
@@ -126,62 +123,6 @@ export class PostsComponent implements OnInit, OnDestroy {
   }
 
 
-  handleCompletado(resultIndicator: string, sessionVersion: string, referencia: string) {
-    this.stopPolling();
-    console.log('Pago completado con éxito:', resultIndicator);
-    console.log('sessionVersion', sessionVersion)
-    console.log('referencia', referencia)
-    //alert('pago completado ' + referencia)
-    this._evo.insertarRespuesta(referencia,resultIndicator)
-      .pipe(
-        switchMap(response => {
-          console.warn('success', response)
-          sessionStorage.removeItem("MasterID");
-          sessionStorage.removeItem("shoppingCart");
-          //trespbanco1
-          return this._ps.getPDF(referencia);
-        })
-      ).subscribe({
-        next: (response) => {
-          const blob = response.body;
-          if (!blob) {
-            console.error('La respuesta no contiene el PDF.');
-            return;
-          }
-
-          const disposition = response.headers.get('Content-Disposition') ?? '';
-          console.log('Content-Disposition recibido:', response.headers.get('Content-Disposition'));
-          const nombre = disposition.match(/filename\*?=(?:UTF-8''|")?([^";]+)/i)?.[1]
-            ?.replace(/"/g, '')
-            ?? 'reporte.pdf';
-
-          const url = URL.createObjectURL(blob);
-          const enlace = document.createElement('a');
-          enlace.href = url;
-          enlace.download = decodeURIComponent(nombre);
-          document.body.appendChild(enlace);
-          enlace.click();
-          enlace.remove();
-
-          setTimeout(() => URL.revokeObjectURL(url), 1000);
-          this.router.navigate(['/recibos'], {
-            queryParams: {
-              resultIndicator: resultIndicator,
-              sessionVersion: sessionVersion
-            }
-          });
-          console.log('response success', blob)
-
-        },
-        error: (e) => {
-          console.error('e.handleComplete', e)
-        },
-        complete: () => {
-          console.log('complete handlecomplete')
-        }
-      })
-    // Tu lógica para validar el pago contra tu backend usando el resultIndicator
-  }
 
  prepararEvo(): void {
   const scriptUrl =
@@ -207,7 +148,7 @@ export class PostsComponent implements OnInit, OnDestroy {
   this.renderer.appendChild(document.head, script);
 }
   async ngOnInit() {
-     this.prepararEvo();//esta linea es importante
+    this.prepararEvo();//esta linea es importante
     this.blockUI.start('Cargando datos...');
     this.crearFormulario();
     const tipo: string = sessionStorage.getItem('Tipo').toString();
@@ -250,7 +191,7 @@ export class PostsComponent implements OnInit, OnDestroy {
         this.calcularServicios();
         this.sumarTotal();
       },
-      error: (err) => {
+      error: () => {
         Swal.fire({
           icon: 'error',
           title: 'Hubo un error al cargar los detalles del descuento, intentelo de nuevo',
@@ -451,15 +392,10 @@ export class PostsComponent implements OnInit, OnDestroy {
     //this.mostrarEvo(entity)
   }
 
-
-
-  
-
   // Cerrar
-  public closeEvoModal(event?: Event): void {
-    this._evo.closeEvoModal();
+  public closeEvoModal(event:any): void {
+    this._evo.closeEvoModal(event);
   }
-
   getCatalogoServicios(tipo: string) {
     this._cp.getCatalogoPagoTipoUser(tipo).subscribe(
       (catalogoPagoTipoUser) => {
@@ -485,51 +421,8 @@ export class PostsComponent implements OnInit, OnDestroy {
     }
   }
 
-  /*cosas que agrugué JCMH*/
-  private pollingSubscription?: Subscription;
 
-  private startPolling(referencia: string): void {
-    this.stopPolling();
-    this.pollingSubscription = interval(30000)
-    .pipe(
-      startWith(0),
-      switchMap(() =>
-        this._evo.retrieveInfo(referencia).pipe(
-          catchError(error => {
-            console.error('Error consultando la transacción; se volverá a intentar:', error);
-            return EMPTY;
-          })
-        )
-      ),
-      takeUntil(timer(10 * 60 * 1000))
-    )
-      .subscribe({
-        next: (response: any) => {
-          console.log('Estado de la transacción:', response);
-
-          // Sustituye esta condición por el campo/estados que devuelve tu API.
-          if (response && this.transaccionTerminada(response)) {
-            //sessionStorage.removeItem("MasterID");
-            // sessionStorage.removeItem("shoppingCart");
-            this.stopPolling();
-          }
-        },
-        error: (error) => {
-          console.error('Error consultando la transacción:', error);
-          this.stopPolling();
-        }
-      });
-  }
-  private transaccionTerminada(response: any): boolean {
-    // console.info('estado de la trans terminada', response)
-    return response.status === 'CAPTURED';
-  }
-  private stopPolling(): void {
-    if (this.pollingSubscription) {
-      this.pollingSubscription.unsubscribe();
-      this.pollingSubscription = undefined;
-    }
-  }
+ 
 
   @HostListener('window:pageshow', ['$event'])
   onPageShow(event: PageTransitionEvent): void {

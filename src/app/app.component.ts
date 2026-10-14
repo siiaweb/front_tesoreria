@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { environment } from '../environments/environment';
+import { LoginService } from './shared/login/login.service';
 
 @Component({
   selector: 'app-root',
@@ -8,7 +9,7 @@ import { environment } from '../environments/environment';
 export class AppComponent implements OnInit {
 
 
-  constructor(  ) {
+  constructor( private authService:LoginService ) {
 /*
     if (sessionStorage.getItem('Login') != null) {
       console.log("si entra");
@@ -20,7 +21,7 @@ export class AppComponent implements OnInit {
    }
 
   ngOnInit(): void {
-    
+     this.authService.autoLogin();
   }
 
 }

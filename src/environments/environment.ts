@@ -4,14 +4,9 @@
 
 export const environment = {
   production: false,
-
-  rutaPortal: 'http://172.20.11.123:4500/',
-
-  //rutaAPI: 'http://192.168.1.190:8090/api'
-  //rutaAPI: 'http://192.168.10.38:8090/api'
-  //rutaAPI: 'https://tesoreria.ujed.mx/api'
-  rutaAPI: 'http://172.20.11.123:8090/api',
-  //rutaAlumno:'http://127.0.0.0.1:8085/SIIAWEB'
+  rutaPublica: 'http://172.20.11.123:8090/api',
+  rutaPortal: 'http://172.20.11.123:4500',
+  rutaAPI: 'http://172.20.11.123:8090/portal',
   rutaAlumno:'https://sistemas.ujed.mx/SIIA'
 };
 

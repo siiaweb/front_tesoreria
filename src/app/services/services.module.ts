@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 
-import { LoginService } from './login.service';
+
 import { RegistrarService } from './registrar.service';
 import { ValidadoresService } from './validadores.service';
 import { ErroresService } from './manejo_errores/errores.service';
@@ -12,6 +12,7 @@ import { PagoServiciosService } from './dashboard/pagoServicios/pagoservicios.se
 
 import { LoginGuard } from './guards/login.guard';
 
+
 @NgModule({
   declarations: [],
   imports: [
@@ -20,7 +21,7 @@ import { LoginGuard } from './guards/login.guard';
   ],
   providers: [
     LoginGuard,
-    LoginService,
+   // LoginService,
     RegistrarService,
     ValidadoresService,
     ErroresService,

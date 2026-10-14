@@ -3,11 +3,11 @@ import { Login } from './login';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import swal from 'sweetalert2';
-import { LoginService } from '../../services/login.service';
 import { environment } from '../../../environments/environment';
-import {MatDialog,MatDialogConfig} from '@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import { DialogBodyComponent } from '../dialog-body/dialog-body.component';
 import { BlockUIService } from 'ng-block-ui';
+import { LoginService } from './login.service';
 
 @Component({
   selector: 'app-login',
@@ -17,10 +17,10 @@ import { BlockUIService } from 'ng-block-ui';
 export class LoginComponent implements OnInit {
   private subscription: Subscription;
   public log: Login = new Login();
-
+ 
   constructor( 
     private router: Router, 
-    private _log: LoginService ,
+    private loginService: LoginService ,
     private dialog: MatDialog,
     private blockUIService: BlockUIService,
   ) { }
@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit {
   login() {
     this.blockUIService.start('global','cargando login')
     console.warn('ingresando')
-    this.subscription = this._log.getLogin(this.log)
+    this.subscription = this.loginService.ingresar(this.log.user,this.log.password)
       .subscribe((data: any) => {
         this.blockUIService.stop('global')
         console.log('DATA',data);

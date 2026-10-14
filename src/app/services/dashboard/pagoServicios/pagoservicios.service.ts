@@ -14,7 +14,7 @@ export class PagoServiciosService {
 
   constructor(private http: HttpClient) { }
   getRecibosPagosOnline(usuario: string) {
-    return this.http.get(`${this.urlEndPoint}/recibos/${usuario}`)
+    return this.http.get(`${this.urlEndPoint}/pdf/recibos/${usuario}`)
       .pipe(
         map((response: any) => response
         )
@@ -36,6 +36,7 @@ export class PagoServiciosService {
 
   logoutSession(error:{}){
     return this.http.post(`${this.urlEndPoint}/evo/logoutsesion`,error)
+   
   }
 
 

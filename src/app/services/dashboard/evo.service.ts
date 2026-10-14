@@ -7,7 +7,7 @@ import { catchError, map, startWith, switchMap, takeUntil } from 'rxjs/operators
 import Swal from 'sweetalert2';
 import { BlockUIService } from 'ng-block-ui';
 import { EvoCheckout } from 'src/app/modules/posts/posts.component';
-//import { Evo } from './Evo'
+
 
 @Injectable({
   providedIn: 'root'
@@ -99,12 +99,13 @@ export class EvoService {
   }
 
     public closeEvoModal(event?: Event): void {
-    if (event) event.stopPropagation();
-    const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
-    if (overlay) overlay.classList.remove('open');
-    const container = document.getElementById('evo-embed-container');
-    if (container) container.innerHTML = '';
-    document.body.style.overflow = '';
+      this.stopPolling();
+      if (event) event.stopPropagation();
+      const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
+      if (overlay) overlay.classList.remove('open');
+      const container = document.getElementById('evo-embed-container');
+      if (container) container.innerHTML = '';
+      document.body.style.overflow = '';
     //this.clearHostedCheckoutSessionStorage();
   }
 

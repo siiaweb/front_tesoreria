@@ -39,37 +39,21 @@
                             <section *ngIf="forma.get('usua_tipo_usuario').value === '30' || forma.get('usua_tipo_usuario').value === '10' || forma.get('usua_tipo_usuario').value === '20'">
                                 <mat-form-field class="custom-form-field" appearance="outline" [ngClass]="{ 'custom-form-field-invalid': forma.get('ures_desc').invalid && forma.get('ures_desc').touched }">
                                     <mat-label>URES</mat-label>
-                                    <input
-                                        type="text"
-                                        matInput
-                                        formControlName="ures_desc"
-                                        [matAutocomplete]="autoUres"
-                                        onfocus="this.select()"
-                                        (input)="buscarUres()"
-                                        (blur)="validarUres()">
-                                        <button
-                                            type="button"
-                                            mat-icon-button
-                                            matSuffix
-                                            matTooltip="Limpiar Selección"
-                                            *ngIf="forma.get('ures_desc')?.value"
-                                            (click)="deseleccionarUres()"
-                                        >
-                                            <i class="bi bi-x"></i>
-                                        </button>
-                                        <mat-autocomplete #autoUres="matAutocomplete" autoActiveFirstOption="true"  panelClass="autocomplete-dropdown" (optionSelected)="seleccionarUres($event)">
-                                            <mat-option *ngFor="let selected of filteredUres" [value]="selected">
-                                              <div class="dropdown-item">
-                                                <div>
-                                                  <div class="item-title">{{selected.uresdesc}}</div>
+                                    <mat-select formControlName="ures_desc" panelClass="autocomplete-dropdown" (selectionChange)="seleccionarUres($event)">
+                                        <mat-select-trigger>
+                                            {{ forma.get('ures_desc')?.value.uresdesc }}
+                                          </mat-select-trigger>
+                                        <mat-option *ngFor="let option of ures" [value]="option">
+                                            <div class="dropdown-item">
+                                                <div style="display: inline-block; width: 100%; white-space: nowrap; overflow: hidden !important; text-overflow: ellipsis; margin-right: 5px;">
+                                                    <span class="item-title">{{ option.uresdesc }}</span>
                                                 </div>
-                                                <span class="item-code">{{selected.ures}}</span>
-                                              </div>
-                                            </mat-option>
-                                        </mat-autocomplete>
+                                                <div class="item-code">{{ option.ures }}</div>
+                                            </div>
+                                        </mat-option>
+                                    </mat-select>
                                 </mat-form-field>
                                 <div class="div-error" *ngIf="forma.get('ures_desc').hasError('required') && forma.get('ures_desc').touched">* campo obligatorio</div>
-                                <div class="div-error" *ngIf="forma.get('ures_desc').hasError('noId') && forma.get('ures_desc').touched">seleccione una opción valida</div>
                                 <mat-form-field class="custom-form-field" appearance="outline" style="margin-top: 10px;">
                                     <mat-label>PROGRAMA</mat-label>
                                     <mat-select formControlName="usua_prog" panelClass="autocomplete-dropdown">

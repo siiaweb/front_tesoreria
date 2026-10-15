@@ -14,6 +14,7 @@ import { environment } from 'src/environments/environment';
 import { fieldIdValidation, matchWithField } from '../dialog-body/validators/validators.dialog';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { erroresFormulario } from 'src/app/modules/componentes-genericos/manejo-errores-forma/errores';
+import { MatSelectChange } from '@angular/material/select';
 
 
 @Component({
@@ -103,51 +104,28 @@ export class RegistrarComponent implements OnInit {
     if(this.forma.get('usua_tipo_usuario').value === '30'){
       this.getUres();
       this.forma.get('usua_ures').setValue('');
+      this.forma.get('ures_desc').setValidators(Validators.required);
+      this.forma.get('ures_desc').updateValueAndValidity();
       this.forma.get('usua_prog').setValue('');
     }else{
       this.forma.get('usua_ures').setValue('5300');
+      this.forma.get('ures_desc').clearValidators();
+      this.forma.get('ures_desc').updateValueAndValidity();
       this.forma.get('usua_prog').setValue('510002');
     }
   }
 
-  buscarUres(){
-    const filter = this.forma.get('ures_desc').value?.toUpperCase() || '';
-    console.log(this.ures);
-    if(filter === ''){
-      this.deseleccionarUres();
-    }else{
-      this.filteredUres = this.ures.filter(item =>
-        item.ures?.toString().toUpperCase().includes(filter) ||
-        item.uresdesc?.toString().toUpperCase().includes(filter)
-      )
-      console.log(this.filteredUres);
-    }
-  }
-
-  validarUres(){
-    if(this.filteredUres?.length === 0) this.limpiarCamposUres();
-  }
-
-  deseleccionarUres(){
-    this.forma.get('ures_desc').setValue('');
-    this.limpiarCamposUres();
-    this.filteredUres = this.ures;
-  }
-
   limpiarCamposUres(){
+    this.forma.get('ures_desc').setValue('');
     this.forma.get('usua_ures').setValue('');
     this.forma.get('ures_desc').updateValueAndValidity();
     this.forma.get('usua_prog').setValue('');
     this.programas = [];
   }
 
-  seleccionarUres(event: MatAutocompleteSelectedEvent) {
-    let value: Ures = event.option.value;
-    this.limpiarCamposUres();
-    this.forma.get('ures_desc').setValue(value.uresdesc);
+  seleccionarUres(event: MatSelectChange) {
+    let value: Ures = event.value;
     this.forma.get('usua_ures').setValue(value.ures);
-    this.forma.get('ures_desc').updateValueAndValidity();
-    this.buscarUres();
     this.Programas(value.ures);
   }
 
@@ -168,9 +146,9 @@ export class RegistrarComponent implements OnInit {
   crearFormulario(){
     this.forma = this.fb.group({
       usua_tipo_usuario: ['', Validators.required],
-      usua_nivel: [''],
+      usua_nivel: '',
       usua_ures: '',
-      ures_desc: ['', [Validators.required, fieldIdValidation('usua_ures')]],
+      ures_desc: ['', [Validators.required]],
       usua_prog: [''],
       usua_usuario: ['', [Validators.required,Validators.maxLength(20),Validators.pattern(/^\S+$/)]],
       usua_persona: ['', [Validators.required,Validators.maxLength(10)]],

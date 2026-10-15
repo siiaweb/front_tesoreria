@@ -4,6 +4,8 @@ import { DescuentosService } from '../../services/dashboard/descuentos/descuento
 import { Descuentos } from '../../services/dashboard/descuentos/descuentos';
 import { LoginService } from 'src/app/shared/login/login.service';
 import { Usuario } from 'src/app/shared/login/login.models';
+import { BlockUIService } from 'ng-block-ui';
+import { erroresFormulario } from '../componentes-genericos/manejo-errores-forma/errores';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,7 +24,12 @@ usuario:Usuario;
 
   nombre: any;
 
-  constructor( private _ds: DescuentosService, private _reg: RegistrarService, public loginService :LoginService) { }
+  constructor( 
+    private _ds: DescuentosService, 
+    private _reg: RegistrarService, 
+    public loginService :LoginService,
+    private blockUIService: BlockUIService,
+  ) { }
 
   ngOnInit() {
     window.scroll(0, 0);
@@ -31,8 +38,10 @@ usuario:Usuario;
         this.nombre=usuario.Nombre;
         this.usuario=usuario;
       },
-      error:(e)=>{
-
+      error:(error)=>{
+        this.blockUIService.stop('global')
+        console.error('error',error)
+        erroresFormulario.handleError(error);
       },
       complete:()=>{
 
@@ -53,13 +62,18 @@ usuario:Usuario;
     //   }
     // )
 
-    this._ds.getDescuento().subscribe(
-      (descuentos) => {
+    this._ds.getDescuento().subscribe({
+      next: (descuentos) => {
         this.descuentos = descuentos
         //console.log(descuentos);
         this.count = this.descuentos.length;
+      },
+      error: (error) => {
+        this.blockUIService.stop('global')
+        console.error('error',error)
+        erroresFormulario.handleError(error);
       }
-    )
+    })
 
   }
 

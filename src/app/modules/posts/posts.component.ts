@@ -186,14 +186,11 @@ export class PostsComponent implements OnInit, OnDestroy {
         this.calcularServicios();
         this.sumarTotal();
       },
-      error: () => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Hubo un error al cargar los detalles del descuento, intentelo de nuevo',
-          showConfirmButton: true,
-        }).then(() => {
-          this.limpiarCamposDescuento();
-        });
+      error: (error) => {
+        this.blockUIService.stop('global')
+        console.error('error',error);
+        this.limpiarCamposDescuento();
+        erroresFormulario.handleError(error);
       }
     })
   }
@@ -373,16 +370,28 @@ export class PostsComponent implements OnInit, OnDestroy {
     this._evo.closeEvoModal(event);
   }
   getCatalogoServicios(tipo: string) {
-    this._cp.getCatalogoPagoTipoUser(tipo).subscribe((catalogoPagoTipoUser) => {
+    this._cp.getCatalogoPagoTipoUser(tipo).subscribe({
+      next: (catalogoPagoTipoUser) => {
       this.catalogoPagoTipoUser = catalogoPagoTipoUser;
+      },
+      error: (error) => {
+        this.blockUIService.stop('global');
+        erroresFormulario.handleError(error);
+      }
     })
   }
 
   getDescuentos(id: string) {
-    this._ds.getDescuento().subscribe((descuentos) => {
-      if (descuentos.length != 0) {
-        this.descuentos = descuentos
-        this.llenarDescuento(id);
+    this._ds.getDescuento().subscribe({
+      next: (descuentos) => {
+        if (descuentos.length != 0) {
+          this.descuentos = descuentos
+          this.llenarDescuento(id);
+        }
+      },
+      error: (error) => {
+        this.blockUIService.stop('global');
+        erroresFormulario.handleError(error);
       }
     })
   }

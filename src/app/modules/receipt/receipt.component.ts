@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
-import { BlockUI, NgBlockUI } from 'ng-block-ui';
-import Swal from 'sweetalert2';
+import { BlockUI, BlockUIService, NgBlockUI } from 'ng-block-ui';
 import { ActivatedRoute } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
 import { EvoService } from 'src/app/services/dashboard/evo.service';
+import { erroresFormulario } from '../componentes-genericos/manejo-errores-forma/errores';
 
 @Component({
   selector: 'app-receipt',
@@ -19,7 +19,12 @@ export class ReceiptComponent implements OnInit {
   p: number = 1;
 
   recibos: any;
-  constructor(private _ps: PagoServiciosService, private route: ActivatedRoute, private _evo: EvoService) { }
+  constructor(
+    private _ps: PagoServiciosService, 
+    private route: ActivatedRoute, 
+    private _evo: EvoService,
+    private blockUIService: BlockUIService,
+  ) { }
 
   ngOnInit() {
 
@@ -116,8 +121,8 @@ export class ReceiptComponent implements OnInit {
       },
       error: error => {
         alert('err'+JSON.stringify(error))
-        this.blockUI.stop();
-        console.error('Error en el flujo:', error)
+        this.blockUIService.stop('global');
+        erroresFormulario.handleError(error);
       },
       complete: () => {
         this.blockUI.stop();
@@ -143,12 +148,9 @@ export class ReceiptComponent implements OnInit {
       },
         (error: { message: any; }) => {
           console.log(error);
-          this.blockUI.stop();
-          Swal.fire({
-            title: 'ERROR!!!',
-            text: error.message,
-            icon: 'error'
-          });
+          alert('err'+JSON.stringify(error))
+          this.blockUIService.stop('global');
+          erroresFormulario.handleError(error);
         });
     } else {
       this._ps.printReceiptDsto(id, ref_banco).subscribe((response: BlobPart) => {
@@ -158,13 +160,8 @@ export class ReceiptComponent implements OnInit {
         this.blockUI.stop();
       },
         (error: { error: { message: any; }; }) => {
-          this.blockUI.stop();
-          console.log(error);
-          Swal.fire({
-            title: 'ERROR!!!',
-            text: error.error.message,
-            icon: 'error'
-          });
+          this.blockUIService.stop('global');
+          erroresFormulario.handleError(error);
         });
     }
   }
@@ -178,11 +175,8 @@ export class ReceiptComponent implements OnInit {
       const fileURL = URL.createObjectURL(blob);
       window.open(fileURL);
     }, error => {
-      this.blockUI.stop();
-      console.log(error);
-      Swal.fire({
-        title: 'AVISO!!', text: "Error al cargar carta, inténtelo de nuevo", icon: 'error'
-      });
+      this.blockUIService.stop('global');
+      erroresFormulario.handleError(error);
     });
   }
 

@@ -5,12 +5,11 @@ import { Router } from '@angular/router';
 import swal from 'sweetalert2';
 
 import { environment } from '../../../environments/environment';
-import {MatDialog,MatDialogConfig} from '@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import { DialogBodyComponent } from '../dialog-body/dialog-body.component';
 import { BlockUIService } from 'ng-block-ui';
 import { erroresFormulario } from 'src/app/modules/componentes-genericos/manejo-errores-forma/errores';
 import { LoginService } from './login.service';
-import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',

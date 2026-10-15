@@ -48,7 +48,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
         FormsModule,
         ReactiveFormsModule,
         ServicesModule,
-        BlockUIModule.forRoot(),
+        BlockUIModule,
         NgxPaginationModule,
         AngularEditorModule,
         MatProgressBarModule,

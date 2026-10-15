@@ -10,6 +10,7 @@ import { DialogBodyComponent } from '../dialog-body/dialog-body.component';
 import { BlockUIService } from 'ng-block-ui';
 import { erroresFormulario } from 'src/app/modules/componentes-genericos/manejo-errores-forma/errores';
 import { LoginService } from './login.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -48,9 +49,7 @@ export class LoginComponent implements OnInit {
       this.subscription = this._log.ingresar(this.log.user,this.log.password)
       .subscribe((data: any) => {
         sessionStorage.clear();
-        this.blockUIService.stop('global')
-        //console.log('DATA',data);
-        //console.warn(typeof data !== 'undefined',data)
+        this.blockUIService.stop('global');
         if ( typeof data !== 'undefined' && data['token']) {
           swal.fire({
             icon: 'success',
@@ -64,7 +63,7 @@ export class LoginComponent implements OnInit {
           sessionStorage.Ures = data.usua_ures.toString();
           sessionStorage.Persona = data.usua_persona.toString();
           sessionStorage.Nombre = data.usua_nombre.toString();
-         // sessionStorage.token=data.token;
+          //sessionStorage.token=data.token;
           this.router.navigate(['/dashboard']);
         } else{
           swal.fire({
@@ -76,7 +75,7 @@ export class LoginComponent implements OnInit {
       error => {
         this.blockUIService.stop('global')
         console.error('error',error)
-        erroresFormulario.handleErrorMessageVentana(error);
+        erroresFormulario.handleError(error);
       });
     }
   }

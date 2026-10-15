@@ -49,7 +49,7 @@ export class LoginService {
   ingresar(username: string, password: string) {
     const urlLogin = this.urlEndPointPUBLICO + '/tusuarios/' + username + '/' + password;
     return this.http.post<UsuarioResponse>(urlLogin, {}).pipe(
-      catchError(LoginService.handleError),
+      //catchError(LoginService.handleError),
       tap(response => {
        /*   sessionStorage.Login = username.toString();
           sessionStorage.Tipo = response.usua_tipo_usuario.toString();
@@ -93,38 +93,38 @@ export class LoginService {
     //this.autoLogout(exp);
     this.autoLogout(exp * 1000 - Date.now());
   }
-  private static handleError(errorRes: HttpErrorResponse) {
-    let errorMessage = 'An unknown error occurred!';
-    let errorType = 'desconocido';
-    const estatus = errorRes.status;
-    if (errorRes.status == 401) {
-      errorMessage = errorRes.statusText;
-    }
-    if (errorRes.status == 503) {
-      return throwError({
-        estatus,
-        message: "Servicio no disponible, favor de intentarlo más tarde"
-      });
-    }
-    if (!errorRes.error || !errorRes.error.error) {
-      return throwError({ message: errorMessage, errorType: errorType });
-    }
-    switch (errorRes.error.error) {
-      case 'invalid_grant':
-        errorMessage = 'Usuario y/o contraseña incorrecta';
-        errorType = 'usuario/contraseña incorrecta';
-        break;
-      case 'unauthorized':
-        errorMessage = 'MOTIVO:' + errorRes.error.error_description;
-        errorType = 'Acceso denegado';
-        break;
-      default:
-        errorMessage = errorRes.error.error_description;
-        errorType = errorRes.error.error;
-      // code block
-    }
-    return throwError({ message: errorMessage, errorType: errorType });
-  }
+  // private static handleError(errorRes: HttpErrorResponse) {
+  //   let errorMessage = 'An unknown error occurred!';
+  //   let errorType = 'desconocido';
+  //   const estatus = errorRes.status;
+  //   if (errorRes.status == 401) {
+  //     errorMessage = errorRes.statusText;
+  //   }
+  //   if (errorRes.status == 503) {
+  //     return throwError({
+  //       estatus,
+  //       message: "Servicio no disponible, favor de intentarlo más tarde"
+  //     });
+  //   }
+  //   if (!errorRes.error || !errorRes.error.error) {
+  //     return throwError({ message: errorMessage, errorType: errorType });
+  //   }
+  //   switch (errorRes.error.error) {
+  //     case 'invalid_grant':
+  //       errorMessage = 'Usuario y/o contraseña incorrecta';
+  //       errorType = 'usuario/contraseña incorrecta';
+  //       break;
+  //     case 'unauthorized':
+  //       errorMessage = 'MOTIVO:' + errorRes.error.error_description;
+  //       errorType = 'Acceso denegado';
+  //       break;
+  //     default:
+  //       errorMessage = errorRes.error.error_description;
+  //       errorType = errorRes.error.error;
+  //     // code block
+  //   }
+  //   return throwError({ message: errorMessage, errorType: errorType });
+  // }
 
 
   get nombre() {

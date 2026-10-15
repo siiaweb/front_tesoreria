@@ -358,8 +358,8 @@ export class PostsComponent implements OnInit, OnDestroy {
 
       },
       error: (error) => {
-        this.blockUIService.stop('global')
-        erroresFormulario.handleErrorMessageVentana(error);
+        this.blockUIService.stop('global');
+        erroresFormulario.handleError(error);
       },
       complete:() => {
 

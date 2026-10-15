@@ -116,6 +116,7 @@ export class EvoService {
     });
   }
   public closeEvoModal(event: Event,referencia:string): void {
+    this.stopPolling();
     console.log('closing evo')
     if (event) event.stopPropagation();
     const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;

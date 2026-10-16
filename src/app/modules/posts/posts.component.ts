@@ -2,7 +2,7 @@ import { Component, HostListener, OnDestroy, OnInit, Renderer2 } from '@angular/
 import { CatalogoPagoService } from '../../services/dashboard/catalogoPago.service';
 import { CatalogoPago } from '../../services/dashboard/catalogoPago';
 import { CatalogoPagoTipoUser } from '../../services/dashboard/catalogoPagoTipoUser';
-import { Validators, FormGroup, FormBuilder, FormArray } from '@angular/forms';
+import { Validators, FormGroup, FormBuilder, FormArray, FormControl } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { BlockUI, BlockUIService, NgBlockUI } from 'ng-block-ui';
 import { DescuentosService } from 'src/app/services/dashboard/descuentos/descuentos.service';
@@ -11,6 +11,8 @@ import { erroresFormulario } from '../componentes-genericos/manejo-errores-forma
 import { EvoService } from '../../services/dashboard/evo.service';
 import { MatSelectChange } from '@angular/material/select';
 import { maxValidator, minValidator } from './validators/validators.post';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 export interface EvoCheckout {
   configure(options: {
@@ -76,13 +78,15 @@ export class PostsComponent implements OnInit, OnDestroy {
     private _ds: DescuentosService,
     private _evo: EvoService,
     private blockUIService: BlockUIService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private router: Router,
+    private route: ActivatedRoute
   ) {
 
 
     (window as any).errorCallback = (error: any) => {
       console.log('EVO error:', error);
-      if(error.explanation.includes('expired')){
+      if (error.explanation.includes('expired')) {
 
       }
     };
@@ -98,14 +102,36 @@ export class PostsComponent implements OnInit, OnDestroy {
       this._evo.handleCompletado(resultIndicator['resultIndicator'], resultIndicator['sessionVersion'], referencia)
     };
     console.log('construido')
+    //alert('constructor')
+    const orderId =
+      this.route.snapshot.queryParamMap.get('orderId');
+    if (orderId) {
+      this._evo.cortar(
+        orderId,
+        'INVALID_REQUEST',
+        'EL USUARIO CANCELO O REFRESCO DESPUES DE CANCELAR'
+      ).subscribe({
+        next: response => {
+          console.log('Respuesta de cortar:', response);
+
+        },
+        error: error => {
+          console.error('Error en cortar:', error);
+        },
+        complete: () => {
+          console.log('Solicitud cortar completada');
+        }
+      });
+    }
+
   }
   ngOnDestroy(): void {
     // alert('ondestroy')
     //throw new Error('Method not implemented.');
-      //this._evo.stopPolling();
-      delete (window as any).errorCallback;
-      delete (window as any).cancelCallback;
-      delete (window as any).completeCallback;
+    //this._evo.stopPolling();
+    delete (window as any).errorCallback;
+    delete (window as any).cancelCallback;
+    delete (window as any).completeCallback;
   }
   handleError(error: any) {
     console.error('Error en el pago de EVO:', error);
@@ -118,30 +144,30 @@ export class PostsComponent implements OnInit, OnDestroy {
   }
 
 
+  private routerSubscription?: Subscription;
+  prepararEvo(): void {
+    const scriptUrl =
+      'https://evopaymentsmexico.gateway.mastercard.com/static/checkout/checkout.min.js';
 
- prepararEvo(): void {
-  const scriptUrl =
-    'https://evopaymentsmexico.gateway.mastercard.com/static/checkout/checkout.min.js';
+    const existente = Array.from(document.scripts)
+      .find(script => script.src === scriptUrl);
 
-  const existente = Array.from(document.scripts)
-    .find(script => script.src === scriptUrl);
+    if (existente) {
+      console.log('Checkout.js ya está agregado; no se insertará otra vez.');
+      return;
+    }
 
-  if (existente) {
-    console.log('Checkout.js ya está agregado; no se insertará otra vez.');
-    return;
+    const script = this.renderer.createElement('script') as HTMLScriptElement;
+
+    this.renderer.setAttribute(script, 'src', scriptUrl);
+    this.renderer.setAttribute(script, 'data-error', 'errorCallback');
+    this.renderer.setAttribute(script, 'data-cancel', 'cancelCallback');
+    this.renderer.setAttribute(script, 'data-complete', 'completeCallback');
+
+    script.onerror = () => console.error('Error cargando Checkout.js');
+
+    this.renderer.appendChild(document.head, script);
   }
-
-  const script = this.renderer.createElement('script') as HTMLScriptElement;
-
-  this.renderer.setAttribute(script, 'src', scriptUrl);
-  this.renderer.setAttribute(script, 'data-error', 'errorCallback');
-  this.renderer.setAttribute(script, 'data-cancel', 'cancelCallback');
-  this.renderer.setAttribute(script, 'data-complete', 'completeCallback');
-
-  script.onerror = () => console.error('Error cargando Checkout.js');
-
-  this.renderer.appendChild(document.head, script);
-}
   async ngOnInit() {
     this.prepararEvo();//esta linea es importante
     this.blockUI.start('Cargando datos...');
@@ -153,7 +179,7 @@ export class PostsComponent implements OnInit, OnDestroy {
     if (entity) {
       console.log(entity);
       this.forma.patchValue(entity.forma);
-      this.forma.controls['referencia'].setValue(referencia||null);
+      this.forma.controls['referencia'].setValue(referencia || null);
       this.getDescuentos(entity.forma.descuento || null);
       entity.detalles.map(det => {
         const element = this.fb.group({ ...this.detalle });
@@ -188,7 +214,7 @@ export class PostsComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         this.blockUIService.stop('global')
-        console.error('error',error);
+        console.error('error', error);
         this.limpiarCamposDescuento();
         erroresFormulario.handleError(error);
       }
@@ -256,7 +282,7 @@ export class PostsComponent implements OnInit, OnDestroy {
     } else {
       let id = this.forma.get('idingreso').value;
       let encontrada = null;
-      if(this.forma.get('cambiaPrecio').value !== 'S'){
+      if (this.forma.get('cambiaPrecio').value !== 'S') {
         encontrada = this.Detalles.find(a => a.get('idingreso').value === id);
       }
       const element = this.fb.group({ ...this.detalle });
@@ -358,7 +384,7 @@ export class PostsComponent implements OnInit, OnDestroy {
         this.blockUIService.stop('global');
         erroresFormulario.handleError(error);
       },
-      complete:() => {
+      complete: () => {
 
       }
     })
@@ -366,13 +392,13 @@ export class PostsComponent implements OnInit, OnDestroy {
   }
 
   // Cerrar
-  public closeEvoModal(event:any): void {
-    this._evo.closeEvoModal(event);
+  public closeEvoModal(event: any): void {
+    this._evo.closeEvoModal(event, this.referencia.value);
   }
   getCatalogoServicios(tipo: string) {
     this._cp.getCatalogoPagoTipoUser(tipo).subscribe({
       next: (catalogoPagoTipoUser) => {
-      this.catalogoPagoTipoUser = catalogoPagoTipoUser;
+        this.catalogoPagoTipoUser = catalogoPagoTipoUser;
       },
       error: (error) => {
         this.blockUIService.stop('global');
@@ -404,7 +430,7 @@ export class PostsComponent implements OnInit, OnDestroy {
   }
 
 
- 
+
 
   @HostListener('window:pageshow', ['$event'])
   onPageShow(event: PageTransitionEvent): void {
@@ -425,6 +451,10 @@ export class PostsComponent implements OnInit, OnDestroy {
   onEvoCheckoutFinished(): void {
     console.log('onEvoCheckoutFinished')
     this.blockUIService.stop('global');
+  }
+
+  get referencia() {
+    return this.forma.get('referencia') as FormControl;
   }
 
 }

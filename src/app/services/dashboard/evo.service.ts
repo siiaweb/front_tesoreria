@@ -7,6 +7,7 @@ import { catchError, map, startWith, switchMap, takeUntil } from 'rxjs/operators
 import Swal from 'sweetalert2';
 import { BlockUIService } from 'ng-block-ui';
 import { EvoCheckout } from 'src/app/modules/posts/posts.component';
+import { PagoOnlineDTO } from 'src/app/modules/posts/pagoonline.models';
 
 
 @Injectable({
@@ -20,7 +21,7 @@ export class EvoService {
     private http: HttpClient,
     public router: Router,
     private blockUIService: BlockUIService) { }
-  
+
 
   public stopPolling(): void {
     if (this.pollingSubscription) {
@@ -31,13 +32,13 @@ export class EvoService {
 
   handleCompletado(resultIndicator: string, sessionVersion: string, referencia: string) {
     this.stopPolling();
-  
+
     //alert('pago completado ' + referencia)
     this.insertarRespuestaConPdf(referencia, resultIndicator)
       .subscribe({
         next: (response) => {
           const disposition = response.headers.get('Content-Disposition');
-        
+
           const coincidencia = disposition.match(/filename\*?=(?:UTF-8''|")?([^";]+)/i);
           let nombre = coincidencia && coincidencia[1]
             ? coincidencia[1].replace(/"/g, '')
@@ -63,33 +64,33 @@ export class EvoService {
           enlace.remove();
 
           setTimeout(() => URL.revokeObjectURL(url), 1000);
-         // this.closeEvoModal();
+          // this.closeEvoModal();
 
           this.router.navigate(['/recibos'], {
             queryParams: { resultIndicator, sessionVersion }
           }).then(navigated => {
-         
-           // this.cdr.detectChanges();
-           if(navigated){
-            window.location.reload();
-           }
+
+            // this.cdr.detectChanges();
+            if (navigated) {
+              window.location.reload();
+            }
           }).catch(error => {
             console.error('Error de navegación:', error);
           });
-        
+
 
         },
         error: (e) => {
           console.error('e.handleComplete', e)
         },
         complete: () => {
-        
+
         }
       })
     // Tu lógica para validar el pago contra tu backend usando el resultIndicator
   }
 
- public showEvoOverlay(): void {
+  public showEvoOverlay(): void {
     const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
     if (!overlay) { console.error('Overlay no encontrado'); return; }
     overlay.classList.add('open');
@@ -98,29 +99,53 @@ export class EvoService {
     void overlay.offsetHeight;
   }
 
-    public closeEvoModal(event?: Event): void {
-      this.stopPolling();
-      if (event) event.stopPropagation();
-      const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
-      if (overlay) overlay.classList.remove('open');
-      const container = document.getElementById('evo-embed-container');
-      if (container) container.innerHTML = '';
-      document.body.style.overflow = '';
+  public closeEvoModal(event: Event, referencia: string): void {
+    this.cortar(
+      referencia,
+      'INVALID_REQUEST',
+      'EL USUARIO CERRO EL MODAL'
+    ).subscribe({
+      next: response => {
+        console.log('Respuesta de cortar:', response);
+
+      },
+      error: error => {
+        console.error('Error en cortar:', error);
+      },
+      complete: () => {
+        console.log('Solicitud cortar completada');
+      }
+    });
+    this.stopPolling();
+    if (event) event.stopPropagation();
+    const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
+    if (overlay) overlay.classList.remove('open');
+    const container = document.getElementById('evo-embed-container');
+    if (container) container.innerHTML = '';
+    document.body.style.overflow = '';
     //this.clearHostedCheckoutSessionStorage();
   }
 
-   mostrarEvo(entity:any) {//(this.ID, this.total)
-   
+  cortar(referencia: string, causa: string, comentario: string) {
+    // /portal/evo/logoutsesion/{orderid}
+    return this.http.post(`${this.urlEndPoint}/evo/logoutsesion/${referencia}`, {
+      'error.cause': causa,
+      'error.explanation': comentario
+    })
+  }
+
+  mostrarEvo(entity: PagoOnlineDTO) {//(this.ID, this.total)
+
     //let referencia = this.forma.get('referencia').value;
-    
+
     return this.getEvo(entity).pipe(
-      map(response=>{
+      map(response => {
         //this.blockUIService.stop('global');
         console.warn('response', response)
         sessionStorage.MasterID = response.referencia;
-       
+
         //this.pago_referencia.setValue(response.referencia);
-       
+
         this.showEvoOverlay();
         setTimeout(() => {
           try {
@@ -138,30 +163,49 @@ export class EvoService {
               if (checkout) {
                 this.clearHostedCheckoutSessionStorage();
                 this.startPolling(response.referencia)
-                if(this.esDispositivoMovil()){
-                    checkout.showPaymentPage();
-                   //  checkout.showEmbeddedPage('#evo-embed-container');
-                } else{
-                    checkout.showEmbeddedPage('#evo-embed-container');
+                if (this.esDispositivoMovil()) {
+                  this.cortar(
+                    response.referencia,
+                    'INVALID_REQUEST',
+                    'EL SALE DEL PORTAL HACIA EVOPAYMENTS'
+                  ).subscribe({
+                    next: response => {     
+                                                  
+                      console.log('Respuesta de cortar:', response);
+                      checkout.showPaymentPage();
+                    },
+                    error: error => {
+                     
+                      console.error('Error en cortar:', error);
+                      checkout.showPaymentPage();
+                    },
+                    complete: () => {
+                      console.log('Solicitud cortar completada');
+                    }
+                  });
+                  
+                  //  checkout.showEmbeddedPage('#evo-embed-container');
+                } else {
+                  checkout.showEmbeddedPage('#evo-embed-container');
                 }
-                
+
               }
               //checkout.showEmbeddedPage('#evo-embed-container');
             }, 700);
 
-         
+
           } catch (e) {
             this.blockUIService.stop('global');
             console.error('Error invocando showEmbeddedPage:', e);
             Swal.fire({ title: 'AVISO!!!', text: JSON.stringify(e), icon: 'error' });
-            this.closeEvoModal();
+            this.closeEvoModal(null, entity.referencia);
           }
         }, 2000); // 200ms es suficiente si el overlay ya está visible
         return response;
-    })
-  )
-    
-  
+      })
+    )
+
+
   }
   clearHostedCheckoutSessionStorage() {
     const keys = ['HostedCheckout_sessionId', 'HostedCheckout_embedContainer', 'HostedCheckout_merchantState'];
@@ -172,11 +216,11 @@ export class EvoService {
       }
     });
   }
-esDispositivoMovil(): boolean {
-  
-  return /Android|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i
-    .test(navigator.userAgent);
-}
+  esDispositivoMovil(): boolean {
+//return false;
+    return /Android|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i
+      .test(navigator.userAgent);
+  }
 
   public startPolling(referencia: string): void {
     this.stopPolling();
@@ -195,7 +239,7 @@ esDispositivoMovil(): boolean {
       )
       .subscribe({
         next: (response: any) => {
-        
+
           // Sustituye esta condición por el campo/estados que devuelve tu API.
           if (response && this.transaccionTerminada(response)) {
             this.stopPolling();
@@ -216,8 +260,8 @@ esDispositivoMovil(): boolean {
   //----------------------------------------------------------
 
 
-  getEvo(entity:any):Observable<any> {
-    return this.http.post(this.urlEndPoint + '/evo/order',entity)
+  getEvo(entity: any): Observable<any> {
+    return this.http.post(this.urlEndPoint + '/evo/order', entity)
   }
 
   retrieveInfo(referencia: string) {
@@ -254,7 +298,5 @@ esDispositivoMovil(): boolean {
     );
   }
 
-   logoutSession(error: {}) {
-    return this.http.post(`${this.urlEndPoint}/evo/logoutsesion`, error)
-  }
+
 }

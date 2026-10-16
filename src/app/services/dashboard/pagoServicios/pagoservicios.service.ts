@@ -14,7 +14,7 @@ export class PagoServiciosService {
    }
 
   getRecibosPagosOnline(usuario: string) {
-    return this.http.get(`${this.urlEndPoint}/pdf/recibos/${usuario}`)
+    return this.http.get(`${this.urlEndPoint}/evo/recibos/${usuario}`)
   }
 
  

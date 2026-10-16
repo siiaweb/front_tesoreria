@@ -2,11 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
 import { BlockUI, BlockUIService, NgBlockUI } from 'ng-block-ui';
 import { ActivatedRoute } from '@angular/router';
-import { filter, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
 import { EvoService } from 'src/app/services/dashboard/evo.service';
 import { erroresFormulario } from '../componentes-genericos/manejo-errores-forma/errores';
-import { HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-receipt',
@@ -102,6 +101,7 @@ export class ReceiptComponent implements OnInit {
         }
         sessionStorage.removeItem("MasterID");
         sessionStorage.removeItem("shoppingCart");
+        this._evo.clearHostedCheckoutSessionStorage();
         // alert('test')
         const blob = new Blob([response.body], { type: 'application/pdf' });
         if (!blob) {

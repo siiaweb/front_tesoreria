@@ -332,7 +332,7 @@ export class PostsComponent implements OnInit, OnDestroy {
       idingreso: ['', Validators.required],
       servicio: '',
       cantidad: [1, [Validators.required, maxValidator(999), minValidator(1)]],
-      punit: ['', [Validators.required, maxValidator(99999), minValidator(0.01)]],
+      punit: ['', [Validators.required, maxValidator(99999999), minValidator(0.01)]],
       cambiaPrecio: 'N',
       user: sessionStorage.getItem('usuID'),
       nombre: sessionStorage.getItem('Nombre'),

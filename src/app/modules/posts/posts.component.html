@@ -90,7 +90,9 @@
                       style="text-align: right;"
                       formControlName="punit"
                       [ngClass]="{'custom-form-field-error': forma.get('punit')?.invalid && forma.get('punit')?.touched}"
-                      (blur)="formatearPrecio()">
+                      (blur)="formatearPrecio()"
+                      [maxLength]="11"
+                      >
                       <span class="input-moneda">$</span>
                   </mat-form-field>
                 </div>

@@ -49,7 +49,7 @@
               type="button"
               *ngIf="recibo.estatus == 'A'"
               class="custom-btn custom-btn-blue"
-              (click)="generarRecibo( recibo.foliopago)"
+              (click)="generarRecibo( recibo.foliopago,recibo.successIndicator)"
             >
               <mat-icon>receipt</mat-icon> Recibo
             </button>

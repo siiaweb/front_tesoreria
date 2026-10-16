@@ -132,9 +132,9 @@ export class ReceiptComponent implements OnInit {
 
   }
 
-  generarRecibo(id: number) {
+  generarRecibo(id: number,token:string) {
     this.blockUI.start('generando..')
-    this._ps.getRecibo(id).pipe(
+    this._ps.getRecibo(id,token).pipe(
     //  filter((event): event is HttpResponse<Blob> => event instanceof HttpResponse)
     ).subscribe({
       next: (response) => {

@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { environment, } from '../../../../environments/environment';
-import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -10,52 +9,48 @@ import { map } from 'rxjs/operators';
 export class PagoServiciosService {
 
   public urlEndPoint = `${environment.rutaAPI}`;
+  constructor(private http: HttpClient) {
 
+   }
 
-  constructor(private http: HttpClient) { }
   getRecibosPagosOnline(usuario: string) {
     return this.http.get(`${this.urlEndPoint}/pdf/recibos/${usuario}`)
   }
-  getPDF(referencia: string): Observable<any> {
-    return this.http.get(
-      `${this.urlEndPoint}/pdf/${encodeURIComponent(referencia)}`,
-      {
-    observe: 'response',
-    responseType: 'blob'
-  }
-    );
-    
-  }
-  getTsqpagosonline() {
-    return this.http.get(this.urlEndPoint + '/evo/tsqpagosonline/', { responseType: 'text' });
-  }
 
-  logoutSession(error:{}){
-    return this.http.post(`${this.urlEndPoint}/evo/logoutsesion`,error)
-   
-  }
-
-
-
-  printReceipt(id, ref_banco): any {
-    const httpOptions = {
-      responseType: 'arraybuffer' as 'json'
-    //This also worked
-    };
-
-    return this.http.get<any>(this.urlEndPoint + '/pdf/print/' + id + '/' + ref_banco, httpOptions);
-  }
-
-  printReceiptDsto(id, ref_banco): any {
-    const httpOptions = {
-      responseType: 'arraybuffer' as 'json'
-      // 'responseType'  : 'blob' as 'json'        //This also worked
-    };
-    return this.http.get<any>(this.urlEndPoint + '/pdf/printDesc/' + id + '/' + ref_banco, httpOptions);
-  }
+ 
 
   getCartaNoAdeudo(foliopago: string, ref: string): Observable<any> {
     return this.http.get<any>(`${environment.rutaAPI}/pdf/cartaNA?foliopago=${foliopago}&ref=${ref}&forma=L`, { responseType: 'blob' as 'json' });
   }
+
+  getRecibo(foliopago:number): Observable<HttpResponse<Blob>>{
+    return this.http.get(
+      `${this.urlEndPoint}/pdf/recibo/folio/${foliopago}`,{ observe: 'response',responseType: 'blob' }
+    );
+  }
+  /*
+  getPDF(referencia: string): Observable<any> {
+    return this.http.get(
+      `${this.urlEndPoint}/recibo/${encodeURIComponent(referencia)}`,{ observe: 'response',responseType: 'blob' }
+    );
+
+  }
+*/
+/*
+
+  printReceipt(id, ref_banco): any {
+    return this.http.get<any>(this.urlEndPoint + '/pdf/print/' + id + '/' + ref_banco, {
+      responseType: 'arraybuffer' as 'json'
+    });
+  }
+
+  printReceiptDsto(id, ref_banco): any {
+    return this.http.get<any>(this.urlEndPoint + '/pdf/printDesc/' + id + '/' + ref_banco, {
+      responseType: 'arraybuffer' as 'json'   //This also worked
+    });
+  }
+*/
+
+
 
 }

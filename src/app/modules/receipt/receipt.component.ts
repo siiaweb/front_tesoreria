@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
 import { BlockUI, BlockUIService, NgBlockUI } from 'ng-block-ui';
 import { ActivatedRoute } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
 import { EvoService } from 'src/app/services/dashboard/evo.service';
 import { erroresFormulario } from '../componentes-genericos/manejo-errores-forma/errores';
+import { HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-receipt',
@@ -16,12 +17,12 @@ export class ReceiptComponent implements OnInit {
   resultIndicator: string | null = null;
   @BlockUI() blockUI!: NgBlockUI;
 
-  p: number = 1;
+
 
   recibos: any;
   constructor(
-    private _ps: PagoServiciosService, 
-    private route: ActivatedRoute, 
+    private _ps: PagoServiciosService,
+    private route: ActivatedRoute,
     private _evo: EvoService,
     private blockUIService: BlockUIService,
   ) { }
@@ -81,7 +82,7 @@ export class ReceiptComponent implements OnInit {
       })
     ).subscribe({
       next: response => {
-       
+
         this.blockUI.stop();
         console.warn('cambiando')
         const disposition = response.headers.get('Content-Disposition');
@@ -120,7 +121,7 @@ export class ReceiptComponent implements OnInit {
         this._evo.stopPolling();
       },
       error: error => {
-        alert('err'+JSON.stringify(error))
+        alert('err' + JSON.stringify(error))
         this.blockUIService.stop('global');
         erroresFormulario.handleError(error);
       },
@@ -131,40 +132,31 @@ export class ReceiptComponent implements OnInit {
 
   }
 
-
-
-
-  printInvoice(id: any, ref_banco: any, bandera: null) {
-    console.warn('params', id, ref_banco, bandera)
-    this.blockUI.start('Descargando su recibo...');
-    if (bandera == null) {
-      this._ps.printReceipt(id, ref_banco).subscribe((response: BlobPart) => {
-
-        const file = new Blob([response], { type: 'application/pdf' });
-        const fileURL = URL.createObjectURL(file);
-        window.open(fileURL);
+  generarRecibo(id: number) {
+    this.blockUI.start('generando..')
+    this._ps.getRecibo(id).pipe(
+    //  filter((event): event is HttpResponse<Blob> => event instanceof HttpResponse)
+    ).subscribe({
+      next: (response) => {
         this.blockUI.stop();
+        const fileURL = URL.createObjectURL(response.body);
+        window.open(fileURL, '_blank');
+        setTimeout(() => URL.revokeObjectURL(fileURL), 60000);
+      //  const fileURL = URL.createObjectURL(blob);
+      },
+      error: (error) => {
+        this.blockUI.stop();
+        console.error('error', error)
 
       },
-        (error: { message: any; }) => {
-          console.log(error);
-          alert('err'+JSON.stringify(error))
-          this.blockUIService.stop('global');
-          erroresFormulario.handleError(error);
-        });
-    } else {
-      this._ps.printReceiptDsto(id, ref_banco).subscribe((response: BlobPart) => {
-        const file = new Blob([response], { type: 'application/pdf' });
-        const fileURL = URL.createObjectURL(file);
-        window.open(fileURL);
+      complete: () => {
         this.blockUI.stop();
-      },
-        (error: { error: { message: any; }; }) => {
-          this.blockUIService.stop('global');
-          erroresFormulario.handleError(error);
-        });
-    }
+        console.log('complete...')
+      }
+    })
   }
+
+
 
   generarCartaNoAdeudo(id: string, ref: string) {
     console.log(id);

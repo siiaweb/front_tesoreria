@@ -253,4 +253,8 @@ esDispositivoMovil(): boolean {
       httpOptions
     );
   }
+
+   logoutSession(error: {}) {
+    return this.http.post(`${this.urlEndPoint}/evo/logoutsesion`, error)
+  }
 }

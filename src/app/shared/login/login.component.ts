@@ -47,29 +47,14 @@ export class LoginComponent implements OnInit {
     }else{
       this.subscription = this._log.ingresar(this.log.user,this.log.password)
       .subscribe((data: any) => {
-        sessionStorage.clear();
-        this.blockUIService.stop('global');
-        if ( typeof data !== 'undefined' && data['token']) {
-          swal.fire({
-            icon: 'success',
-            title: 'Usuario Logeado',
-            text: 'Bienvenido ' + data.usua_nombre,
-            timer: 1000
-          });
-          sessionStorage.Login = this.log.user.toString();
-          sessionStorage.Tipo = data.usua_tipo_usuario.toString();
-          sessionStorage.usuID = data.usua_id.toString();
-          sessionStorage.Ures = data.usua_ures.toString();
-          sessionStorage.Persona = data.usua_persona.toString();
-          sessionStorage.Nombre = data.usua_nombre.toString();
-          //sessionStorage.token=data.token;
-          this.router.navigate(['/dashboard']);
-        } else{
-          swal.fire({
-            icon: 'error',
-            title: 'Usuario y/o contraseña incorrecta'
-          });
-        }
+         this.blockUIService.stop('global')
+         swal.fire({
+                    icon: 'success',
+                    title: 'Usuario Logeado',
+                    text: 'Bienvenido ' + data.usua_nombre,
+                    timer: 1000
+                  });
+         this.router.navigate(['/dashboard']);
       },
       error => {
         this.blockUIService.stop('global')

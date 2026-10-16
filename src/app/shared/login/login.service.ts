@@ -51,12 +51,13 @@ export class LoginService {
     return this.http.post<UsuarioResponse>(urlLogin, {}).pipe(
       //catchError(LoginService.handleError),
       tap(response => {
-       /*   sessionStorage.Login = username.toString();
-          sessionStorage.Tipo = response.usua_tipo_usuario.toString();
-          sessionStorage.usuID = response.usua_id.toString();
-          sessionStorage.Ures = response.usua_ures.toString();
-          sessionStorage.Persona = response.usua_persona.toString();
-          sessionStorage.Nombre = response.usua_nombre.toString();*/
+        sessionStorage.clear();       
+        sessionStorage.Login = username.toString();
+        sessionStorage.Tipo = response.usua_tipo_usuario;
+        sessionStorage.usuID = response.usua_id.toString();
+        sessionStorage.Ures = response.usua_ures.toString();
+        sessionStorage.Persona = response.usua_persona.toString();
+        sessionStorage.Nombre = response.usua_nombre.toString();
         const Login = username;
         const Tipo = response.usua_tipo_usuario.toString();
         const usuID = +response.usua_id;

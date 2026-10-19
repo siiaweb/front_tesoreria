@@ -18,22 +18,22 @@
             <section class="user-types-section">
                 <h3 class="section-title">Usuario nuevo - regístrate</h3>
                 <div class="grid-container">
-                    <button class="user-card active" routerLink="/registrar/ALUMNOS">
+                    <button type="button" class="user-card active" routerLink="/registrar/ALUMNOS">
                         <i class="bi bi-person-fill" style="color: #951823; font-size: 30px !important;"></i>
                         <span>Alumnos</span>
                     </button>
-                    
-                    <button class="user-card" routerLink="/registrar/PERSONAL">
+
+                    <button type="button" class="user-card" routerLink="/registrar/PERSONAL">
                         <i class="bi bi-person-vcard-fill" style="color: #951823; font-size: 30px !important;"></i>
                         <span>Personal UJED</span>
                     </button>
-                    
-                    <button class="user-card" routerLink="/registrar/URESINC">
+
+                    <button type="button" class="user-card" routerLink="/registrar/URESINC">
                         <i class="bi bi-building-fill" style="color: #951823; font-size: 30px !important;"></i>
                         <span>URES e Incorporadas</span>
                     </button>
-                    
-                    <button class="user-card" routerLink="/registrar/PG">
+
+                    <button type="button" class="user-card" routerLink="/registrar/PG">
                         <i class="bi bi-people-fill" style="color: #951823; font-size: 30px !important;"></i>
                         <span>Público en General y Proveedores</span>
                     </button>
@@ -41,38 +41,37 @@
             </section>
 
             <div class="vertical-divider"></div>
-            <form (ngSubmit)="login()">
-                <section class="login-section">
-                    <h3 class="section-title">Iniciar sesión</h3>
-                    <div class="login-form">
-                        <input type="text" class="form-input" [(ngModel)]="log.user" name="user" placeholder="Usuario" style="margin-bottom: 20px !important;">
-                        <div class="input-container">
-                            <input 
-                                type="password"
-                                #password 
-                                class="form-input" 
-                                id="password"
-                                [(ngModel)]="log.password" 
-                                name="password" 
-                                placeholder="Contraseña" 
-                                style="margin-bottom: 20px !important;">
-                                <button
-                                    type="button"
-                                    matSuffix
-                                    class="btn-input-action p-0"
-                                    *ngIf="log?.password"
-                                    (click)="togglePassword('password')"
-                                >
-                                    <i [class]="password.type === 'password' ? 'bi bi-eye-fill' : 'bi bi-eye-slash-fill'" style="font-size: 15px !important;"></i>
-                                </button>
-                        </div>
-                        <button type="submit" class="btn-submit" (click)='login()'>Ingresar</button>
-                        <div class="form-links">
-                            <a (click)="openDialog()">¿Olvidaste tu contraseña?</a>
-                        </div>
+
+            <section class="login-section">
+                <h3 class="section-title">Iniciar sesión</h3>
+                <div class="login-form">
+                    <input type="text" class="form-input" [(ngModel)]="log.user" name="user" placeholder="Usuario" style="margin-bottom: 20px !important;">
+                    <div class="input-container">
+                        <input
+                            type="password"
+                            #password
+                            class="form-input"
+                            id="password"
+                            [(ngModel)]="log.password"
+                            name="password"
+                            placeholder="Contraseña"
+                            style="margin-bottom: 20px !important;">
+                            <button
+                                type="button"
+                                matSuffix
+                                class="btn-input-action p-0"
+                                *ngIf="log?.password"
+                                (click)="togglePassword('password')"
+                            >
+                                <i [class]="password.type === 'password' ? 'bi bi-eye-fill' : 'bi bi-eye-slash-fill'" style="font-size: 15px !important;"></i>
+                            </button>
                     </div>
-                </section>
-            </form>
+                    <button class="btn-submit" (click)='login()'>Ingresar</button>
+                    <div class="form-links">
+                        <a (click)="openDialog()">¿Olvidaste tu contraseña?</a>
+                    </div>
+                </div>
+            </section>
         </div>
     </main>
 </div>

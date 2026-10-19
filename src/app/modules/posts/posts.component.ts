@@ -412,7 +412,7 @@ export class PostsComponent implements OnInit, OnDestroy {
       next: (descuentos) => {
         if (descuentos.length != 0) {
           this.descuentos = descuentos
-          this.llenarDescuento(id);
+          if(id) this.llenarDescuento(id);
         }
       },
       error: (error) => {
@@ -426,6 +426,9 @@ export class PostsComponent implements OnInit, OnDestroy {
     const encontrada = this.descuentos.find(s => s.vdes_foldescto?.toString() === id?.toString());
     if (encontrada) {
       this.forma.controls['dsctodescrip'].setValue(encontrada);
+    }else{
+      this.limparDetalle();
+      sessionStorage.removeItem("shoppingCart");
     }
   }
 

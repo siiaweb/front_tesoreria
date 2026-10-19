@@ -23,9 +23,9 @@ export class PagoServiciosService {
     return this.http.get<any>(`${environment.rutaAPI}/pdf/cartaNA?foliopago=${foliopago}&ref=${ref}&forma=L`, { responseType: 'blob' as 'json' });
   }
 
-  getRecibo(foliopago:number): Observable<HttpResponse<Blob>>{
+  getRecibo(foliopago:number,token:string): Observable<HttpResponse<Blob>>{
     return this.http.get(
-      `${this.urlEndPoint}/pdf/recibo/folio/${foliopago}`,{ observe: 'response',responseType: 'blob' }
+      `${this.urlEndPoint}/pdf/recibo/folio/${foliopago}?token=${token}`,{ observe: 'response',responseType: 'blob' }
     );
   }
   /*

@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, interval, Subscription, throwError } from "rxjs";
+import { BehaviorSubject, interval, Subscription } from "rxjs";
 import { environment } from '../../../environments/environment';
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { catchError, tap } from "rxjs/operators";
+import { HttpClient } from "@angular/common/http";
+import { tap } from "rxjs/operators";
 import { Usuario } from "./login.models";
 import { Router } from "@angular/router";
 import { jwtDecode } from "jwt-decode";

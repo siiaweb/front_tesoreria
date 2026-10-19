@@ -41,37 +41,38 @@
             </section>
 
             <div class="vertical-divider"></div>
-
-            <section class="login-section">
-                <h3 class="section-title">Iniciar sesión</h3>
-                <div class="login-form">
-                    <input type="text" class="form-input" [(ngModel)]="log.user" name="user" placeholder="Usuario" style="margin-bottom: 20px !important;">
-                    <div class="input-container">
-                        <input 
-                            type="password"
-                            #password 
-                            class="form-input" 
-                            id="password"
-                            [(ngModel)]="log.password" 
-                            name="password" 
-                            placeholder="Contraseña" 
-                            style="margin-bottom: 20px !important;">
-                            <button
-                                type="button"
-                                matSuffix
-                                class="btn-input-action p-0"
-                                *ngIf="log?.password"
-                                (click)="togglePassword('password')"
-                            >
-                                <i [class]="password.type === 'password' ? 'bi bi-eye-fill' : 'bi bi-eye-slash-fill'" style="font-size: 15px !important;"></i>
-                            </button>
+            <form (ngSubmit)="login()">
+                <section class="login-section">
+                    <h3 class="section-title">Iniciar sesión</h3>
+                    <div class="login-form">
+                        <input type="text" class="form-input" [(ngModel)]="log.user" name="user" placeholder="Usuario" style="margin-bottom: 20px !important;">
+                        <div class="input-container">
+                            <input 
+                                type="password"
+                                #password 
+                                class="form-input" 
+                                id="password"
+                                [(ngModel)]="log.password" 
+                                name="password" 
+                                placeholder="Contraseña" 
+                                style="margin-bottom: 20px !important;">
+                                <button
+                                    type="button"
+                                    matSuffix
+                                    class="btn-input-action p-0"
+                                    *ngIf="log?.password"
+                                    (click)="togglePassword('password')"
+                                >
+                                    <i [class]="password.type === 'password' ? 'bi bi-eye-fill' : 'bi bi-eye-slash-fill'" style="font-size: 15px !important;"></i>
+                                </button>
+                        </div>
+                        <button type="submit" class="btn-submit" (click)='login()'>Ingresar</button>
+                        <div class="form-links">
+                            <a (click)="openDialog()">¿Olvidaste tu contraseña?</a>
+                        </div>
                     </div>
-                    <button type="button" class="btn-submit" (click)='login()'>Ingresar</button>
-                    <div class="form-links">
-                        <a (click)="openDialog()">¿Olvidaste tu contraseña?</a>
-                    </div>
-                </div>
-            </section>
+                </section>
+            </form>
         </div>
     </main>
 </div>

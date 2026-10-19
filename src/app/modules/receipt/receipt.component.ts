@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
 import { BlockUI, BlockUIService, NgBlockUI } from 'ng-block-ui';
 import { ActivatedRoute } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
-import { EMPTY } from 'rxjs';
+import { catchError, finalize, switchMap } from 'rxjs/operators';
+import { EMPTY, throwError } from 'rxjs';
 import { EvoService } from 'src/app/services/dashboard/evo.service';
 import { erroresFormulario } from '../componentes-genericos/manejo-errores-forma/errores';
 
@@ -27,19 +27,9 @@ export class ReceiptComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-
-    const usuario = sessionStorage.getItem('usuID');
-    this.resultIndicator =
-      this.route.snapshot.queryParamMap.get('resultIndicator');
-
-    if (!usuario) {
-      console.error('No existe usuID en sessionStorage');
-      return;
-    }
     const referencia = sessionStorage.getItem('MasterID');
-    const resultIndicator =
-      this.route.snapshot.queryParamMap.get('resultIndicator');
-
+    const usuario = sessionStorage.getItem('usuID');
+    const resultIndicator = this.route.snapshot.queryParamMap.get('resultIndicator');
     this.resultIndicator = resultIndicator;
 
     if (!usuario) {
@@ -78,22 +68,31 @@ export class ReceiptComponent implements OnInit {
           return EMPTY;
         }
         return this._evo.insertarRespuestaConPdf(referencia, resultIndicator);
+      }),
+      catchError(error => {
+        console.error('Error al procesar el recibo:', error);
+
+        return throwError(error); // Hace que se ejecute el error del subscribe.
+      }),
+      finalize(() => {
+        this.blockUI.stop();
       })
     ).subscribe({
       next: response => {
 
         this.blockUI.stop();
-        console.warn('cambiando')
+        console.warn('cambiando',response)
         const disposition = response.headers.get('Content-Disposition');
         this.recibos = this.recibos.map((item: any) =>
           item.successIndicator === resultIndicator
             ? { ...item, estatus: 'A' }
             : item
         );
-        const coincidencia = disposition.match(/filename\*?=(?:UTF-8''|")?([^";]+)/i);
+        console.info('disposition',disposition)
+        const coincidencia = disposition?.match(/filename\*?=(?:UTF-8''|")?([^";]+)/i);
         let nombre = coincidencia && coincidencia[1]
           ? coincidencia[1].replace(/"/g, '')
-          : 'reporte.pdf';
+          : 'recibo.pdf';
         try {
           nombre = decodeURIComponent(nombre);
         } catch {
@@ -120,10 +119,17 @@ export class ReceiptComponent implements OnInit {
         setTimeout(() => URL.revokeObjectURL(url), 1000);
         this._evo.stopPolling();
       },
-      error: error => {
-        alert('err' + JSON.stringify(error))
+      error: async error => {
         this.blockUIService.stop('global');
-        erroresFormulario.handleError(error);
+        this.blockUI.stop();
+        if (this.resultIndicator) {
+          sessionStorage.removeItem("MasterID");
+          sessionStorage.removeItem("shoppingCart");
+          this._evo.clearHostedCheckoutSessionStorage();
+        }
+        void this.manejarErrorRecibo(error).then(result=>{
+            window.location.reload();
+        });
       },
       complete: () => {
         this.blockUI.stop();
@@ -132,28 +138,59 @@ export class ReceiptComponent implements OnInit {
 
   }
 
-  generarRecibo(id: number,token:string) {
+  generarRecibo(id: number, token: string) {
     this.blockUI.start('generando..')
-    this._ps.getRecibo(id,token).pipe(
-    //  filter((event): event is HttpResponse<Blob> => event instanceof HttpResponse)
+    this._ps.getRecibo(id, token).pipe(
+      //  filter((event): event is HttpResponse<Blob> => event instanceof HttpResponse)
     ).subscribe({
       next: (response) => {
         this.blockUI.stop();
         const fileURL = URL.createObjectURL(response.body);
         window.open(fileURL, '_blank');
         setTimeout(() => URL.revokeObjectURL(fileURL), 60000);
-      //  const fileURL = URL.createObjectURL(blob);
+        //  const fileURL = URL.createObjectURL(blob);
       },
-      error: (error) => {
-        this.blockUI.stop();
+      error: async error => {
         console.error('error', error)
-
+        void this.manejarErrorRecibo(error)
       },
       complete: () => {
         this.blockUI.stop();
         console.log('complete...')
       }
     })
+  }
+
+  private async manejarErrorRecibo(error: any): Promise<boolean> {
+    this.blockUI.stop();
+
+    let mensaje = `Error HTTP ${error?.status || ''}`;
+    let texto: string | undefined;
+
+    if (error?.error instanceof Blob) {
+      texto = await error.error.text();
+    } else if (error?.error instanceof ArrayBuffer) {
+      const tipo = error.headers?.get('Content-Type') || 'application/json';
+      const blob = new Blob([error.error], { type: tipo });
+      texto = await blob.text();
+    } else if (typeof error?.error === 'string') {
+      texto = error.error;
+    }
+
+    if (texto) {
+      try {
+        const json = JSON.parse(texto);
+        mensaje = json.message || json.mensaje || texto || mensaje;
+        return erroresFormulario.handleError({ error: json });
+      } catch {
+        mensaje = texto;
+      }
+    } else if (error?.error?.message || error?.error?.mensaje) {
+      mensaje = error.error.message || error.error.mensaje;
+      return erroresFormulario.handleError(error);
+    }
+
+    console.error('Error al generar el recibo:', mensaje, error);
   }
 
 

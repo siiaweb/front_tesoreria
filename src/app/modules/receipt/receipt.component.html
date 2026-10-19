@@ -24,7 +24,7 @@
       [ngClass]="{ 'fila-destacada': recibo.successIndicator === resultIndicator && resultIndicator!=null}"
       >
         <td data-label="folio">
-          <!-- <mat-icon *ngIf="recibo.foliodescto" class="text-danger"> local_offer</mat-icon> -->
+          <mat-icon *ngIf="recibo.foliodescto" class="text-danger"> local_offer</mat-icon> 
           {{ recibo.foliopago }}
         </td>
         <td data-label="referencia">

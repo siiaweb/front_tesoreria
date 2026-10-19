@@ -1,11 +1,11 @@
-import { Component,OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Login } from './login';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import swal from 'sweetalert2';
 
 import { environment } from '../../../environments/environment';
-import {MatDialog} from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogBodyComponent } from '../dialog-body/dialog-body.component';
 import { BlockUIService } from 'ng-block-ui';
 import { erroresFormulario } from 'src/app/modules/componentes-genericos/manejo-errores-forma/errores';
@@ -22,7 +22,7 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private _log: LoginService ,
+    private _log: LoginService,
     private dialog: MatDialog,
     private blockUIService: BlockUIService,
   ) { }
@@ -31,40 +31,44 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnDestroy() {
-		if (this.subscription !== undefined) {
-			this.subscription.unsubscribe();
-		}
+    if (this.subscription !== undefined) {
+      this.subscription.unsubscribe();
+    }
   }
 
   login() {
-    this.blockUIService.start('global','cargando login')
+    this.blockUIService.start('global', 'cargando login')
     console.warn('ingresando')
-    if(this.log.user === undefined || this.log.password === undefined){
+    if (this.log.user === undefined || this.log.password === undefined) {
       swal.fire({
         icon: 'info',
         title: 'Ingrese sus datos'
       });
-    }else{
-      this.subscription = this._log.ingresar(this.log.user,this.log.password)
-      .subscribe((data: any) => {
-         this.blockUIService.stop('global')
-         swal.fire({
-                    icon: 'success',
-                    title: 'Usuario Logeado',
-                    text: 'Bienvenido ' + data.usua_nombre,
-                    timer: 1000
-                  });
-         this.router.navigate(['/dashboard']);
-      },
-      error => {
-        this.blockUIService.stop('global')
-        console.error('error',error)
-        erroresFormulario.handleError(error);
-      });
+    } else {
+      this.subscription = this._log.ingresar(this.log.user, this.log.password)
+        .subscribe({
+          next: (data) => {
+            this.blockUIService.stop('global')
+            swal.fire({
+              icon: 'success',
+              title: 'Usuario Logeado',
+              text: 'Bienvenido ' + data.usua_nombre,
+              timer: 1000
+            });
+            this.router.navigate(['/dashboard']);
+          },
+          error: (error) => {
+            this.blockUIService.stop('global')
+            erroresFormulario.handleError(error);
+            console.error('error', error)
+          },
+          complete: () => {
+            this.blockUIService.stop('global')
+          }
+        });
     }
   }
-
-  togglePassword(elementId:string) {
+  togglePassword(elementId: string) {
     const input = (<HTMLInputElement>document.getElementById(elementId));
     if (input.type === "password") {
       input.type = "text";
@@ -73,7 +77,7 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  portal(){
+  portal() {
     window.location.href = `${environment.rutaPortal}`;
   }
 

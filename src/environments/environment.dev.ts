@@ -4,13 +4,13 @@
 
 export const environment = {
   production: false,
-  rutaPublica: 'http://172.20.11.123:8091/api',
+  rutaPublica: 'http://172.20.11.123:8080/api/api',
   rutaPortal: 'http://172.20.11.123:4500/',
-  rutaAPI: 'http://172.20.11.123:8091/portal',
+  rutaAPI: 'http://172.20.11.123:8080/api/portal',
   rutaAlumno:'https://sistemas.ujed.mx/SIIA'
 };
 
-/*
+/*http://172.20.11.123/
  * For easier debugging in development mode, you can import the following file
  * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
  *

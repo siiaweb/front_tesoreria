@@ -22,13 +22,15 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
-            "assets": ["src/favicon.ico", "src/assets",
-           {
-    "glob": "**/*",
-    "input": "src/WEB-INF",
-    "output": "WEB-INF"
-  }
-          ],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "src/WEB-INF",
+                "output": "WEB-INF"
+              }
+            ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.scss",
@@ -79,6 +81,16 @@
               ],
               "optimization": false,
               "sourceMap": true
+            },
+             "tomcat": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.tomcat.ts"
+                }
+              ],
+              "optimization": false,
+              "sourceMap": true
             }
           }
         },
@@ -93,6 +105,9 @@
             },
             "development": {
               "browserTarget": "dashboard:build:development"
+            },
+            "development": {
+              "browserTarget": "dashboard:build:tomcat"
             }
           }
         },

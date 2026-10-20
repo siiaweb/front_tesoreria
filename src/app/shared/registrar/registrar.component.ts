@@ -19,7 +19,7 @@ import { MatSelectChange } from '@angular/material/select';
 
 @Component({
   selector: 'app-registrar',
-  templateUrl: './registrar.component.html',
+  templateUrl: 'registrar.component.html',
   styleUrls: ['./../login/login.component.scss']
 })
 export class RegistrarComponent implements OnInit {

@@ -188,6 +188,7 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
     flex: 1;
     display: flex;
     flex-direction: column;
+    justify-content: center;
 }
 
 .login-form {
@@ -200,7 +201,7 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
   position: relative;
   width: 100%;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
 
   .btn-input-action {
     position: absolute;
@@ -213,13 +214,11 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: $radius-md; // O $radius-sm
 
     i {
       width: 16px;
-      height: 16px;
-      margin-top: 5px;      
-      display: block;
+      height: 16px;     
+      display: flex;
       color: #222222;
     }
   }

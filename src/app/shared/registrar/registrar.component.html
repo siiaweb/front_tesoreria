@@ -157,6 +157,7 @@
                                                 matSuffix
                                                 *ngIf="forma.get('usua_paswd')?.value"
                                                 (click)="togglePassword('usua_paswd')"
+                                                style="margin-right: 5px;"
                                             >
                                                 <i [class]="password.type === 'password' ? 'bi bi-eye-fill' : 'bi bi-eye-slash-fill'" style="font-size: 15px !important;"></i>
                                             </button>
@@ -179,6 +180,7 @@
                                                 matSuffix
                                                 *ngIf="forma.get('repassword')?.value"
                                                 (click)="togglePassword('repassword')"
+                                                style="margin-right: 5px;"
                                             >
                                                 <i [class]="repassword.type === 'password' ? 'bi bi-eye-fill' : 'bi bi-eye-slash-fill'" style="font-size: 15px !important;"></i>
                                             </button>

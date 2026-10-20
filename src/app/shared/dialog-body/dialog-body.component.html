@@ -29,8 +29,9 @@
             formControlName="email"  
             autocomplete="off"
             [ngClass]="{'form-input-invalid': form.get('email')?.invalid && form.get('email')?.touched}" 
-            style="margin-bottom: 5px !important;">
-    
+            style="margin-bottom: 5px !important;"
+            (input)="form.get('confemail')?.updateValueAndValidity();">
+
         <input 
             type="email" 
             class="form-input" 

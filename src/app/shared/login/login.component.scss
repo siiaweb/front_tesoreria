@@ -1,8 +1,8 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 $font-sans: 'Inter', system-ui, -apple-system, sans-serif;
@@ -24,107 +24,107 @@ $radius-md: 0.75rem;
 $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 
 @mixin flex-between {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .contenedor-general {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background: linear-gradient(0deg,rgba(240, 240, 240, 0.5) 80%, rgba(240, 240, 240, 1) 100%), 
-    url('frontispicio.jpg') center/cover no-repeat fixed;
-    color: #333333;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(0deg,rgba(240, 240, 240, 0.5) 80%, rgba(240, 240, 240, 1) 100%), 
+  url('frontispicio.jpg') center/cover no-repeat fixed;
+  color: #333333;
 }
 
 .header {
-    padding: 25px 30px;
+  padding: 25px 30px;
 }
 
 .header-container {
-    display: flex;
-    align-items: center;
-    gap: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
 
 .logo-section {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
 }
 
 .logo {
-    height: 100px !important;
+  height: 100px !important;
 }
 
 .header-divider {
-    width: 2px;
-    height: 60px;
-    background-color: #222222;
-    margin: 0 10px;
+  width: 2px;
+  height: 60px;
+  background-color: #222222;
+  margin: 0 10px;
 }
 
 .portal-title-section h2 {
-    font-size: 1.7rem;
-    font-weight: 700;
-    color: #111111;
-    letter-spacing: 0;
-    line-height: 1;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #111111;
+  letter-spacing: 0;
+  line-height: 1;
 }
 
 .portal-title-section h3 {
-    font-size: 1.2rem;
-    font-weight: 400;
-    color: #333333;
-    margin-top: 4px;
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #333333;
+  margin-top: 4px;
 }
 
 .portal-title-section p {
-    font-size: 1.2rem;
-    font-weight: 400;
-    color: #222222;
-    margin-top: 1px;
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #222222;
+  margin-top: 1px;
 }
 
 .main-container {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
 }
 
 .card-wrapper {
-    background-color: #f6f6f6;
-    backdrop-filter: blur(5px);
-    width: 100%;
-    max-width: 960px;
-    border-radius: 16px;
-    padding: 40px;
-    display: flex;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    gap: 30px;
+  background-color: #f6f6f6;
+  backdrop-filter: blur(5px);
+  width: 100%;
+  max-width: 960px;
+  border-radius: 16px;
+  padding: 40px;
+  display: flex;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  gap: 30px;
 }
 
 .card-wrapper-reg {
-    background-color: #f6f6f6;
-    backdrop-filter: blur(5px);
-    width: 100%;
-    max-width: 960px;
-    border-radius: 16px;
-    padding: 40px;
-    display: flex;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    gap: 30px;
+  background-color: #f6f6f6;
+  backdrop-filter: blur(5px);
+  width: 100%;
+  max-width: 960px;
+  border-radius: 16px;
+  padding: 40px;
+  display: flex;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  gap: 30px;
 }
 
 .section-title {
-    font-size: 1.5rem;
-    font-weight: 400;
-    color: #111;
-    margin-bottom: 25px;
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #111;
+  margin-bottom: 25px;
 }
 
 .normal-title {
@@ -185,16 +185,16 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
 }
 
 .login-section {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .login-form {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 
 .input-container {
@@ -226,59 +226,59 @@ $shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 
 }
 
 .form-input {
-    width: 100% !important;
-    padding: 5px 36px 5px 5px !important;
-    font-size: 15px !important;
-    background: $color-bg-app !important;
-    border: 1px solid $color-border !important;
-    border-radius: $radius-md !important;
-    outline: none !important;
-    transition: all 0.2s ease !important;
-    box-sizing: border-box !important;
-    align-items: center;
+  width: 100% !important;
+  padding: 5px 36px 5px 5px !important;
+  font-size: 15px !important;
+  background: $color-bg-app !important;
+  border: 1px solid $color-border !important;
+  border-radius: $radius-md !important;
+  outline: none !important;
+  transition: all 0.2s ease !important;
+  box-sizing: border-box !important;
+  align-items: center;
   
-    &:focus {
-      background: $color-surface !important;
-      border-color: $color-primary !important;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
-    }  
+  &:focus {
+    background: $color-surface !important;
+    border-color: $color-primary !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+  }  
 }
 
 .btn-submit {
-    width: 100%;
-    background-color: #951823;
-    color: #ffffff;
-    border: none;
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+  width: 100%;
+  background-color: #951823;
+  color: #ffffff;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .btn-submit:hover {
-    background-color: #70121A;
+  background-color: #70121A;
 }
 
 .form-links {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
 }
 
 .form-links a {
-    color: #A87F3F;
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: color 0.2s;
+  color: #A87F3F;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
 }
 
 .form-links a:hover {
-    text-decoration: underline;
-    color: #951823;
+  text-decoration: underline;
+  color: #951823;
 }
 
 .radio-container {

@@ -57,7 +57,7 @@ export class DialogBodyComponent implements OnInit {
     }
     else {
       let recupera = {
-        usua_email: this.form.get('email').value?.toUpperCase(),
+        usua_email: this.form.get('email').value,
         usua_usuario: this.form.get('usuario').value,
       }
       this.blockuiService.start('global','cargando..')

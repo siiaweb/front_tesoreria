@@ -53,8 +53,12 @@ export class SettingsComponent implements OnInit {
     }else{
       //console.log(this.forma.value);
       this._reg.changePassword(this.forma.value).subscribe(usr => {
-        this.router.navigate(['']);
-          Swal.fire('Password Guardado', '', 'success');
+        
+          Swal.fire('Password Guardado', '', 'success').then(r=>{
+            if(r.isConfirmed){
+                this.router.navigate(['/dashboard']);
+            }
+          });
           //this.cargarUsers();
       },
       error => {

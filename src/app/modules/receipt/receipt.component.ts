@@ -38,7 +38,7 @@ export class ReceiptComponent implements OnInit {
       });
       return;
     }
-    this.blockUI.start('cargando...<espere por favor>')
+    this.blockUI.start(this.resultIndicator?'cargando...<espere por favor>':'generando su recibo....<espere por favor>')
     this._ps.getRecibosPagosOnline(usuario).pipe(
 
       switchMap((recibos: Array<any>) => {

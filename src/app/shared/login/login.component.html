@@ -42,7 +42,7 @@
 
             <div class="vertical-divider"></div>
 
-            <section class="login-section">
+            <form class="login-section" (ngSubmit)="login()">
                 <h3 class="section-title">Iniciar sesión</h3>
                 <div class="login-form">
                     <input type="text" class="form-input" [(ngModel)]="log.user" name="user" placeholder="Usuario">
@@ -70,7 +70,7 @@
                         <a (click)="openDialog()">¿Olvidaste tu contraseña?</a>
                     </div>
                 </div>
-            </section>
+            </form>
         </div>
     </main>
 </div>

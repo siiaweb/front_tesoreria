@@ -27,7 +27,7 @@ export interface UsuarioResponse {
   usua_id: number;
   token?: string;
   tipoDescrip: string;
-  uresDescrip:string;
+  uresDescrip: string;
   // Login: string;
 }
 
@@ -51,7 +51,7 @@ export class LoginService {
     return this.http.post<UsuarioResponse>(urlLogin, {}).pipe(
       //catchError(LoginService.handleError),
       tap(response => {
-        sessionStorage.clear();       
+        sessionStorage.clear();
         sessionStorage.Login = username.toString();
         sessionStorage.Tipo = response.usua_tipo_usuario;
         sessionStorage.usuID = response.usua_id.toString();
@@ -69,7 +69,7 @@ export class LoginService {
         const uresDescrip = response.uresDescrip;
         const { exp } = jwtDecode<{ exp: number }>(token);
         this.handleAuthentication(
-          Nombre, Persona, Tipo, Ures, usuID, Login, exp, token, tipoDescrip,uresDescrip
+          Nombre, Persona, Tipo, Ures, usuID, Login, exp, token, tipoDescrip, uresDescrip
         );
       })
     );
@@ -84,11 +84,11 @@ export class LoginService {
     exp: number,
     token: string,
     tipoDescrip: string,
-    uresDescrip:string
+    uresDescrip: string
   ) {
     console.log('usuario')
 
-    const usuario = new Usuario(Nombre, Persona, Tipo, Ures, usuId, Login, token, exp, tipoDescrip,uresDescrip);
+    const usuario = new Usuario(Nombre, Persona, Tipo, Ures, usuId, Login, token, exp, tipoDescrip, uresDescrip);
     this.usuario.next(usuario);
     sessionStorage.setItem('usuario', JSON.stringify(usuario));
     //this.autoLogout(exp);
@@ -137,7 +137,11 @@ export class LoginService {
     this.countdownSubscription?.unsubscribe();
     this.remainingSecondsSubject.next(0);
     this.tokenExpirationTimer = null;
-    this.router.navigate(['']);
+    const rutaActual = this.router.url.split('?')[0];
+
+    if (rutaActual !== '/') {
+      this.router.navigateByUrl('/');
+    }
   }
 
   autoLogin() {
@@ -151,7 +155,7 @@ export class LoginService {
       token: string;
       exp: number;
       tipoDescrip: string;
-      uresDescrip:string;
+      uresDescrip: string;
     } = JSON.parse(sessionStorage.getItem('usuario'));
 
     if (!userData) {
@@ -185,26 +189,26 @@ export class LoginService {
 
     }
   }
-autoLogout(expirationDuration: number) {
-  clearTimeout(this.tokenExpirationTimer);
-  this.countdownSubscription?.unsubscribe();
+  autoLogout(expirationDuration: number) {
+    clearTimeout(this.tokenExpirationTimer);
+    this.countdownSubscription?.unsubscribe();
 
-  const duration = Math.max(0, expirationDuration);
-  const expiresAt = Date.now() + duration;
+    const duration = Math.max(0, expirationDuration);
+    const expiresAt = Date.now() + duration;
 
-  const updateCountdown = () => {
-    const seconds = Math.max(0, Math.ceil((expiresAt - Date.now()) / 1000));
-    this.remainingSecondsSubject.next(seconds);
-  };
+    const updateCountdown = () => {
+      const seconds = Math.max(0, Math.ceil((expiresAt - Date.now()) / 1000));
+      this.remainingSecondsSubject.next(seconds);
+    };
 
-  updateCountdown();
+    updateCountdown();
 
-  if (duration === 0) {
-    this.logout();
-    return;
+    if (duration === 0) {
+      this.logout();
+      return;
+    }
+
+    this.countdownSubscription = interval(1000).subscribe(updateCountdown);
+    this.tokenExpirationTimer = setTimeout(() => this.logout(), duration);
   }
-
-  this.countdownSubscription = interval(1000).subscribe(updateCountdown);
-  this.tokenExpirationTimer = setTimeout(() => this.logout(), duration);
-}
 }

@@ -10,7 +10,6 @@ import { EvoService } from './dashboard/evo.service';
 import { CatalogoPagoService } from './dashboard/catalogoPago.service';
 import { PagoServiciosService } from './dashboard/pagoServicios/pagoservicios.service';
 
-import { LoginGuard } from './guards/login.guard';
 
 
 @NgModule({
@@ -20,7 +19,7 @@ import { LoginGuard } from './guards/login.guard';
     HttpClientModule
   ],
   providers: [
-    LoginGuard,
+   // LoginGuard,
    // LoginService,
     RegistrarService,
     ValidadoresService,

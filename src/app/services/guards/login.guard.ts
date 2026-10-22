@@ -7,8 +7,9 @@ import { LoginService } from 'src/app/shared/login/login.service';
 import swal from 'sweetalert2';
 
 
-@Injectable()
-
+@Injectable({
+  providedIn: 'root'
+})
 export class LoginGuard implements CanActivate {
 
 	constructor(private router: Router, private _login: LoginService) { }
@@ -30,6 +31,19 @@ export class LoginGuard implements CanActivate {
         }
         return this.router.createUrlTree(['/']);
       })
+    );
+  }
+
+    canActivateChild(
+    childRoute: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Observable<boolean | UrlTree> {
+    return this._login.usuario.pipe(
+      take(1),
+      map(user => user
+        ? true
+        : this.router.createUrlTree(['/'])
+      )
     );
   }
 }

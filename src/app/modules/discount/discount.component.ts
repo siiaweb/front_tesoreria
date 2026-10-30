@@ -94,13 +94,12 @@ export class DiscountComponent implements OnInit, OnDestroy {
   }
 
   onDiscountSelectionChange(value: number) {
-    console.log('value', value)
+  
     this.forma.get('pago_foldescto')!.setValue(value);
     this.blockUISERVICE.start('global', 'cargando...');
     this._ds.getDescuentoDet(value).subscribe({
       next: (responseDETALLE) => {
         this.blockUISERVICE.stop('global');
-        console.log('res', responseDETALLE)
         this.totalPrice(responseDETALLE);
         this.det = [];
         for (var i = 0; i < responseDETALLE.length; i++) {

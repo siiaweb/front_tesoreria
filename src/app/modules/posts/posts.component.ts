@@ -5,9 +5,7 @@ import { CatalogoPagoTipoUser } from '../../services/dashboard/catalogoPagoTipoU
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
-import { ListaUsuariosService } from '../../services/dashboard/listausuarios/listausuarios.service';
 import { Carrito } from '../shoppingcart/shoppingcart.model';
-import { startWith } from 'rxjs/operators';
 export interface Concepto {
   concepto: string;
   descripcion: string;
@@ -109,7 +107,7 @@ export class PostsComponent implements OnInit {
   }
 
   add() {
-    console.log(this.forma)
+   
 this.isSubmitted=true;
      if (this.forma.invalid) {
        alert('falta capturar campos!');
@@ -132,7 +130,9 @@ this.isSubmitted=true;
       descto: null,
       dto_pagar: null,
       regidescto: null,
-      paquete: conceptoROW.paquete
+      paquete: conceptoROW.paquete,
+      importe:conceptoROW.punit,
+      montoDescuento:null
     };
     if (sessionStorage.getItem('shoppingCart') === null) {
       this.array = [];

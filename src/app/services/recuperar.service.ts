@@ -13,20 +13,15 @@ export class RecuperarService {
 
   constructor(private http: HttpClient, public router: Router ) { }
 
-  public urlEndPoint = `${environment.rutaAPI}`;
+  public urlEndPoint = `${environment.rutaPublica}`;
   usuario:string;
   email:string;
 
-  getUsuariosEmail(recupera: recuperaPass): Observable<recuperaPass[]>  {
-    
+  getUsuariosEmail(recupera: any): Observable<recuperaPass[]>  {
     this.usuario=recupera.usua_usuario;
     this.email=recupera.usua_email;
-
-    return this.http.get(`${environment.rutaAPI + '/recuperaPass?usua_usuario=' + this.usuario+'&usua_email='+this.email}`).pipe(
+    return this.http.get(`${environment.rutaPublica + '/recuperaPass?usua_usuario=' + this.usuario+'&usua_email='+this.email}`).pipe(
       map(response => response as recuperaPass[])
-    
     );
-    //return this.http.get(`${environment.rutaAPI + '/recuperaPass?usua_usuario=' + this.usuario+'&usua_email='+this.email}`);
-    
   }
 }

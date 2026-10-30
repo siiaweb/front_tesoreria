@@ -4,13 +4,14 @@
 
 export const environment = {
   production: false,
-
-  rutaPortal: 'http://localhost:4500/',
+  rutaPublica: 'http://127.0.0.1:8090/api',
+  rutaPortal: 'http://127.0.0.1:4500/',
 
   //rutaAPI: 'http://192.168.1.190:8090/api'
   //rutaAPI: 'http://192.168.10.38:8090/api'
   //rutaAPI: 'https://tesoreria.ujed.mx/api'
-  rutaAPI: 'http://localhost:8090/api',
+  rutaAPI: 'http://127.0.0.1:8090/portal',
+  //rutaAlumno:'http://localhost:8085/SIIAWEB'
   rutaAlumno:'https://sistemas.ujed.mx/SIIA'
 };
 
@@ -21,4 +22,4 @@ export const environment = {
  * This import should be commented out in production mode because it will have a negative impact
  * on performance if an error is thrown.
  */
-// import 'zone.js/dist/zone-error';  // Included with Angular CLI.
+// import 'zone.js/plugins/zone-error';  // Included with Angular CLI.

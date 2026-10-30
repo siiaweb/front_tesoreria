@@ -1,7 +1,8 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { LoginService } from 'src/app/services/login.service';
+
 import { RegistrarService } from '../../../services/registrar.service';
 import { Usuarios } from '../../../shared/registrar/usuarios';
+import { LoginService } from '../../login/login.service';
 
 @Component({
   selector: 'app-header',
@@ -25,6 +26,17 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
 
+    this._login.usuario.subscribe({
+      next:(usuario)=>this.nombre=usuario.Nombre,
+      error:(e)=>{
+        console.error('e',e)
+      },
+      complete:()=>{
+        console.error('complete')
+      }
+    })
+
+/*
     this._reg.getUserName(sessionStorage.getItem('Login')).subscribe(
       (usuarios) => {
         //this.usuarios = usuarios;
@@ -32,6 +44,7 @@ export class HeaderComponent implements OnInit {
     
       }
     )
+      */
 
    }
 

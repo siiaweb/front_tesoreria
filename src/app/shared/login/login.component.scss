@@ -1,0 +1,1026 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+$font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+$color-text-main: #0F172A;
+$color-text-muted: #64748B;
+$color-text-light: #94A3B8;
+
+$color-success: #059669;
+$color-success-dark: #047857;
+
+$color-bg-app: #F8FAFC;
+$color-surface: #FFFFFF;
+$color-border: #E2E8F0;
+$color-primary: #2563EB;
+$dark-color: #951823;
+$light-color: #F2F2F2;
+$color-danger: #EF4444;
+$radius-md: 0.75rem;
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.contenedor-general {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(0deg,rgba(240, 240, 240, 0.5) 80%, rgba(240, 240, 240, 1) 100%), 
+  url('frontispicio.jpg') center/cover no-repeat fixed;
+  color: #333333;
+}
+
+.header {
+  padding: 25px 30px;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.logo {
+  height: 100px !important;
+}
+
+.header-divider {
+  width: 2px;
+  height: 60px;
+  background-color: #222222;
+  margin: 0 10px;
+}
+
+.portal-title-section h2 {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #111111;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.portal-title-section h3 {
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #333333;
+  margin-top: 4px;
+}
+
+.portal-title-section p {
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #222222;
+  margin-top: 1px;
+}
+
+.main-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.card-wrapper {
+  background-color: #f6f6f6;
+  backdrop-filter: blur(5px);
+  width: 100%;
+  max-width: 960px;
+  border-radius: 16px;
+  padding: 40px;
+  display: flex;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  gap: 30px;
+}
+
+.card-wrapper-reg {
+  background-color: #f6f6f6;
+  backdrop-filter: blur(5px);
+  width: 100%;
+  max-width: 960px;
+  border-radius: 16px;
+  padding: 40px;
+  display: flex;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  gap: 30px;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #111;
+  margin-bottom: 25px;
+}
+
+.normal-title {
+    font-size: 15px;
+    font-weight: 400;
+    color: #111;
+}
+
+.user-types-section {
+    flex: 1.2;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    justify-content: center;
+}
+
+.user-card {
+    background-color: #fcfcfc;
+    border: none;
+    border-radius: 12px;
+    padding: 25px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    transition: all 0.2s ease-in-out;
+}
+
+.user-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.user-card .icon {
+    font-size: 1.8rem;
+    color: #803038;
+    margin-bottom: 12px;
+}
+
+.user-card span {
+    font-size: 0.95rem;
+    color: #222;
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+.vertical-divider {
+    width: 1px !important;
+    height: auto !important;
+    background-color: #d1d1d1;
+    align-self: stretch;
+}
+
+.login-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.input-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+
+  .btn-input-action {
+    position: absolute;
+    right: 6px;
+    background: transparent;
+    border: none;
+    padding: 6px;
+    margin-right: 5px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    i {
+      width: 16px;
+      height: 16px;     
+      display: flex;
+      color: #222222;
+    }
+  }
+
+}
+
+.form-input {
+  width: 100% !important;
+  padding: 5px 36px 5px 5px !important;
+  font-size: 15px !important;
+  background: $color-bg-app !important;
+  border: 1px solid $color-border !important;
+  border-radius: $radius-md !important;
+  outline: none !important;
+  transition: all 0.2s ease !important;
+  box-sizing: border-box !important;
+  align-items: center;
+  
+  &:focus {
+    background: $color-surface !important;
+    border-color: $color-primary !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+  }  
+}
+
+.btn-submit {
+  width: 100%;
+  background-color: #951823;
+  color: #ffffff;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-submit:hover {
+  background-color: #70121A;
+}
+
+.form-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.form-links a {
+  color: #A87F3F;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.form-links a:hover {
+  text-decoration: underline;
+  color: #951823;
+}
+
+.radio-container {
+    background: #fff;
+    border: 1px solid $light-color;
+    border-radius: 3px;
+    display: flex;
+    gap: 10px;
+    padding: 5px;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 8px;
+}
+
+
+
+.radio-container label {
+    background: $light-color;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    height: 40px;
+    line-height: 26px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    transition: .2s all ease-in-out;
+    width: 100% !important;
+    font-size: 15px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.radio-container label:hover{
+    background: #d1d1d1;
+}
+  
+.radio-container input[type="radio"] {
+    display: none;
+}
+
+.radio-container input[type="radio"]:checked + label {
+    background: $dark-color;
+    border: 1px solid $dark-color;
+    color: white;
+    font-size: 15px;
+    font-weight: 400;
+}
+
+.titulo_registro{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-direction: row;
+    width: 100% !important;
+}
+
+.btn-regresar{
+    background-color: $light-color;
+    color: black;
+    border: none;
+    padding: 5px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-regresar:hover{
+    background-color: #d1d1d1;
+}
+
+.div-error{
+    width: 100% !important;
+    color: $color-danger;
+    text-align: left;
+    font-size: 12px !important;
+}
+
+//----------------- INPUT CON UPPER CASE------------------
+::ng-deep .custom-form-field {
+    width: 100% !important;
+    font-family: $font-sans !important;
+    color: #555;
+    font-size: 10px !important;
+  
+    .mdc-notched-outline__leading {
+      border-radius: $radius-md 0 0 $radius-md !important;
+    }
+  
+    .mdc-notched-outline__trailing {
+      border-radius: 0 $radius-md $radius-md 0 !important;
+    }
+  
+    .mdc-notched-outline__notch {
+      border-radius: 0 !important;
+    }
+  
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: $color-border !important;
+    }
+  
+    .mdc-notched-outline--no-label .mdc-notched-outline__notch {
+      border-top: 1px solid $color-border !important; 
+    }
+  
+    .mat-mdc-text-field-wrapper{
+      height: 30px!important;
+      max-height: 30px!important;
+      background-color: #E9EDF1;
+    }
+  
+    .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mat-mdc-form-field-infix {
+      padding: 3px 8px 0px 8px !important;
+      max-height: 30px!important;
+      min-height: 30px!important;
+    } 
+  
+    .mdc-text-field--outlined {
+      background-color: $color-bg-app !important;
+      border-radius: $radius-md !important;
+      transition: all 0.2s ease !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+  
+    input.mat-mdc-input-element {
+      font-size: 13px !important;
+      font-family: $font-sans !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0;
+    }
+  
+    .mat-mdc-select{
+      font-size: 13px !important;
+      font-family: $font-sans !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0;
+    }
+  
+    &.mat-focused {
+      .mdc-text-field--outlined {
+        background-color: $color-surface !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+        border-radius: $radius-md !important;
+      }
+  
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-color: $color-primary !important;
+      }
+    }
+  
+    .mat-mdc-form-field-subscript-wrapper {
+      display: none !important;
+    }
+  
+    .mat-mdc-icon-button.mat-mdc-button-base {
+      width: 24px;
+      height: 24px;
+      padding: 0px;
+    }
+
+    .mat-mdc-floating-label {
+        top: 13px !important;
+        font-size: 11px !important;
+        font-family: $font-sans !important;
+    }
+  
+    &.mat-mdc-form-field-float-above .mat-mdc-floating-label {
+        font-size: 10px !important;
+        transform: translateY(-21.5px) scale(0.85) !important;
+        top: 27px !important;
+    }
+  
+    .mat-mdc-form-field-label {
+        color: #666 !important;
+        top: 27px !important;
+    }
+  
+    &.mat-focused .mat-mdc-floating-label { 
+      color: black !important;
+    }
+
+    .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mdc-notched-outline--upgraded .mdc-floating-label--float-above{
+        top: 27px !important;
+    }
+    
+}
+
+::ng-deep .custom-form-field-invalid {
+    width: 100% !important;
+    font-family: $font-sans !important;
+    color: #555;
+    font-size: 10px !important;
+  
+    .mdc-notched-outline__leading {
+      border-radius: $radius-md 0 0 $radius-md !important;
+    }
+  
+    .mdc-notched-outline__trailing {
+      border-radius: 0 $radius-md $radius-md 0 !important;
+    }
+  
+    .mdc-notched-outline__notch {
+      border-radius: 0 !important;
+    }
+  
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: $color-danger !important;
+    }
+  
+    .mdc-notched-outline--no-label .mdc-notched-outline__notch {
+      border-top: 1px solid $color-danger !important; 
+    }
+  
+    .mat-mdc-text-field-wrapper{
+      height: 30px!important;
+      max-height: 30px!important;
+      background-color: #E9EDF1;
+    }
+  
+    .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mat-mdc-form-field-infix {
+      padding: 3px 8px 0px 8px !important;
+      max-height: 30px!important;
+      min-height: 30px!important;
+    } 
+  
+    .mdc-text-field--outlined {
+      background-color: $color-bg-app !important;
+      border-radius: $radius-md !important;
+      transition: all 0.2s ease !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+  
+    input.mat-mdc-input-element {
+      font-size: 13px !important;
+      font-family: $font-sans !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0;
+    }
+  
+    .mat-mdc-select{
+      font-size: 13px !important;
+      font-family: $font-sans !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0;
+    }
+  
+    &.mat-focused {
+      .mdc-text-field--outlined {
+        background-color: $color-surface !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+        border-radius: $radius-md !important;
+      }
+  
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-color: $color-primary !important;
+      }
+    }
+  
+    .mat-mdc-form-field-subscript-wrapper {
+      display: none !important;
+    }
+  
+    .mat-mdc-icon-button.mat-mdc-button-base {
+      width: 24px;
+      height: 24px;
+      padding: 0px;
+    }
+}
+
+//----------------- INPUT SIN UPPER CASE------------------
+::ng-deep .custom-form-field-nuc {
+    width: 100% !important;
+    font-family: $font-sans !important;
+    color: #555;
+    font-size: 10px !important;
+  
+    .mdc-notched-outline__leading {
+      border-radius: $radius-md 0 0 $radius-md !important;
+    }
+  
+    .mdc-notched-outline__trailing {
+      border-radius: 0 $radius-md $radius-md 0 !important;
+    }
+  
+    .mdc-notched-outline__notch {
+      border-radius: 0 !important;
+    }
+  
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: $color-border !important;
+    }
+  
+    .mdc-notched-outline--no-label .mdc-notched-outline__notch {
+      border-top: 1px solid $color-border !important; 
+    }
+  
+    .mat-mdc-text-field-wrapper{
+      height: 30px!important;
+      max-height: 30px!important;
+      background-color: #E9EDF1;
+    }
+  
+    .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mat-mdc-form-field-infix {
+      padding: 3px 8px 0px 8px !important;
+      max-height: 30px!important;
+      min-height: 30px!important;
+    } 
+  
+    .mdc-text-field--outlined {
+      background-color: $color-bg-app !important;
+      border-radius: $radius-md !important;
+      transition: all 0.2s ease !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+  
+    input.mat-mdc-input-element {
+      font-size: 13px !important;
+      font-family: $font-sans !important;
+      letter-spacing: 0;
+    }
+  
+    .mat-mdc-select{
+      font-size: 13px !important;
+      font-family: $font-sans !important;
+      letter-spacing: 0;
+    }
+  
+    &.mat-focused {
+      .mdc-text-field--outlined {
+        background-color: $color-surface !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+        border-radius: $radius-md !important;
+      }
+  
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-color: $color-primary !important;
+      }
+    }
+  
+    .mat-mdc-form-field-subscript-wrapper {
+      display: none !important;
+    }
+  
+    .mat-mdc-icon-button.mat-mdc-button-base {
+      width: 24px;
+      height: 24px;
+      padding: 0px;
+    }
+
+    .mat-mdc-floating-label {
+        top: 13px !important;
+        font-size: 11px !important;
+        font-family: $font-sans !important;
+    }
+  
+    &.mat-mdc-form-field-float-above .mat-mdc-floating-label {
+        font-size: 10px !important;
+        transform: translateY(-21.5px) scale(0.85) !important;
+        top: 27px !important;
+    }
+  
+    .mat-mdc-form-field-label {
+        color: #666 !important;
+        top: 27px !important;
+    }
+  
+    &.mat-focused .mat-mdc-floating-label {
+        color: black !important;
+        top: 27px !important;
+    }
+
+    .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mdc-notched-outline--upgraded .mdc-floating-label--float-above{
+        top: 27px !important;
+    }
+    
+}
+
+::ng-deep .custom-form-field-invalid-nuc {
+    width: 100% !important;
+    font-family: $font-sans !important;
+    color: #555;
+    font-size: 10px !important;
+  
+    .mdc-notched-outline__leading {
+      border-radius: $radius-md 0 0 $radius-md !important;
+    }
+  
+    .mdc-notched-outline__trailing {
+      border-radius: 0 $radius-md $radius-md 0 !important;
+    }
+  
+    .mdc-notched-outline__notch {
+      border-radius: 0 !important;
+    }
+  
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: $color-danger !important;
+    }
+  
+    .mdc-notched-outline--no-label .mdc-notched-outline__notch {
+      border-top: 1px solid $color-danger !important; 
+    }
+  
+    .mat-mdc-text-field-wrapper{
+      height: 30px!important;
+      max-height: 30px!important;
+      background-color: #E9EDF1;
+    }
+  
+    .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mat-mdc-form-field-infix {
+      padding: 3px 8px 0px 8px !important;
+      max-height: 30px!important;
+      min-height: 30px!important;
+    } 
+  
+    .mdc-text-field--outlined {
+      background-color: $color-bg-app !important;
+      border-radius: $radius-md !important;
+      transition: all 0.2s ease !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+  
+    input.mat-mdc-input-element {
+      font-size: 13px !important;
+      font-family: $font-sans !important;
+      letter-spacing: 0;
+    }
+  
+    .mat-mdc-select{
+      font-size: 13px !important;
+      font-family: $font-sans !important;
+      letter-spacing: 0;
+    }
+  
+    &.mat-focused {
+      .mdc-text-field--outlined {
+        background-color: $color-surface !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+        border-radius: $radius-md !important;
+      }
+  
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-color: $color-primary !important;
+      }
+    }
+  
+    .mat-mdc-form-field-subscript-wrapper {
+      display: none !important;
+    }
+  
+    .mat-mdc-icon-button.mat-mdc-button-base {
+      width: 24px;
+      height: 24px;
+      padding: 0px;
+    }
+}
+
+::ng-deep .autocomplete-dropdown {
+    position: absolute;
+    background: $color-surface !important;
+    border: 1px solid $color-border !important;
+    border-radius: $radius-md !important;
+    box-shadow: $shadow-xl !important;
+    max-height: 200px !important;
+    padding: 0 !important;
+}
+  
+::ng-deep .mat-mdc-option .mdc-list-item__primary-text{
+    width: 100% !important;
+}
+  
+::ng-deep .mat-mdc-option{
+    min-height: 40px !important;
+    max-height: 40px !important;
+    height: 40px !important;
+}
+  
+::ng-deep .mat-mdc-option.mdc-list-item--activated,
+::ng-deep .mat-mdc-option.mat-mdc-option-active {
+    min-height: 40px !important;
+    max-height: 40px !important;
+    height: 40px !important;
+}
+  
+::ng-deep .mdc-menu-surface.mat-mdc-autocomplete-panel{
+    padding: 0 !important;
+}
+  
+::ng-deep .dropdown-item {
+    @include flex-between;
+    max-height: 40px !important;
+    min-height: 40px !important;
+    height: 40px !important;
+    padding: 0 !important;
+    border-bottom: 1px solid $color-border !important;
+    cursor: pointer !important;
+  
+    .item-title { font-size: 0.75rem; font-weight: 600; color: $color-text-main; }
+    .item-error { font-size: 0.75rem; font-weight: 600; color: $color-danger; }
+    .item-code { font-size: 0.625rem; color: $color-text-light; }
+    .item-price { font-size: 0.75rem; font-weight: 800; color: $color-success; }
+    
+}
+
+.div-twoinput{
+    display: flex !important;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.id-input{
+    width: 25%;
+}
+
+.desc-input{
+    width: 75%;
+}
+
+.input-50{
+    width: 50%;
+}
+  
+
+// //--------------------------------- PANTALLAS ---------------------------------
+
+// XS
+@media only screen and (max-width: 600px) {
+    .main-container{
+        align-items: flex-start;
+    }
+
+    .card-wrapper{
+        flex-direction: column-reverse;
+    }
+
+    .vertical-divider {
+        height: 1px !important;
+        width: auto !important;
+        background-color: #d1d1d1;
+        align-self: stretch;
+    }
+    
+    .card-wrapper-reg {
+        flex-direction: column-reverse;
+        padding: 15px;
+    }
+    
+    .div-twoinput{
+        flex-direction: column;
+    }
+
+    .id-input{
+        width: 100% !important;
+    }
+
+    .desc-input{
+        width: 100% !important;
+    }
+
+    .input-50{
+        width: 100%;
+    }
+}
+
+// S
+@media only screen and (min-width: 600px) {
+    .main-container{
+        align-items: flex-start;
+    }
+
+    .card-wrapper{
+        flex-direction: column-reverse;
+    }
+
+    .vertical-divider {
+        height: 1px !important;
+        width: auto !important;
+        background-color: #d1d1d1;
+        align-self: stretch;
+    }
+
+    .card-wrapper-reg {
+        flex-direction: column-reverse;
+        padding: 15px;
+    }
+
+    .div-twoinput{
+        flex-direction: column;
+    }
+
+    .id-input{
+        width: 100% !important;
+    }
+
+    .desc-input{
+        width: 100% !important;
+    }
+
+    .input-50{
+        width: 100%;
+    }
+}
+
+// M
+@media only screen and (min-width: 768px) {
+    .main-container{
+        align-items: flex-start;
+    }
+
+    .card-wrapper{
+        flex-direction: row;
+    }
+
+    .vertical-divider {
+        width: 1px !important;
+        height: auto !important;
+        background-color: #d1d1d1;
+        align-self: stretch;
+    }
+
+    .card-wrapper-reg {
+        flex-direction: row;
+        padding: 40px;
+    }
+
+    .div-twoinput{
+        flex-direction: row;
+    }
+
+    .id-input{
+        width: 25% !important;
+    }
+
+    .desc-input{
+        width: 75% !important;
+    }
+
+    .input-50{
+        width: 50%;
+    }
+}
+
+
+// L
+@media only screen and (min-width: 992px) {
+    .main-container{
+        align-items: center;
+    }
+
+    .card-wrapper{
+        flex-direction: row;
+    }
+
+    .vertical-divider {
+        width: 1px !important;
+        height: auto !important;
+        background-color: #d1d1d1;
+        align-self: stretch;
+    }
+
+    .card-wrapper-reg {
+        flex-direction: row;
+        padding: 40px;
+    }
+
+    .div-twoinput{
+        flex-direction: row;
+    }
+
+    .id-input{
+        width: 25% !important;
+    }
+
+    .desc-input{
+        width: 75% !important;
+    }
+
+    .input-50{
+        width: 50%;
+    }
+}
+
+// XL
+@media only screen and (min-width: 1200px) {
+    .main-container{
+        align-items: center;
+    }
+
+    .card-wrapper{
+        flex-direction: row;
+    }
+
+    .vertical-divider {
+        width: 1px !important;
+        height: auto !important;
+        background-color: #d1d1d1;
+        align-self: stretch;
+    }
+
+    .card-wrapper-reg {
+        flex-direction: row;
+        padding: 40px;
+    }
+
+    .div-twoinput{
+        flex-direction: row;
+    }
+
+    .id-input{
+        width: 25% !important;
+    }
+
+    .desc-input{
+        width: 75% !important;
+    }
+
+    .input-50{
+        width: 50%;
+    }
+}

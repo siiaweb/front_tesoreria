@@ -1,72 +1,80 @@
 <block-ui>
+  <div style="width: 100%; margin-bottom: 10px;">
+    <button mat-button routerLink="/dashboard" style="letter-spacing: 0;">
+      <mat-icon>arrow_back</mat-icon>
+      Regresar
+    </button>
+  </div>
+
   <table class="concepts-table">
-    <caption class="text-end">Listado de recibos</caption>
+    <caption class="text-end" style="min-width: 100px;">Listado de recibos</caption>
     <thead>
       <tr>
-        <th>Folio</th>
-        <th>Ref. Pago</th>
-        <th>Descripción del pago</th>
-        <th>Fecha</th>
-        <th>Estatus</th>
-        <th>Monto</th>
-        <th>Recibo</th>
+        <th class="text-center">Folio</th>
+        <th class="text-center">Ref. Pago</th>
+        <th class="text-center">Descripción del pago</th>
+        <th class="text-center">Fecha</th>
+        <th class="text-center">Estatus</th>
+        <th class="text-center">Monto</th>
+        <th class="text-center"></th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let recibo of recibos"
       [ngClass]="{ 'fila-destacada': recibo.successIndicator === resultIndicator && resultIndicator!=null}"
       >
-        <td>{{ recibo.foliopago }}</td>
-        <td>
+        <td data-label="folio">
+          <!-- <mat-icon *ngIf="recibo.foliodescto" class="text-danger"> local_offer</mat-icon>  -->
+          {{ recibo.foliopago }}
+        </td>
+        <td data-label="referencia">
           <b>{{ recibo.referencia }}</b>
         </td>
-        <td>{{ recibo.descripcion }}</td>
-        <td>{{ recibo.fecha | date: "dd/MM/yyyy" }}</td>
-        <td *ngIf="recibo.estatus == 'A'" style="color: rgb(113, 177, 132)">
-          <strong>PAGADO</strong>
+        <td data-label="descripcion">
+          {{ recibo.descripcion }}
         </td>
-        <td *ngIf="recibo.estatus == 'P'" style="color: rgb(122, 129, 109)">
-          SIN PAGAR
+        <td data-label="fecha">
+          {{ recibo.fecha | date: "dd/MM/yyyy" }}
         </td>
-        <td style="text-align: center">
+        <td data-label="estatus" class="text-start text-md-center">
+          <strong *ngIf="recibo.estatus == 'A'; else elseTemplate" class="text-success">PAGADO</strong>
+          <ng-template #elseTemplate><span  style="color: rgb(122, 129, 109)">SIN PAGAR</span></ng-template>
+        </td>
+        <td data-label="total" class="text-start text-md-end">
           {{ recibo.total | currency: "MXN" : "symbol" }}
         </td>
-        <td>
+        <td data-label="recibo">
           <section class="seccion">
             <button
+              type="button"
               *ngIf="recibo.estatus == 'A'"
               class="custom-btn custom-btn-blue"
-              (click)="
-                printInvoice(
-                  recibo.foliopago,
-                  recibo.referencia,
-                  recibo.foliodescto
-                )
-              "
+              (click)="generarRecibo( recibo.foliopago,recibo.successIndicator)"
             >
               <mat-icon>receipt</mat-icon> Recibo
             </button>
-            <a
+            <button
+              type="button"
               class="custom-btn custom-btn-red"
               target="_blank"
               *ngIf="
                 recibo.fautoriza != null &&
-                recibo.estatus == 'A' &&
-                recibo.hasCartaNoAdedudo
+                recibo.hasCartaNoAdedudo &&
+                recibo.estatus == 'A'                 
               "
-              [attr.href]="
-                'https://sistemas.ujed.mx/SIIA/cartaNA?foliopago=' +
-                recibo.foliopago +
-                '&ref=' +
-                recibo.referencia +
-                '&forma=L'
-              "
+              (click)="generarCartaNoAdeudo(recibo.foliopago,recibo.referencia)"
             >
               <mat-icon>picture_as_pdf</mat-icon>Carta no adeudo
-            </a>
+            </button>
           </section>
         </td>
       </tr>
     </tbody>
   </table>
 </block-ui>
+<ng-template #pdf>
+
+</ng-template>
+
+<!-- recibo.fautoriza != null &&
+recibo.hasCartaNoAdedudo && -->

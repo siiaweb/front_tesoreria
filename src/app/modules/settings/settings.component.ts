@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, FormControl, Validators, UntypedFormBuilder } from '@angular/forms';
 import { ValidadoresService } from '../../services/validadores.service';
 import { RegistrarService } from 'src/app/services/services.index';
 import {Router, ActivatedRoute} from '@angular/router';
@@ -8,13 +8,13 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.scss']
+  styleUrls: ['./settings.component.scss','../../../assets/css/login.css']
 })
 export class SettingsComponent implements OnInit {
 
-  forma: FormGroup;
+  forma: UntypedFormGroup;
 
-  constructor( private fb: FormBuilder, private validadores: ValidadoresService, private _reg: RegistrarService,
+  constructor( private fb: UntypedFormBuilder, private validadores: ValidadoresService, private _reg: RegistrarService,
                public router: Router ) { }
 
   ngOnInit() {
@@ -53,8 +53,12 @@ export class SettingsComponent implements OnInit {
     }else{
    
       this._reg.changePassword(this.forma.value).subscribe(usr => {
-        this.router.navigate(['']);
-          Swal.fire('Password Guardado', '', 'success');
+        
+          Swal.fire('Password Guardado', '', 'success').then(r=>{
+            if(r.isConfirmed){
+                this.router.navigate(['/dashboard']);
+            }
+          });
           //this.cargarUsers();
       },
       error => {

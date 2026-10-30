@@ -6,9 +6,9 @@ import { RegistrarComponent } from './registrar/registrar.component';
 
 const sharedRoutes: Routes = [
   { path: '', component: LoginComponent },
-  { path: 'registrar', component: RegistrarComponent },
+  { path: 'registrar/:tipo', component: RegistrarComponent },
   //{ path: '**', pathMatch: 'full', redirectTo: '' }
 ];
 
 //export const SHARED_ROUTES = RouterModule.forChild(sharedRoutes);
-export const SHARED_ROUTES = RouterModule.forRoot(sharedRoutes, {useHash: true});
+export const SHARED_ROUTES = RouterModule.forRoot(sharedRoutes, { useHash: true });

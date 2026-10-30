@@ -1,75 +1,215 @@
-<block-ui>
-  <mat-toolbar color="grey">
-    <div fxFlex fxLayout="row" fxLayoutAlign="end center">
-      <button mat-icon-button routerLink="/shoppingcart">
-        <mat-icon matBadge="{{ arrayLength }}" matBadgeColor="warn">
-          shopping_cart</mat-icon
-        >
+
+  <form [formGroup]="forma">
+    <h2>Pago de servicios</h2>
+
+    <div style="width: 100%; margin-bottom: 10px;">
+      <button type="button" mat-button routerLink="/dashboard" style="letter-spacing: 0;">
+        <mat-icon>arrow_back</mat-icon>
+        Regresar
       </button>
     </div>
-  </mat-toolbar>
 
-  <form class="container-fluid p-3" [formGroup]="forma">
-    <div class="row">
-      <div class="col-12" *ngIf="catalogoPagoTipoUser">
-        <label>Seleccionar servicio</label>
-        <select
-          formControlName="concepto"
-          (change)="textSelect()"
-          class="form-control form-control-sm"
-        >
-          <option value="" selected disabled>
-            - Seleccione un servicio a pagar -
-          </option>
-          <option *ngFor="let cp of catalogoPagoTipoUser" [ngValue]="cp">
-            {{ cp.descripcion }} ({{ cp.punit | currency: "MXN" : "symbol" }})
-          </option>
-        </select>
-        <small *ngIf="concepto.invalid && isSubmitted" class="text-danger">
-          Falta seleccionar servicio
-        </small>
+    <div class="main-container">
+      
+      <!-- PRIMERA COLUMNA -->
+      <div class="column left-col">
+        <!-- MAESTRO -->
+        <mat-card appearance="outlined" class="card" *ngIf="descuentos" style="margin-bottom: 10px !important;">
+          <mat-card-header class="card-header">
+            <mat-card-title class="card-title">
+              <i class="bi bi-currency-dollar" (click)="dcto.open()"></i>
+              <span>Descuentos</span>
+            </mat-card-title>
+            <mat-card-subtitle class="card-subtitle">Tienes {{descuentos?.length}} {{descuentos?.length != 1 ? 'descuentos disponibles':'descuento disponible'}}.</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content style="padding: 0 !important;">
+            <mat-form-field class="custom-form-field" appearance="outline">
+              <mat-select #dcto formControlName="dsctodescrip" panelClass="autocomplete-dropdown" (selectionChange)="seleccionarDescuento($event)">
+                <mat-select-trigger>
+                  {{ forma.get('dsctodescrip')?.value?.vdes_descdescrip }}
+                </mat-select-trigger>
+                <mat-option *ngFor="let option of descuentos" [value]="option">
+                  <div class="dropdown-item">
+                    <div class="item-title">{{ option.vdes_descdescrip }}</div>
+                    <div class="item-code">Clave: {{ option.vdes_foldescto }}</div>
+                  </div>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="checkout-footer" style="background-color: white; padding: 5px !important;" *ngIf="forma.get('descuento').value">
+              <button 
+                type="button" 
+                class="btn boton-delete" 
+                style="width: 100%; margin-top: 5px;" 
+                (click)="limpiarCamposDescuento()">
+                Limpiar descuento
+              </button>
+            </div>
+           
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card appearance="outlined" class="card" *ngIf="!forma.get('descuento').value">
+          <mat-card-header class="card-header">
+            <mat-card-title class="card-title">
+              <i class="bi bi-search" (click)="servicios.open()"></i>
+              <span>Busqueda de servicios</span>
+            </mat-card-title>
+            <mat-card-subtitle class="card-subtitle">Selecciona de la lista los articulos que deseas pagar.</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content style="padding: 0 !important;">
+            <mat-form-field class="custom-form-field" appearance="outline">
+              <mat-select #servicios formControlName="servicio" panelClass="autocomplete-dropdown" (selectionChange)="seleccionarServicio($event)">
+                <mat-select-trigger>
+                  {{ forma.get('servicio')?.value?.descripcion }}
+                </mat-select-trigger>
+                <mat-option *ngFor="let selected of catalogoPagoTipoUser" [value]="selected">
+                  <div class="dropdown-item">
+                    <div style="display: inline-block; width: 100%; white-space: nowrap; overflow: hidden !important; text-overflow: ellipsis; margin-right: 5px;">
+                      <span class="item-title">{{selected.descripcion}}</span>
+                    </div>
+                    <span class="item-price">{{selected.punit|currency:"MXN":"symbol"}}</span>
+                  </div>
+                </mat-option>
+              </mat-select>
+            </mat-form-field> 
+
+            <div class="selected-card" *ngIf="forma.get('idingreso').value">
+              <div class="preview-header">
+                <div>
+                  <h4 class="preview-title">{{forma.get('servicio')?.value.descripcion}}</h4>
+                  <p class="preview-code">ID: {{forma.get('idingreso')?.value}}</p>
+                </div>
+                <span class="preview-price" *ngIf="forma.get('cambiaPrecio').value === 'N'">${{forma.get('punit')?.value}}</span>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; width: 100%;" *ngIf="forma.get('cambiaPrecio').value === 'S'">
+                  <span class="badge">Puede editar el precio</span>
+                  <mat-form-field class="custom-form-field" appearance="outline" style="width: 50% !important;">
+                    <input 
+                      type="text"
+                      matInput  
+                      style="text-align: right;"
+                      formControlName="punit"
+                      [ngClass]="{'custom-form-field-error': forma.get('punit')?.invalid && forma.get('punit')?.touched}"
+                      (blur)="formatearPrecio()"
+                      [maxLength]="11"
+                      >
+                      <span class="input-moneda">$</span>
+                  </mat-form-field>
+                </div>
+                
+              </div>
+            </div>
+
+            <div style="margin: 0; padding: 0; width: 100%; align-items: start;" *ngIf="forma.get('idingreso').value">
+              <label class="form-label">Cantidad</label>
+            </div>
+            <div class="action-grid" *ngIf="forma.get('idingreso').value">
+              <div class="qty-picker">
+                <button type="button" (click)="ajustarCantidad(-1)">-</button>
+                <input type="number" formControlName="cantidad" readonly>
+                <button type="button" (click)="ajustarCantidad(1)">+</button>
+              </div>
+              <div style="display:flex; justify-content: flex-end;">
+                <button
+                  type="button" 
+                  class="boton boton-primary"
+                  style="max-width: 350px !important;"
+                  [disabled]="!forma.get('idingreso').value" 
+                  (click)="agregarDetalle()">
+                  <i class="bi bi-plus"></i> Añadir
+                </button>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-12 alert alert-info">
-        <strong>Descripción</strong>
-        <h3>{{ concepto.value?.descripcion }}</h3>
-        <br />
-        <section class="d-flex flex-column">
-          <strong>Precio Unitario</strong>
-          <input class="form-control" formControlName="p_unitario" />
-          <small *ngIf="punit.invalid && isSubmitted" class="text-danger">
-            Precio unitario invalido
-          </small>
-        </section>
 
-        <section>
-          <strong>Cantidad</strong><br />
+      <!-- SEGUNDA COLUMNA -->
+      <div class="column right-col">
+        <!-- DETALLE -->
+        <div name="panel-detalle" *ngIf="arreglo?.length > 0" style="margin-bottom: 10px !important;">
+          <div class="card checkout-card" style="padding: 0 !important;">
 
-          <input
-            class="form-control"
-            formControlName="cantidad"
-            type="number"
-            max="999"
-            min="1"
-            value="1"
-            [class.is-invalid]="cantidadNovalido"
-          />
-          <small *ngIf="cantidadNovalido" class="text-danger">
-            Ingrese una cantidad
-          </small>
-        </section>
+            <!-- TITULO DETALLE -->
+            <div class="table-header">
+              <h3 class="card-title" style="padding-left: 5px !important;">
+                <i class="bi bi-list"></i>
+                <span>Conceptos a pagar</span>
+              </h3>
+              <span class="count-pill"> {{arreglo?.length}} {{arreglo?.length !== 1 ? 'servicios':'servicio'}}</span>
+            </div>
 
-        <strong>Monto a Pagar</strong><br />
-        <h4>{{ importe | currency: "MXN" : "symbol" }}</h4>
-      </div>
-    </div>
+            <!-- TABLA -->
+            <form [formGroup]="formDet">
+              <div class="table-responsive">
+                <table class="concepts-table">
+                  <thead>
+                    <tr>
+                      <th>Concepto</th>
+                      <th class="text-center">Cantidad</th>
+                      <th class="text-right">Precio unitario</th>
+                      <th class="text-right" *ngIf="forma.get('descuento').value">Descuento</th>
+                      <th class="text-right">Subtotal</th>
+                      <th class="text-center" *ngIf="!forma.get('descuento').value"></th>
+                    </tr>
+                  </thead>
+                  <tbody formArrayName="detalle">
+                    <tr *ngFor="let item of arreglo.controls; let i = index" [formGroupName]="i">
+                      <td>
+                        <span class="item-code">{{ item.get('idingreso')?.value }}</span>
+                        <div class="item-name">{{ item.get('concepto')?.value }}</div>
+                      </td>
+                      <td class="text-center font-bold">{{ item.get('cantidad')?.value }}</td>
+                      <td class="text-right font-bold">{{ item.get('punit')?.value|currency:"MXN":"symbol"}}</td>
+                      <td class="text-right font-bold" *ngIf="forma.get('descuento').value">{{item.get('descto')?.value}}%</td>
+                      <td class="text-right font-bold">{{item.get('subtotal')?.value|currency:"MXN":"symbol"}}</td>
+                      <td class="text-center" *ngIf="!forma.get('descuento').value">
+                        <button type="button" class="btn btn-danger" (click)="eliminarFila(i)">
+                          <i class="bi bi-trash3-fill"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </form>
 
-    <div class="col-sm-4">
-      <button type="button" class="btn btn-blue btn-sm" (click)="add()">
-        Añadir al carrito
-      </button>
-    </div>
+            <div class="checkout-footer">
+              <div class="summary-row summary-total">
+                <span>TOTAL A PAGAR</span>
+                <span class="total-amount">{{forma.get('total').value|currency:"MXN":"symbol"}}</span>
+              </div>
     
+              <button 
+                type="button"
+                class="boton boton-success boton-pay" 
+                [disabled]="arreglo?.length === 0"
+                (click)="Pagar()">
+                <span>PROCESAR PAGO DE ({{forma.get('total').value|currency:"MXN":"symbol"}})</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <mat-card appearance="outlined" class="card-warning">
+          <mat-card-header class="card-header-warning">
+            <mat-card-title class="card-title-warning">
+              <i class="bi bi-exclamation-circle"></i>
+              <span style="margin-left: 5px !important;">Antes de efectuar su pago, favor de verificar con su banco si tiene habilitado en su tarjeta la opción de pago en línea o contar con el servicio 3D Secure</span>
+            </mat-card-title>
+          </mat-card-header>
+        </mat-card>
+
+      </div>
+    </div>
   </form>
-</block-ui>
+
+
+<div id="evo-embed-overlay" class="evo-overlay">
+  <div class="evo-modal" (click)="$event.stopPropagation()">
+    <button type="button" class="evo-close" (click)="closeEvoModal($event)">✕</button>
+    <!-- Aquí el SDK incrustará el checkout -->
+    <div id="evo-embed-container" style="width:100%; height:700px;"></div>
+  </div>
+</div>

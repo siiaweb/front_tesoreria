@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ListaUsuariosService } from '../../../services/dashboard/listausuarios/listausuarios.service';
+import { LoginService } from '../../login/login.service';
 
 @Component({
   selector: 'app-footer',
@@ -10,17 +11,23 @@ export class FooterComponent implements OnInit {
 
   tipoUsuario: string;
   uresUsuario: string;
-  
-  constructor( private _lus: ListaUsuariosService ) { }
+
+  constructor( private authService: LoginService ) { }
 
   ngOnInit() {
-    this._lus.getListaUsuario().subscribe(
-      (usuario) => {
-        this.tipoUsuario = usuario[0].tipo_usuario;
-        this.uresUsuario = usuario[0].unidad_responsable;
-       
+    this.authService.usuario.subscribe({
+      next:(usuario)=>{
+        this.tipoUsuario=usuario.Tipo+' - '+usuario.tipoDescrip;
+        this.uresUsuario=usuario.Ures+' - '+usuario.uresDescrip;
+      },
+      error:(e)=>{
+        console.error('e',e)
+      },
+      complete:()=>{
+
       }
-    )
+    })
+
   }
 
 }

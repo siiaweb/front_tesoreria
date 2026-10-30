@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
 import { environment, } from '../../../environments/environment';
-import { catchError, map, startWith, switchMap, takeUntil } from 'rxjs/operators';
-import { Subscription, interval, EMPTY, timer } from 'rxjs';
 import { Router } from '@angular/router';
-import { BlockUIService } from 'ng-block-ui';
+import { EMPTY, Observable, Subscription, interval, timer } from 'rxjs';
+import { catchError, map, startWith, switchMap, takeUntil } from 'rxjs/operators';
 import Swal from 'sweetalert2';
-import { EvoCheckout } from 'src/app/modules/shoppingcart/shoppingcart.component';
+import { BlockUIService } from 'ng-block-ui';
+import { EvoCheckout } from 'src/app/modules/posts/posts.component';
+import { PagoOnlineDTO } from 'src/app/modules/posts/pagoonline.models';
 
 
 @Injectable({
@@ -30,13 +30,6 @@ export class EvoService {
     }
   }
 
-  cortar(referencia: string, causa: string, comentario: string) {
-    return this.http.post(`${this.urlEndPoint}/logoutsesion/${referencia}`, {
-      'error.cause': causa,
-      'error.explanation': comentario
-    })
-  }
-
   handleCompletado(resultIndicator: string, sessionVersion: string, referencia: string) {
     this.stopPolling();
 
@@ -57,7 +50,6 @@ export class EvoService {
           }
           sessionStorage.removeItem("MasterID");
           sessionStorage.removeItem("shoppingCart");
-         
           const blob = new Blob([response.body], { type: 'application/pdf' });
           if (!blob) {
             console.error('La respuesta no contiene el PDF.');
@@ -106,25 +98,8 @@ export class EvoService {
     // forzar reflow para evitar problemas de stacking
     void overlay.offsetHeight;
   }
-  clearHostedCheckoutSessionStorage() {
-    const keys = ['HostedCheckout_sessionId', 'HostedCheckout_embedContainer', 'HostedCheckout_merchantState'];
-    keys.forEach(k => {
-      if (sessionStorage.getItem(k) !== null) {
-       
-        sessionStorage.removeItem(k);
-      }
-    });
-  }
-  public closeEvoModal(event: Event,referencia:string): void {
-    this.stopPolling();
-    console.log('closing evo')
-    if (event) event.stopPropagation();
-    const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
-    if (overlay) overlay.classList.remove('open');
-    const container = document.getElementById('evo-embed-container');
-    if (container) container.innerHTML = '';
-    document.body.style.overflow = '';
-    this.clearHostedCheckoutSessionStorage();
+
+  public closeEvoModal(event: Event, referencia: string): void {
     this.cortar(
       referencia,
       'INVALID_REQUEST',
@@ -141,23 +116,40 @@ export class EvoService {
         console.log('Solicitud cortar completada');
       }
     });
+    this.stopPolling();
+    if (event) event.stopPropagation();
+    const overlay = document.getElementById('evo-embed-overlay') as HTMLElement;
+    if (overlay) overlay.classList.remove('open');
+    const container = document.getElementById('evo-embed-container');
+    if (container) container.innerHTML = '';
+    document.body.style.overflow = '';
+    //this.clearHostedCheckoutSessionStorage();
   }
 
-  mostrarEvo(total: number, entity: any) {//(this.ID, this.total)
+  cortar(referencia: string, causa: string, comentario: string) {
+    // /portal/evo/logoutsesion/{orderid}
+    return this.http.post(`${this.urlEndPoint}/evo/logoutsesion/${referencia}`, {
+      'error.cause': causa,
+      'error.explanation': comentario
+    })
+  }
+
+  mostrarEvo(entity: PagoOnlineDTO) {//(this.ID, this.total)
 
     //let referencia = this.forma.get('referencia').value;
 
-    return this.getEvo(total, entity).pipe(
+    return this.getEvo(entity).pipe(
       map(response => {
         //this.blockUIService.stop('global');
         console.warn('response', response)
         sessionStorage.MasterID = response.referencia;
 
         //this.pago_referencia.setValue(response.referencia);
-        this.clearHostedCheckoutSessionStorage();
+
         this.showEvoOverlay();
         setTimeout(() => {
           try {
+            this.blockUIService.stop('global');
             const checkout: EvoCheckout | any = (window as any).Checkout;
             if (!checkout) {
               throw new Error('El SDK de Checkout no está cargado.');
@@ -169,17 +161,44 @@ export class EvoService {
             });
             setTimeout(() => {
               if (checkout) {
+                this.clearHostedCheckoutSessionStorage();
                 this.startPolling(response.referencia)
-                checkout.showEmbeddedPage('#evo-embed-container');
+                if (this.esDispositivoMovil()) {
+                  this.cortar(
+                    response.referencia,
+                    'INVALID_REQUEST',
+                    'EL SALE DEL PORTAL HACIA EVOPAYMENTS'
+                  ).subscribe({
+                    next: response => {     
+                                                  
+                      console.log('Respuesta de cortar:', response);
+                      checkout.showPaymentPage();
+                    },
+                    error: error => {
+                     
+                      console.error('Error en cortar:', error);
+                      checkout.showPaymentPage();
+                    },
+                    complete: () => {
+                      console.log('Solicitud cortar completada');
+                    }
+                  });
+                  
+                  //  checkout.showEmbeddedPage('#evo-embed-container');
+                } else {
+                  checkout.showEmbeddedPage('#evo-embed-container');
+                }
+
               }
               //checkout.showEmbeddedPage('#evo-embed-container');
             }, 700);
 
 
           } catch (e) {
+            this.blockUIService.stop('global');
             console.error('Error invocando showEmbeddedPage:', e);
             Swal.fire({ title: 'AVISO!!!', text: JSON.stringify(e), icon: 'error' });
-            this.closeEvoModal(null,response.referencia);
+            this.closeEvoModal(null, entity.referencia);
           }
         }, 2000); // 200ms es suficiente si el overlay ya está visible
         return response;
@@ -188,10 +207,23 @@ export class EvoService {
 
 
   }
+  clearHostedCheckoutSessionStorage() {
+    const keys = ['HostedCheckout_sessionId', 'HostedCheckout_embedContainer', 'HostedCheckout_merchantState'];
+    keys.forEach(k => {
+      if (sessionStorage.getItem(k) !== null) {
+        console.log('Borrando sessionStorage key:', k);
+        sessionStorage.removeItem(k);
+      }
+    });
+  }
+  esDispositivoMovil(): boolean {
+//return false;
+    return /Android|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i
+      .test(navigator.userAgent);
+  }
 
   public startPolling(referencia: string): void {
     this.stopPolling();
-    console.log('START POLLING')
     this.pollingSubscription = interval(30000)
       .pipe(
         startWith(0),
@@ -228,8 +260,8 @@ export class EvoService {
   //----------------------------------------------------------
 
 
-  getEvo(amount: number, entity: any): Observable<any> {
-    return this.http.post(`${this.urlEndPoint}/evo/${amount}`, entity);
+  getEvo(entity: any): Observable<any> {
+    return this.http.post(this.urlEndPoint + '/evo/order', entity)
   }
 
   retrieveInfo(referencia: string) {
@@ -266,19 +298,5 @@ export class EvoService {
     );
   }
 
+
 }
-/*
-  getPDF(referencia: string): Observable<any> {
-    return this.http.get(
-      `${this.urlEndPoint}/pdf/${encodeURIComponent(referencia)}`,
-      {
-    
-    responseType: 'blob'
-  }
-    );
-    */
-
-
-
-
-

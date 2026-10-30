@@ -1,28 +1,36 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, Validators, UntypedFormBuilder } from '@angular/forms';
 import { ValidadoresService } from '../../services/validadores.service';
 import { RegistrarService } from 'src/app/services/services.index';
 import { Ttipouser } from './ttipouser';
 import { Tnivelures } from './tnivelures';
 import { Ures } from './ures';
-import { Programas } from './programas';
-import {Router, ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import Swal from 'sweetalert2';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
-import { sha256, sha224 } from 'js-sha256';
 import { ErroresService } from '../../services/manejo_errores/errores.service';
+import { environment } from 'src/environments/environment';
+import { fieldIdValidation, matchWithField } from '../dialog-body/validators/validators.dialog';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { erroresFormulario } from 'src/app/modules/componentes-genericos/manejo-errores-forma/errores';
+import { MatSelectChange } from '@angular/material/select';
 
 
 @Component({
   selector: 'app-registrar',
-  templateUrl: './registrar.component.html'
+  templateUrl: 'registrar.component.html',
+  styleUrls: ['./../login/login.component.scss']
 })
 export class RegistrarComponent implements OnInit {
 
+  private route = inject(ActivatedRoute);
+  tipo: string | null = null;
+  titulo:string = null;
+
   @BlockUI() blockUI: NgBlockUI;
 
-  forma: FormGroup;
+  forma: UntypedFormGroup;
 
   private subscription: Subscription;
 
@@ -32,222 +40,230 @@ export class RegistrarComponent implements OnInit {
   ttipouser:Ttipouser[];
   tnivelures:Tnivelures[];
   ures:Ures[];
-  programas: any[];
+  filteredUres: Ures[] = [];
+  programas: any[] = [];
 
-  constructor( private fb: FormBuilder, private validadores: ValidadoresService, private _reg: RegistrarService,
-               public router: Router, private _error: ErroresService ) { }
+  constructor( 
+    private fb: UntypedFormBuilder, 
+    private validadores: ValidadoresService, 
+    private _reg: RegistrarService,
+    public router: Router, 
+    private _error: ErroresService 
+  ) { }
 
   ngOnInit(): void {
-    window.scroll(0, 0);
-    this.blockUI.start();
     this.crearFormulario();
+    this.tipo = this.route.snapshot.paramMap.get('tipo');
+    this.setValorTitulo(this.tipo);
+  }
 
-    this._reg.getTtipouser().subscribe(
-      (ttipouser) => {
-        this.ttipouser = ttipouser;
-    
-      }
-    )
-
-    this._reg.getTnivelures().subscribe(
-      (tnivelures) => {
-        this.tnivelures = tnivelures;
-    
-      }
-    )
-
-    this._reg.getUres().subscribe(
-      (ures) => {
-        this.ures = ures;
-       
-      }
-    )
-    this.blockUI.stop();
+  setValorTitulo(tipo:string){
+    switch(tipo){
+      case 'ALUMNOS':
+        this.titulo = "Registro para Alumnos"
+        this.forma.get('usua_tipo_usuario').setValue('10');
+        this.getUres();
+        break;
+      case 'PERSONAL':
+        this.titulo = "Registro para Personal UJED"
+        this.forma.get('usua_tipo_usuario').setValue('20');
+        this.getUres();
+        break;
+      case 'URESINC':
+        this.titulo = "Registro para URES e Incorporadas"
+        break;
+      case 'PG':
+        this.titulo = "Registro para Proveedores y Público General"
+        this.forma.get('usua_tipo_usuario').setValue('50');
+        this.forma.get('usua_ures').setValue('5300');
+        this.forma.get('usua_prog').setValue('510002');
+        this.forma.get('usua_persona').setValue('999999');
+        this.forma.get('ures_desc').clearValidators();
+        break;
+      default:
+        Swal.fire({
+          title: 'ERROR',
+          text: 'Hubo un problema, intentalo de nuevo',
+          icon: 'error'
+        }).then((result) => {
+          this.portal();
+        });
+        break;
+    }
   }
 
   Programas(valueUres){
-    
     this._reg.getPrograma(valueUres).subscribe(
       (programas: any) => {
         this.programas = programas;
-      
       }
     )
   }
 
-  Hidden(ValorSelect){
-    if (ValorSelect=="10" || ValorSelect=="20" || ValorSelect=="30"){
-      this.isHidden = false;
-
+  cambioUresPersonal(){
+    if(this.forma.get('usua_tipo_usuario').value === '30'){
+      this.getUres();
       this.forma.get('usua_ures').setValue('');
-      this.forma.get('usua_ures').setValidators(Validators.required);
-      this.forma.get('usua_ures').updateValueAndValidity();
-
-      this.forma.get('usua_nivel').setValue('');
-      //this.forma.get('usua_nivel').setValidators(Validators.required);
-      this.forma.get('usua_nivel').updateValueAndValidity();
-
+      this.forma.get('ures_desc').setValidators(Validators.required);
+      this.forma.get('ures_desc').updateValueAndValidity();
       this.forma.get('usua_prog').setValue('');
-      this.forma.get('usua_prog').clearValidators();
-      this.forma.get('usua_prog').updateValueAndValidity();
     }else{
-      this.isHidden = true;
-
       this.forma.get('usua_ures').setValue('5300');
-      this.forma.get('usua_ures').clearValidators();
-      this.forma.get('usua_ures').updateValueAndValidity();
-
-      this.forma.get('usua_nivel').setValue('40');
-      //this.forma.get('usua_nivel').clearValidators();
-      this.forma.get('usua_nivel').updateValueAndValidity();
-      
-      this.Programas('5300');
-
+      this.forma.get('ures_desc').clearValidators();
+      this.forma.get('ures_desc').updateValueAndValidity();
       this.forma.get('usua_prog').setValue('510002');
-      this.forma.get('usua_prog').clearValidators();
-      this.forma.get('usua_prog').updateValueAndValidity();
     }
+  }
 
-    if (ValorSelect=="50"){
-      this.isHiddenMatricula = true;
-      this.forma.get('usua_persona').setValue('999999');
-      this.forma.get('usua_persona').updateValueAndValidity();
-    }else{
-      this.isHiddenMatricula = false;
-      this.forma.get('usua_persona').setValue('');
-      this.forma.get('usua_persona').updateValueAndValidity();
+  limpiarCamposUres(){
+    this.forma.get('ures_desc').setValue('');
+    this.forma.get('usua_ures').setValue('');
+    this.forma.get('ures_desc').updateValueAndValidity();
+    this.forma.get('usua_prog').setValue('');
+    this.programas = [];
+  }
+
+  seleccionarUres(event: MatSelectChange) {
+    let value: Ures = event.value;
+    this.forma.get('usua_ures').setValue(value.ures);
+    this.Programas(value.ures);
+  }
+
+  updateValidity(field:string){
+    this.forma.get(field).updateValueAndValidity();
+  }
+
+  togglePassword(elementId:string) {
+    const input = (<HTMLInputElement>document.getElementById(elementId));
+    if (input.type === "password") {
+      input.type = "text";
+    } else {
+      input.type = "password";
     }
-
   }
 
-  get tipoUsuarioNovalido(){
-    return this.forma.get('usua_tipo_usuario').invalid && this.forma.get('usua_tipo_usuario').touched
-  }
-/*
-  get nivelUresNovalido(){
-    return this.forma.get('usua_nivel').invalid && this.forma.get('usua_nivel').touched
-  }
-*/
-  get uresNovalido(){
-    return this.forma.get('usua_ures').invalid && this.forma.get('usua_ures').touched
-  }
-
-  get userNovalido(){
-    return this.forma.get('usua_usuario').invalid && this.forma.get('usua_usuario').touched
-  }
-
-  get matriculaNovalido(){
-    return this.forma.get('usua_persona').invalid && this.forma.get('usua_persona').touched
-  }
-
-  get nombreNovalido(){
-    return this.forma.get('usua_nombre').invalid && this.forma.get('usua_nombre').touched
-  }
-
-  get telefonoNovalido(){
-    return this.forma.get('usua_tel').invalid && this.forma.get('usua_tel').touched
-  }
-
-  get emailNovalido(){
-    return this.forma.get('usua_email').invalid && this.forma.get('usua_email').touched
-  }
-
-  get passwordNovalido(){
-    return this.forma.get('usua_paswd').invalid && this.forma.get('usua_paswd').touched
-  }
-
-  get repasswordNovalido(){
-    //return this.forma.get('repassword').invalid && this.forma.get('repassword').touched
-    const pass1 = this.forma.get('usua_paswd').value;
-    const pass2 = this.forma.get('repassword').value;
-    
-    return ( pass1 === pass2) ? false : true;
-  }
 
   crearFormulario(){
-
     this.forma = this.fb.group({
       usua_tipo_usuario: ['', Validators.required],
-      usua_nivel: [''],
-      //usua_ures: ['', [Validators.required, this.validadores.existeUsuario]],
-      usua_ures: ['', Validators.required],
+      usua_nivel: '',
+      usua_ures: '',
+      ures_desc: ['', [Validators.required]],
       usua_prog: [''],
-      usua_usuario: ['', [Validators.required,Validators.maxLength(20)]],
+      usua_usuario: ['', [Validators.required,Validators.maxLength(20),Validators.pattern(/^\S+$/)]],
       usua_persona: ['', [Validators.required,Validators.maxLength(10)]],
       usua_nombre: ['', [Validators.required,Validators.maxLength(100)]],
       usua_tel: ['', [Validators.required,Validators.maxLength(10),Validators.pattern(/^[0-9]\d*$/)]],
       usua_email: ['', [Validators.required,Validators.email,Validators.maxLength(50)]],
+      validemail: ['', [Validators.required,Validators.email,matchWithField('usua_email')]],
       usua_paswd: ['', [Validators.required,Validators.maxLength(50)]],
-      repassword: ['', [Validators.required,Validators.maxLength(50)]]
-    },{
-      validators: this.validadores.passwordsIguales('usua_paswd','repassword')
+      repassword: ['', [Validators.required,Validators.maxLength(50),matchWithField('usua_paswd')]]
     });
-
   }
 
-guardar() {
-  if (this.forma.invalid) {
-    Object.values(this.forma.controls).forEach(control => {
-      control.markAsTouched();
-    });
-    return;
+  diccionario: any = {
+    usua_tipo_usuario: 'Tipo de usuario',
+    ures_desc: 'URES',
+    usua_usuario: 'Usuario',
+    usua_persona: 'Matrícula / No. Persona',
+    usua_nombre: 'Nombre',
+    usua_tel: 'Teléfono',
+    usua_email: 'Correo',
+    validemail:'Validación de correo',
+    usua_paswd: 'Contraseña',
+    repassword: 'Validación de contraseña',
   }
 
-  this._reg.create(this.forma.value).subscribe(
-    usr => {
-      this.router.navigate(['']);
-      Swal.fire(
-        'Nuevo usuario',
-        `Usuario ${usr.usua_usuario} creado con éxito!`,
-        'success'
-      );
-      this.forma.reset();
-    },
-    error => {
-   
-      if (error.error && typeof error.error === 'string' && error.error.includes('usuario ya existe')) {
-        Swal.fire({
-          title: 'ERROR',
-          text: 'El nombre de usuario ya existe. Intenta con otro nombre.',
-          icon: 'error'
-        });
-        return;
-      }
-
-      // Caso genérico
+  guardar() {
+    if (this.forma.invalid) {
+      this.forma.markAllAsTouched();
       Swal.fire({
-        title: 'ERROR',
-        text: 'Error inesperado',
-        icon: 'error'
+        icon: 'error',
+        title: 'Hay errores en los campos.',
+        html: erroresFormulario.traerErroresFormularios(this.forma, null, this.diccionario),
       });
-
+    }else{
+      this.forma.get('usua_usuario').setValue(this.forma.get('usua_usuario').value?.toString().toUpperCase());
+      this._reg.create(this.forma.getRawValue()).subscribe(
+        usr => {
+          sessionStorage.clear();
+          this.router.navigate(['']);
+          Swal.fire(
+            'Nuevo usuario',
+            `Usuario ${usr.usua_usuario} creado con éxito!`,
+            'success'
+          );
+          this.forma.reset();
+        },
+        error => {
+          console.log(error);
+  
+          // Caso específico: usuario ya existe
+          if (error.error && typeof error.error === 'string' && error.error.includes('usuario ya existe')) {
+            Swal.fire({
+              title: 'ERROR',
+              text: 'El nombre de usuario ya existe. Intenta con otro nombre.',
+              icon: 'error'
+            });
+            return;
+          }
+  
+          // Caso genérico
+          Swal.fire({
+            title: 'ERROR',
+            text: 'Error inesperado',
+            icon: 'error'
+          });
+  
+        });
     }
-
-  );
-}
+  }
 
 
   buscaNombre(){
     if(this.forma.get('usua_tipo_usuario').value === ""){
-      Swal.fire({title: 'Antes de ingresar matricula o número de persona, selecciona un tipo de usuario previamente',text: '',icon: 'warning'});
+      Swal.fire({title: 'Antes de ingresar matricula o número de persona, selecciona un tipo de usuario previamente',text: '',icon: 'info'});
       this.forma.get('usua_persona').setValue("");
     }else{
       this.subscription = this._reg.getBuscaNombre(this.forma.get('usua_tipo_usuario').value,this.forma.get('usua_persona').value)
-      .subscribe((data: any) => {
-    
-        this.forma.get('usua_nombre').setValue(data.Nombre);
-        if (data.Nombre === null){
-          Swal.fire({title: 'Matrícula o número de persona '+this.forma.get('usua_persona').value+' no encontrada',text:'', icon: 'error'});
-          this.forma.get('usua_persona').setValue("");
-        }
+        .subscribe((data: any) => {
+          console.log(data);
+          this.forma.get('usua_nombre').setValue(data.Nombre);
+          if (data.Nombre === null){
+            Swal.fire({title: 'Matrícula o número de persona '+this.forma.get('usua_persona').value+' no encontrada',text:'', icon: 'info'});
+            this.forma.get('usua_persona').setValue("");
+          }
       }),
-        error=>{
+      error=>{
         Swal.fire({
-          title: 'ERROR!!!',
-          text: error.error.message,
-          icon: 'error'});
+        title: 'ERROR!!!',
+        text: error.error.message,
+        icon: 'error'});
       }
     }
+  }
+
+  portal(){
+    window.location.href = `${environment.rutaPortal}`;
+  }
+
+  getNivelUres(){
+    this._reg.getTnivelures().subscribe((tnivelures) => {
+        this.tnivelures = tnivelures;
+      }
+    )
+  }
+
+  getUres(){
+    this._reg.getUres().subscribe((ures) => {
+      if(this.forma.get('usua_tipo_usuario').value === '10'){
+        this.ures = ures.filter(ures => ures.tures === '1000');
+        this.filteredUres = this.ures;
+      }else{
+        this.ures = ures;
+        this.filteredUres = ures;
+      }
+    })
   }
 
 }

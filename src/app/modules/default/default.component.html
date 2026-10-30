@@ -1,15 +1,9 @@
-<app-header (toggleSideBarForMe)="sideBarToggler()"></app-header>
+<app-header></app-header>
 
-<mat-drawer-container  >
-
-    <mat-drawer mode="side" [opened]="sideBarOpen"  >
-        <app-sidebar (closeSidebar)="sideBarOpen = false"></app-sidebar>
-    </mat-drawer>
+<mat-drawer-container autosize>
     <mat-drawer-content>
-        <app-footer></app-footer>
-        <block-ui name="global">
-            <router-outlet></router-outlet>
-        </block-ui>
+        <router-outlet></router-outlet>
     </mat-drawer-content>
 </mat-drawer-container>
 
+<!-- <app-footer></app-footer> -->

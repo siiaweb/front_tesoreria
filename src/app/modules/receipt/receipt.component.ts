@@ -1,11 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
-import { BlockUI, NgBlockUI } from 'ng-block-ui';
-import Swal from 'sweetalert2';
+import { BlockUI, BlockUIService, NgBlockUI } from 'ng-block-ui';
 import { ActivatedRoute } from '@angular/router';
-import { switchMap, tap } from 'rxjs/operators';
-import { EMPTY, of } from 'rxjs';
+import { catchError, finalize, switchMap } from 'rxjs/operators';
+import { EMPTY, throwError } from 'rxjs';
 import { EvoService } from 'src/app/services/dashboard/evo.service';
+import { erroresFormulario } from '../componentes-genericos/manejo-errores-forma/errores';
 
 @Component({
   selector: 'app-receipt',
@@ -16,33 +16,20 @@ export class ReceiptComponent implements OnInit {
   resultIndicator: string | null = null;
   @BlockUI() blockUI!: NgBlockUI;
 
-  p: number = 1;
+
 
   recibos: any;
   constructor(
     private _ps: PagoServiciosService,
     private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef,
-    private _evo: EvoService
-  ) {
-    //alert('constructor');
-
-  }
+    private _evo: EvoService,
+    private blockUIService: BlockUIService,
+  ) { }
 
   ngOnInit() {
-
-    const usuario = sessionStorage.getItem('usuID');
-    this.resultIndicator =
-      this.route.snapshot.queryParamMap.get('resultIndicator');
-
-    if (!usuario) {
-      console.error('No existe usuID en sessionStorage');
-      return;
-    }
     const referencia = sessionStorage.getItem('MasterID');
-    const resultIndicator =
-      this.route.snapshot.queryParamMap.get('resultIndicator');
-
+    const usuario = sessionStorage.getItem('usuID');
+    const resultIndicator = this.route.snapshot.queryParamMap.get('resultIndicator');
     this.resultIndicator = resultIndicator;
 
     if (!usuario) {
@@ -51,7 +38,7 @@ export class ReceiptComponent implements OnInit {
       });
       return;
     }
-    this.blockUI.start('cargando...<espere por favor>')
+    this.blockUI.start(this.resultIndicator?'cargando...<espere por favor>':'generando su recibo....<espere por favor>')
     this._ps.getRecibosPagosOnline(usuario).pipe(
 
       switchMap((recibos: Array<any>) => {
@@ -62,7 +49,7 @@ export class ReceiptComponent implements OnInit {
         }
         const recibo = this.recibos.slice().find(
           item => {
-
+            // console.log('item', item, item.resultIndicator === resultIndicator, item.estatus == 'P')
             return item.successIndicator === resultIndicator && item.estatus == 'P'
           }
         );
@@ -81,21 +68,31 @@ export class ReceiptComponent implements OnInit {
           return EMPTY;
         }
         return this._evo.insertarRespuestaConPdf(referencia, resultIndicator);
+      }),
+      catchError(error => {
+        console.error('Error al procesar el recibo:', error);
+
+        return throwError(error); // Hace que se ejecute el error del subscribe.
+      }),
+      finalize(() => {
+        this.blockUI.stop();
       })
     ).subscribe({
       next: response => {
+
         this.blockUI.stop();
-        console.warn('cambiando')
+        console.warn('cambiando',response)
         const disposition = response.headers.get('Content-Disposition');
         this.recibos = this.recibos.map((item: any) =>
           item.successIndicator === resultIndicator
             ? { ...item, estatus: 'A' }
             : item
         );
-        const coincidencia = disposition.match(/filename\*?=(?:UTF-8''|")?([^";]+)/i);
+        console.info('disposition',disposition)
+        const coincidencia = disposition?.match(/filename\*?=(?:UTF-8''|")?([^";]+)/i);
         let nombre = coincidencia && coincidencia[1]
           ? coincidencia[1].replace(/"/g, '')
-          : 'reporte.pdf';
+          : 'recibo.pdf';
         try {
           nombre = decodeURIComponent(nombre);
         } catch {
@@ -103,6 +100,7 @@ export class ReceiptComponent implements OnInit {
         }
         sessionStorage.removeItem("MasterID");
         sessionStorage.removeItem("shoppingCart");
+        this._evo.clearHostedCheckoutSessionStorage();
         // alert('test')
         const blob = new Blob([response.body], { type: 'application/pdf' });
         if (!blob) {
@@ -121,9 +119,17 @@ export class ReceiptComponent implements OnInit {
         setTimeout(() => URL.revokeObjectURL(url), 1000);
         this._evo.stopPolling();
       },
-      error: error => {
+      error: async error => {
+        this.blockUIService.stop('global');
         this.blockUI.stop();
-        console.error('Error en el flujo:', error)
+        if (this.resultIndicator) {
+          sessionStorage.removeItem("MasterID");
+          sessionStorage.removeItem("shoppingCart");
+          this._evo.clearHostedCheckoutSessionStorage();
+        }
+        void this.manejarErrorRecibo(error).then(result=>{
+            window.location.reload();
+        });
       },
       complete: () => {
         this.blockUI.stop();
@@ -132,50 +138,65 @@ export class ReceiptComponent implements OnInit {
 
   }
 
-  printInvoice(id: any, ref_banco: any, bandera: null) {
-    console.warn('params', id, ref_banco, bandera)
-    this.blockUI.start('Descargando su recibo...');
-    if (bandera == null) {
-      this._ps.printReceipt(id, ref_banco)
-        .subscribe((response: BlobPart) => {
-
-          const file = new Blob([response], { type: 'application/pdf' });
-          const fileURL = URL.createObjectURL(file);
-          window.open(fileURL);
-          this.blockUI.stop();
-
-        },
-          (error: { message: any; }) => {
-
-            this.blockUI.stop();
-            Swal.fire({
-              title: 'ERROR!!!',
-              text: error.message,
-              icon: 'error'
-            });
-          });
-    } else {
-      this._ps.printReceiptDsto(id, ref_banco).subscribe((response: BlobPart) => {
-
-        const file = new Blob([response], { type: 'application/pdf' });
-        const fileURL = URL.createObjectURL(file);
-        window.open(fileURL);
+  generarRecibo(id: number, token: string) {
+    this.blockUI.start('generando..')
+    this._ps.getRecibo(id, token).pipe(
+      //  filter((event): event is HttpResponse<Blob> => event instanceof HttpResponse)
+    ).subscribe({
+      next: (response) => {
         this.blockUI.stop();
+        const fileURL = URL.createObjectURL(response.body);
+        window.open(fileURL, '_blank');
+        setTimeout(() => URL.revokeObjectURL(fileURL), 60000);
+        //  const fileURL = URL.createObjectURL(blob);
       },
-        (error: { error: { message: any; }; }) => {
-          this.blockUI.stop();
-
-          Swal.fire({
-            title: 'ERROR!!!',
-            text: error.error.message,
-            icon: 'error'
-          });
-        });
-    }
+      error: async error => {
+        console.error('error', error)
+        void this.manejarErrorRecibo(error)
+      },
+      complete: () => {
+        this.blockUI.stop();
+        console.log('complete...')
+      }
+    })
   }
 
-  generarCartaNoAdeudo(id: string, ref: string) {
+  private async manejarErrorRecibo(error: any): Promise<boolean> {
+    this.blockUI.stop();
 
+    let mensaje = `Error HTTP ${error?.status || ''}`;
+    let texto: string | undefined;
+
+    if (error?.error instanceof Blob) {
+      texto = await error.error.text();
+    } else if (error?.error instanceof ArrayBuffer) {
+      const tipo = error.headers?.get('Content-Type') || 'application/json';
+      const blob = new Blob([error.error], { type: tipo });
+      texto = await blob.text();
+    } else if (typeof error?.error === 'string') {
+      texto = error.error;
+    }
+
+    if (texto) {
+      try {
+        const json = JSON.parse(texto);
+        mensaje = json.message || json.mensaje || texto || mensaje;
+        return erroresFormulario.handleError({ error: json });
+      } catch {
+        mensaje = texto;
+      }
+    } else if (error?.error?.message || error?.error?.mensaje) {
+      mensaje = error.error.message || error.error.mensaje;
+      return erroresFormulario.handleError(error);
+    }
+
+    console.error('Error al generar el recibo:', mensaje, error);
+  }
+
+
+
+  generarCartaNoAdeudo(id: string, ref: string) {
+    console.log(id);
     this.blockUI.start("Generando...")
     this._ps.getCartaNoAdeudo(id, ref).subscribe(resp => {
       this.blockUI.stop();
@@ -183,11 +204,8 @@ export class ReceiptComponent implements OnInit {
       const fileURL = URL.createObjectURL(blob);
       window.open(fileURL);
     }, error => {
-      this.blockUI.stop();
-
-      Swal.fire({
-        title: 'AVISO!!', text: "Error al cargar carta, inténtelo de nuevo", icon: 'error'
-      });
+      this.blockUIService.stop('global');
+      erroresFormulario.handleError(error);
     });
   }
 

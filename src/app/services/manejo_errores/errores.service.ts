@@ -12,11 +12,7 @@ export class ErroresService {
 
   constructor( private http: HttpClient ) { }
 
-  getErrores(): Observable<Errores[]> {
-    return this.http.get(`${environment.rutaAPI}/cwerrmsj/`).pipe(
-      map(response => response as Errores[])
-    );
-  }
+  
 
   getError(id:string): Observable<Errores> {
     return this.http.get(`${environment.rutaAPI}/cwerrmsj/${id}`).pipe(

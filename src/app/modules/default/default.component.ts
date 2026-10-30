@@ -11,7 +11,7 @@ import { BlockUI, NgBlockUI } from 'ng-block-ui';
 })
 export class DefaultComponent implements OnInit {
   @BlockUI() blockUI!: NgBlockUI;
-  sideBarOpen = true;
+  sideBarOpen = false;
 
   constructor( public router: Router, private _log: LoginService ) { }
 

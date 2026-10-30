@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 import { Descuentos } from '../../services/dashboard/descuentos/descuentos';
 import { Router } from '@angular/router';
 import { EvoService } from '../../services/dashboard/evo.service';
-import { BlockUI, NgBlockUI } from 'ng-block-ui';
+import { BlockUI, BlockUIService, NgBlockUI } from 'ng-block-ui';
 import { Carrito, DetPagoOnlineDTO, PagoOnline, PagoOnlineDTO } from '../shoppingcart/shoppingcart.model';
 
 declare const Checkout: any
@@ -13,21 +13,20 @@ declare const Checkout: any
 @Component({
   selector: 'app-discount',
   templateUrl: './discount.component.html',
-  styleUrls: ['./discount.component.scss', '../../../assets/css/login.css']
+  styleUrls: ['./discount.component.scss']
 })
 export class DiscountComponent implements OnInit, OnDestroy {
   @BlockUI() blockUI!: NgBlockUI;
   det: any[] = [];
   descuentos!: Descuentos[];
-  descuentosdet!: Descuentos[];
-  public items: any = "";
   forma: FormGroup = new FormGroup({});
   total = 0;
   constructor(private _ds: DescuentosService,
     private fb: FormBuilder,
     private renderer: Renderer2,
     public router: Router,
-    private _evo: EvoService
+    private _evo: EvoService,
+    private blockUISERVICE: BlockUIService
   ) {
 
     (window as any).errorCallback = (error: any) => {
@@ -37,12 +36,12 @@ export class DiscountComponent implements OnInit, OnDestroy {
       }
     };
     (window as any).cancelCallback = () => {
-     
+
     };
     (window as any).completeCallback = (resultIndicator: string, sessionVersion: string) => {
-     
+
       const referencia = sessionStorage.getItem('MasterID');
-  
+
       this._evo.handleCompletado(resultIndicator['resultIndicator'], resultIndicator['sessionVersion'], referencia)
     };
 
@@ -61,10 +60,10 @@ export class DiscountComponent implements OnInit, OnDestroy {
       .find(script => script.src === scriptUrl);
 
     if (existente) {
-      
+
       return;
     } else {
-    
+
     }
 
     const script = this.renderer.createElement('script') as HTMLScriptElement;
@@ -88,40 +87,53 @@ export class DiscountComponent implements OnInit, OnDestroy {
     this._ds.getDescuento().subscribe(
       (descuentos) => {
         this.descuentos = descuentos
-        
+
       }
     )
 
   }
 
-  valuesSelect(value: number) {
-    
+  onDiscountSelectionChange(value: number) {
+  
     this.forma.get('pago_foldescto')!.setValue(value);
-    this._ds.getDescuentoDet(value).subscribe(
-      (responseDETALLE) => {
-        this.descuentosdet = responseDETALLE
-        
-        this.totalPrice(this.descuentosdet);
-        this.det=[];
-        for (var i = 0; i < this.descuentosdet.length; i++) {
-          const descuento: Descuentos = this.descuentosdet[i];
-          const rowDetalle: Carrito = {
+    this.blockUISERVICE.start('global', 'cargando...');
+    this._ds.getDescuentoDet(value).subscribe({
+      next: (responseDETALLE) => {
+        this.blockUISERVICE.stop('global');
+        this.totalPrice(responseDETALLE);
+        this.det = [];
+        for (var i = 0; i < responseDETALLE.length; i++) {
+          const descuento: Descuentos = responseDETALLE[i];
+
+          this.det.push({
             dpago_idingreso: descuento.vdes_id,
             dpago_cantidad: descuento.vdes_cantidad,
             dpago_punit: descuento.vdes_punit,
             regidescto: descuento.vdes_regid,
             descto: descuento.vdes_porc,
             dto_pagar: descuento.vdes_a_pagar,
-            Mount: descuento.vdes_a_pagar,
+            amount: descuento.vdes_a_pagar,
             Descrip: descuento.vdes_concepto,
-            paquete:null
-          }
-          console.warn('test', rowDetalle)
-          this.det.push(rowDetalle)
+            paquete: null,
+            importe:descuento.vdes_importe,
+            montoDescuento:descuento.vdes_monto_descto
+          } as Carrito);
         }
-
+      },
+      error: (e) => {
+        this.blockUISERVICE.stop('global')
+        Swal.fire({
+                title: 'AVISO!!!',
+                text: JSON.stringify(e),
+                icon: 'error'
+        });             
+      },
+      complete: () => {
+        this.blockUISERVICE.stop('global')
       }
-    )
+    })
+
+
   }
 
   totalPrice(datosdet: any) {
@@ -148,9 +160,8 @@ export class DiscountComponent implements OnInit, OnDestroy {
   crearFormulario() {
 
     this.forma = this.fb.group({
-     // descuentos: ['', Validators.required],
       pago_concepto: ['', [Validators.required, Validators.maxLength(150)]],
-      pago_foldescto: [null,Validators.required],
+      pago_foldescto: [null, Validators.required],
       pago_referencia: [sessionStorage.MasterID],
       pago_montoapagar: [''],
       pago_usuaid: [sessionStorage.getItem('usuID')],
@@ -190,7 +201,7 @@ export class DiscountComponent implements OnInit, OnDestroy {
 
   Pagar() {
     this.blockUI.start();
-    
+
     if (this.forma.invalid) {
       this.blockUI.stop();
       alert('Faltan campos por completar');
@@ -206,7 +217,7 @@ export class DiscountComponent implements OnInit, OnDestroy {
       console.warn('forma', this.forma.getRawValue())
       this._evo.mostrarEvo(this.total, entity).subscribe({
         next: (r) => {
-         
+
           this.pago_referencia.setValue(r.referencia);
           this.blockUI.stop();
         },
@@ -215,15 +226,19 @@ export class DiscountComponent implements OnInit, OnDestroy {
             this.pago_referencia.setValue(sessionStorage.MasterID);
           }
           this.blockUI.stop();
-          console.error('e.getEvo', e)
+          console.error('e.getEvo', e.error)
+          let message = JSON.stringify(e).replace(/"/g, "'");
+          if(e.error && e.error.message){
+            message=e.error.message;
+          }
           Swal.fire({
             title: 'ERROR!!!',
-            text: JSON.stringify(e),
+            text: message,
             icon: 'error'
           });
         },
         complete: () => {
-         
+
           this.blockUI.stop();
         }
       });
@@ -236,7 +251,7 @@ export class DiscountComponent implements OnInit, OnDestroy {
   }
 
   public closeEvoModal(event: Event): void {
-    this._evo.closeEvoModal(event,this.pago_referencia.value);
+    this._evo.closeEvoModal(event, this.pago_referencia.value);
   }
   private showEvoOverlay(): void {
     this._evo.showEvoOverlay();

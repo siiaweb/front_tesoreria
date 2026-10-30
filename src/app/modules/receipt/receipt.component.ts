@@ -51,7 +51,7 @@ export class ReceiptComponent implements OnInit {
       });
       return;
     }
-this.blockUI.start('cargando...<espere por favor>')
+    this.blockUI.start('cargando...<espere por favor>')
     this._ps.getRecibosPagosOnline(usuario).pipe(
 
       switchMap((recibos: Array<any>) => {
@@ -62,21 +62,21 @@ this.blockUI.start('cargando...<espere por favor>')
         }
         const recibo = this.recibos.slice().find(
           item => {
-           // console.log('item', item, item.resultIndicator === resultIndicator, item.estatus == 'P')
+
             return item.successIndicator === resultIndicator && item.estatus == 'P'
           }
         );
 
-       // alert('wait')
+        // alert('wait')
 
         if (!recibo) {
-           this.blockUI.stop();
+          this.blockUI.stop();
           console.log('No se encontró un recibo pendiente para este resultIndicator.');
           return EMPTY;
         }
 
         if (!referencia) {
-           this.blockUI.stop();
+          this.blockUI.stop();
           console.error('No existe MasterID en sessionStorage.');
           return EMPTY;
         }
@@ -87,11 +87,11 @@ this.blockUI.start('cargando...<espere por favor>')
         this.blockUI.stop();
         console.warn('cambiando')
         const disposition = response.headers.get('Content-Disposition');
- this.recibos = this.recibos.map((item: any) =>
-    item.successIndicator === resultIndicator
-      ? { ...item, estatus: 'A' }
-      : item
-  );
+        this.recibos = this.recibos.map((item: any) =>
+          item.successIndicator === resultIndicator
+            ? { ...item, estatus: 'A' }
+            : item
+        );
         const coincidencia = disposition.match(/filename\*?=(?:UTF-8''|")?([^";]+)/i);
         let nombre = coincidencia && coincidencia[1]
           ? coincidencia[1].replace(/"/g, '')
@@ -103,7 +103,7 @@ this.blockUI.start('cargando...<espere por favor>')
         }
         sessionStorage.removeItem("MasterID");
         sessionStorage.removeItem("shoppingCart");
-       // alert('test')
+        // alert('test')
         const blob = new Blob([response.body], { type: 'application/pdf' });
         if (!blob) {
           console.error('La respuesta no contiene el PDF.');
@@ -122,11 +122,11 @@ this.blockUI.start('cargando...<espere por favor>')
         this._evo.stopPolling();
       },
       error: error => {
-         this.blockUI.stop();
+        this.blockUI.stop();
         console.error('Error en el flujo:', error)
       },
-      complete:()=>{
-         this.blockUI.stop();
+      complete: () => {
+        this.blockUI.stop();
       }
     });
 

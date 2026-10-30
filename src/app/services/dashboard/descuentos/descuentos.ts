@@ -9,8 +9,8 @@ export class Descuentos {
     vdes_cantidad: number;
     vdes_punit: number;
     vdes_porc: number;
-    vdes_importe: string;
-    vdes_monto_descto: string;
+    vdes_importe: number;
+    vdes_monto_descto: number;
     vdes_a_pagar: number;
     vdes_regid: number;
      

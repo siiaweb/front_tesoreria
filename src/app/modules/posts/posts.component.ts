@@ -125,7 +125,7 @@ this.isSubmitted=true;
     // conceptoROW.descripcion
     const elemento: Carrito = {
       dpago_idingreso: conceptoROW.concepto,
-      Mount: this.importe,
+      amount: this.importe,
       Descrip: conceptoROW.descripcion,
       dpago_cantidad: this.forma.get('cantidad').value,
       dpago_punit: this.punit.value,

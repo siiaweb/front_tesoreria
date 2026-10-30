@@ -5,7 +5,7 @@
         <label>Seleccione descuento:</label>
         <select
           formControlName="pago_foldescto"
-          (change)="valuesSelect($event.target.value)"
+          (change)="onDiscountSelectionChange($event.target.value)"
            class="form-control form-control-sm"
         >
           <option value="" selected disabled>
@@ -22,54 +22,51 @@
     </div>
 
     <ng-container *ngIf="descuentos?.length > 0">
-      <table class="table table-hover table-sm">
+      <table class="table table-hover table-sm table-bordered">
         <thead>
           <tr>
-            <th>Cantidad</th>
-            <th>Descripcion</th>
-            <th>P. Unit.</th>
-            <th>Importe</th>
-            <th>%</th>
-            <th>Descto</th>
-            <th>Pagar</th>
+            <th class="text-center">Cantidad</th>
+            <th class="text-center">Descripcion</th>
+            <th class="text-center">P. Unit.</th>
+            <th class="text-center">Importe</th>
+            <th class="text-center">%</th>
+            <th class="text-center">Descto</th>
+            <th class="text-center">Pagar</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let dd of descuentosdet">
+          <tr *ngFor="let row of det">
             <td style="text-align: center; width: 10%">
-              {{ dd.vdes_cantidad }}
+              {{ row.dpago_cantidad }}
             </td>
-            <td style="text-align: left; width: 50%">{{ dd.vdes_concepto }}</td>
-            <td style="text-align: center">
-              {{ dd.vdes_punit | currency: "MXN" : "symbol" }}
+            <td style="text-align: left; width: 40%">
+              {{ row.Descrip }}
             </td>
-            <td style="text-align: center">
-              {{ dd.vdes_importe | currency: "MXN" : "symbol" }}
+            <td class="text-right">
+              {{ row.dpago_punit | currency: "MXN" : "symbol" }}
             </td>
-            <td style="text-align: center; width: 10%">{{ dd.vdes_porc }}%</td>
-            <td style="text-align: center">
-              {{ dd.vdes_monto_descto | currency: "MXN" : "symbol" }}
+            <td class="text-right">
+              {{ row.importe | currency: "MXN" : "symbol" }}
             </td>
-            <td style="text-align: center">
-              {{ dd.vdes_a_pagar | currency: "MXN" : "symbol" }}
+            <td style="text-align: center; width: 10%">
+              {{ row.descto }}%
             </td>
-          </tr>
-          <tr style="text-align: right">
-            <th colspan="6">Total:</th>
-            <td style="text-align: center">
-              <strong>{{ this.total | currency: "MXN" : "symbol" }}</strong>
-              <input type="hidden" formControlName="pago_foldescto" value="" />
-              <input type="hidden" formControlName="pago_referencia" />
-              <input
-                type="hidden"
-                formControlName="pago_montoapagar"
-                value=""
-              />
-              <input type="hidden" formControlName="pago_usuaid" value="" />
-              <input type="hidden" formControlName="pago_estatus" value="P" />
+            <td class="text-right">
+              {{ row.montoDescuento | currency: "MXN" : "symbol" }}
+            </td>
+            <td class="text-right">
+              {{ row.dto_pagar | currency: "MXN" : "symbol" }}
             </td>
           </tr>
         </tbody>
+        <tfoot>
+          <tr style="text-align: right">
+            <th colspan="6">Total:</th>
+            <td class="text-right">
+              <strong>{{ this.total | currency: "MXN" : "symbol" }}</strong>
+            </td>
+          </tr>
+        </tfoot>
       </table>
       <section>
         <span>
@@ -97,7 +94,8 @@
 
   <ng-container *ngIf="descuentos?.length > 0">
     <div style="text-align: right">
-      <button type="submit" class="btn btn-blue">Pagar</button>
+      <button type="submit" class="btn btn-primary">Pagar</button>
+      
     </div>
   </ng-container>
  

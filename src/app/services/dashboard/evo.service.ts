@@ -229,9 +229,7 @@ export class EvoService {
 
 
   getEvo(amount: number, entity: any): Observable<any> {
-
     return this.http.post(`${this.urlEndPoint}/evo/${amount}`, entity);
-    //return this.http.get(this.urlEndPoint + '/evo/'+referencia+'/'+mount,entity);
   }
 
   retrieveInfo(referencia: string) {

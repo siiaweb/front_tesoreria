@@ -1,7 +1,7 @@
 
 export interface Carrito {
   Descrip: string;
-  Mount: number;
+  amount: number;
   dpago_cantidad: number;
   dpago_idingreso: string;
   dpago_punit: number;
@@ -9,6 +9,8 @@ export interface Carrito {
   dto_pagar:number;
   regidescto:number;
   paquete:number | null;
+  importe:number;
+  montoDescuento:number;
 }
 
 export interface PagoOnline {

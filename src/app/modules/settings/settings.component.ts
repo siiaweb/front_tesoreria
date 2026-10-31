@@ -29,10 +29,10 @@ export class SettingsComponent implements OnInit {
     //return this.forma.get('repassword').invalid && this.forma.get('repassword').touched
     const pass1 = this.forma.get('usua_paswd').value;
     const pass2 = this.forma.get('repassword').value;
-    
+
     return ( pass1 === pass2) ? false : true;
   }
-  
+
   crearFormulario(){
 
     this.forma = this.fb.group({
@@ -51,9 +51,9 @@ export class SettingsComponent implements OnInit {
         control.markAsTouched();
       })
     }else{
-   
+      //console.log(this.forma.value);
       this._reg.changePassword(this.forma.value).subscribe(usr => {
-        
+
           Swal.fire('Password Guardado', '', 'success').then(r=>{
             if(r.isConfirmed){
                 this.router.navigate(['/dashboard']);
@@ -62,15 +62,15 @@ export class SettingsComponent implements OnInit {
           //this.cargarUsers();
       },
       error => {
-     
+        console.log(error);
           Swal.fire({
             title: 'ERROR!!!',
             text: error.error.message,
             icon: 'error'});
       });
-      
+
     }
-    
+
   }
 
 }

@@ -149,7 +149,7 @@ export class RegistrarComponent implements OnInit {
       usua_nivel: '',
       usua_ures: '',
       ures_desc: ['', [Validators.required]],
-      usua_prog: [''],
+      usua_prog: ['', [Validators.required]],
       usua_usuario: ['', [Validators.required,Validators.maxLength(20),Validators.pattern(/^\S+$/)]],
       usua_persona: ['', [Validators.required,Validators.maxLength(10)]],
       usua_nombre: ['', [Validators.required,Validators.maxLength(100)]],
@@ -164,6 +164,7 @@ export class RegistrarComponent implements OnInit {
   diccionario: any = {
     usua_tipo_usuario: 'Tipo de usuario',
     ures_desc: 'URES',
+    usua_prog: 'Programa',
     usua_usuario: 'Usuario',
     usua_persona: 'Matrícula / No. Persona',
     usua_nombre: 'Nombre',
@@ -184,6 +185,7 @@ export class RegistrarComponent implements OnInit {
       });
     }else{
       this.forma.get('usua_usuario').setValue(this.forma.get('usua_usuario').value?.toString().toUpperCase());
+      this.forma.get('usua_nombre').setValue(this.forma.get('usua_nombre').value?.toString().toUpperCase());
       this._reg.create(this.forma.getRawValue()).subscribe(
         usr => {
           sessionStorage.clear();

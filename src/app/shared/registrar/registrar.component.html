@@ -54,7 +54,7 @@
                                     </mat-select>
                                 </mat-form-field>
                                 <div class="div-error" *ngIf="forma.get('ures_desc').hasError('required') && forma.get('ures_desc').touched">* campo obligatorio</div>
-                                <mat-form-field class="custom-form-field" appearance="outline" style="margin-top: 10px;">
+                                <mat-form-field class="custom-form-field" appearance="outline" [ngClass]="{ 'custom-form-field-invalid': forma.get('usua_prog').invalid && forma.get('usua_prog').touched }" style="margin-top: 10px;">
                                     <mat-label>PROGRAMA</mat-label>
                                     <mat-select formControlName="usua_prog" panelClass="autocomplete-dropdown">
                                         <mat-option *ngFor="let option of programas" [value]="option.prog_prog">
@@ -74,6 +74,7 @@
                                         </mat-option>
                                     </mat-select>
                                 </mat-form-field>
+                                <div class="div-error" *ngIf="forma.get('usua_prog').hasError('required') && forma.get('usua_prog').touched">* campo obligatorio</div>
                             </section>
                             <section>
                                 <h3 class="normal-title" style="margin-bottom: 10px;">Datos personales</h3>

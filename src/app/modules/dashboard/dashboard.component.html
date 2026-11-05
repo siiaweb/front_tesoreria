@@ -1,31 +1,56 @@
+<h6>Bienvenido(a):</h6>
+<h5>
+  <strong>{{ usuario?.Nombre }}</strong>
+</h5>
+<div class="titulos-container">
+  <div class="column left-col">
+    <h6>{{ usuario.Ures }} - {{ usuario.uresDescrip }}</h6>
+  </div>
+  <div class="column right-col" style="text-align: right">
+    <h6>{{ today | date: "fullDate" : "" : "es-MX" }}</h6>
+  </div>
+</div>
 
-    <h6>Bienvenido(a): </h6>
-    <h5><strong>{{ usuario?.Nombre }}</strong></h5>
-    <div class="titulos-container" >
-      <div class="column left-col">
-        <h6>{{ usuario.Ures }} - {{usuario.uresDescrip}}</h6>
-      </div>
-      <div class="column right-col" style="text-align: right;">
-        <h6>{{today | date:'fullDate':'':'es-MX'}}</h6>
-      </div>
-    </div>
-
-<hr>
+<hr />
 
 <div class="main-container">
   <div class="column left-col">
-    <mat-card  appearance="outlined" class="card" routerLink="/posts">
+    <mat-card appearance="outlined" class="card" routerLink="/posts">
       <mat-card-header class="card-header">
         <mat-card-title class="card-title">PAGAR SERVICIOS</mat-card-title>
-        <mat-card-subtitle class="card-subtitle" *ngIf="descuentos?.length > 0">Usted tiene {{ this.count }} {{this.count != 1 ? 'descuentos disponibles':'descuento disponible'}}</mat-card-subtitle>
+        <mat-card-subtitle class="card-subtitle" *ngIf="descuentos?.length > 0"
+          >Usted tiene {{ this.count }}
+          {{
+            this.count != 1 ? "descuentos disponibles" : "descuento disponible"
+          }}</mat-card-subtitle
+        >
       </mat-card-header>
     </mat-card>
   </div>
   <div class="column right-col">
-    <mat-card  appearance="outlined" class="card2" routerLink="/recibos">
+    <mat-card appearance="outlined" class="card2" routerLink="/recibos">
       <mat-card-header class="card-header">
         <mat-card-title class="card-title">RECIBOS</mat-card-title>
       </mat-card-header>
     </mat-card>
   </div>
+  <!-- <app-buzon></app-buzon> -->
+ 
 </div>
+<footer class="dashboard-footer text-end">
+      <a routerLink="/buzon" class="p-0 my-auto">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        fill="currentColor"
+        class="bi bi-envelope"
+        viewBox="0 0 16 16"
+      >
+        <path
+          d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"
+        />
+      </svg>
+      ¿Tienes dudas?
+    </a>
+</footer>

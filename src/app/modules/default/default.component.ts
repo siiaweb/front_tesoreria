@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 
-import { filter } from 'rxjs/operators';
 import { LoginService } from 'src/app/shared/login/login.service';
 
 @Component({

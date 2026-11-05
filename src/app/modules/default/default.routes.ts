@@ -7,6 +7,7 @@ import { DashboardComponent } from 'src/app/modules/dashboard/dashboard.componen
 import { PostsComponent } from 'src/app/modules/posts/posts.component';
 import { ReceiptComponent } from '../receipt/receipt.component';
 import { SettingsComponent } from '../settings/settings.component';
+import { BuzonComponent } from '../buzon/buzon.component';
 const pagesRoutes: Routes = [
 	{
 		path: '',
@@ -14,9 +15,10 @@ const pagesRoutes: Routes = [
 		canActivateChild: [ LoginGuard ],
 		children: [
 			{ path: 'dashboard', component: DashboardComponent },
-			{ path: 'posts', component: PostsComponent },
-			{ path: 'recibos', component: ReceiptComponent },
-			{ path: 'settings', component: SettingsComponent },
+			{ path: 'posts'	   , component: PostsComponent },
+			{ path: 'recibos'  , component: ReceiptComponent },
+			{ path: 'settings' , component: SettingsComponent },
+			{ path: 'buzon'	   , component: BuzonComponent },
 		]
 	}
 ];

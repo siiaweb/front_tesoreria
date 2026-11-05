@@ -1,0 +1,68 @@
+<button
+  type="button"
+  mat-button
+  routerLink="/dashboard"
+  class="m-2"
+>
+  <mat-icon>arrow_back</mat-icon>
+  Regresar
+</button>
+<form class="card" [formGroup]="formulario" (ngSubmit)="guardar()">
+  <div class="card-header">
+    <p class="p-0 my-auto">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        fill="currentColor"
+        class="bi bi-envelope"
+        viewBox="0 0 16 16"
+      >
+        <path
+          d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"
+        />
+      </svg>
+      Contáctanos!
+    </p>
+  </div>
+  <div class="card-body">
+    <section>
+      <label for="mensaje">Comentario:</label>
+      <textarea
+        class="form-control form-control-sm w-100"
+        formControlName="mensaje"
+        oninput="this.value = this.value.toUpperCase()"
+      >
+      </textarea>
+      <div
+        class="text-danger"
+        *ngIf="mensaje?.touched && mensaje?.hasError('required')"
+      >
+        El campo comentario es requerido
+      </div>
+    </section>
+    <section class="mb-3">
+      <label class="form-label">Imagen (opcional):</label>
+
+      <input
+        type="file"
+        class="form-control"
+        accept="image/*"
+        (change)="seleccionarImagen($event)"
+      />
+
+      <div
+        class="text-danger"
+        *ngIf="
+          formulario.get('imagen')?.touched &&
+          formulario.get('imagen')?.hasError('required')
+        "
+      >
+        Debes seleccionar una imagen.
+      </div>
+    </section>
+  </div>
+  <div class="card-footer text-end">
+    <button type="submit" class="btn btn-primary">Enviar</button>
+  </div>
+</form>

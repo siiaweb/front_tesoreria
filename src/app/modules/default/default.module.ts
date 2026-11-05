@@ -37,13 +37,16 @@ import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from 'src/app/shared/login/auth.interceptor';
+import { BuzonComponent } from '../buzon/buzon.component';
+
 
 @NgModule({
     declarations: [
         DefaultComponent,
         DashboardComponent,
         PostsComponent,
-        ReceiptComponent
+        ReceiptComponent,
+        BuzonComponent
     ],
     exports: [
         DefaultComponent,

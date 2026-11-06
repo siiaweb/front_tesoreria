@@ -1,9 +1,4 @@
-<button
-  type="button"
-  mat-button
-  routerLink="/dashboard"
-  class="m-2"
->
+<button type="button" mat-button routerLink="/dashboard" class="m-2">
   <mat-icon>arrow_back</mat-icon>
   Regresar
 </button>
@@ -26,8 +21,8 @@
     </p>
   </div>
   <div class="card-body">
-    <section>
-      <label for="mensaje">Comentario:</label>
+    <section class="mb-2">
+      <label for="mensaje" class="form-label fw-bold">Comentario:</label>
       <textarea
         class="form-control form-control-sm w-100"
         formControlName="mensaje"
@@ -41,26 +36,70 @@
         El campo comentario es requerido
       </div>
     </section>
-    <section class="mb-3">
-      <label class="form-label">Imagen (opcional):</label>
+    <!-- -->
+    <strong>Adjuntar imagen o captura(opcional):</strong>
+    <div
+      class="paste-zone"
+      contenteditable="true"
+      (paste)="pegarImagen($event)"
+      (dragover)="arrastrarImagen($event)"
+      (drop)="soltarImagen($event)"
+    >
+      <ng-container *ngIf="!previewUrl; else imagenSeleccionada">
+        <button
+          type="button"
+          class="btn btn-link text-secondary p-0"
+          (click)="fileInput.click(); $event.stopPropagation()"
+        >
+          <i class="bi bi-clipboard-plus fs-1"></i>
+          selecciona un archivo desde tu dispositivo.
+        </button>
 
-      <input
-        type="file"
-        class="form-control"
-        accept="image/*"
-        (change)="seleccionarImagen($event)"
-      />
+        <h6 class="mt-2"></h6>
 
-      <div
-        class="text-danger"
-        *ngIf="
-          formulario.get('imagen')?.touched &&
-          formulario.get('imagen')?.hasError('required')
-        "
-      >
-        Debes seleccionar una imagen.
-      </div>
-    </section>
+        <p class="text-muted small mb-1">
+          O Mantén presionado aquí para pegar una imagen.
+        </p>
+
+        <span class="badge bg-light text-dark">
+          PNG, JPG o WEBP · Máximo 10 MB
+        </span>
+
+        <input
+          #fileInput
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          
+          hidden
+          (change)="seleccionarImagen($event)"
+        />
+      </ng-container>
+
+      <ng-template #imagenSeleccionada>
+        <img [src]="previewUrl" class="img-preview" alt="Vista previa" />
+
+        <div class="mt-2">
+          <!-- <button
+            type="button"
+            class="btn btn-sm btn-outline-primary me-2"
+            (click)="fileInput.click(); $event.stopPropagation()"
+          >
+            <i class="bi bi-arrow-repeat"></i>
+            Cambiar
+          </button> -->
+
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-danger"
+            (click)="quitarImagen(fileInput); $event.stopPropagation()"
+          >
+            <i class="bi bi-trash"></i>
+            Quitar imagen
+          </button>
+        </div>
+      </ng-template>
+    </div>
+    <!-- *** -->
   </div>
   <div class="card-footer text-end">
     <button type="submit" class="btn btn-primary">Enviar</button>

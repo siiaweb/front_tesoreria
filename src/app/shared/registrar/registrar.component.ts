@@ -184,6 +184,7 @@ export class RegistrarComponent implements OnInit {
         html: erroresFormulario.traerErroresFormularios(this.forma, null, this.diccionario),
       });
     }else{
+      this.forma.get('usua_persona').setValue(this.forma.get('usua_persona').value?.toString().toUpperCase());
       this.forma.get('usua_usuario').setValue(this.forma.get('usua_usuario').value?.toString().toUpperCase());
       this.forma.get('usua_nombre').setValue(this.forma.get('usua_nombre').value?.toString().toUpperCase());
       this._reg.create(this.forma.getRawValue()).subscribe(
@@ -227,7 +228,7 @@ export class RegistrarComponent implements OnInit {
       Swal.fire({title: 'Antes de ingresar matricula o número de persona, selecciona un tipo de usuario previamente',text: '',icon: 'info'});
       this.forma.get('usua_persona').setValue("");
     }else{
-      this.subscription = this._reg.getBuscaNombre(this.forma.get('usua_tipo_usuario').value,this.forma.get('usua_persona').value)
+      this.subscription = this._reg.getBuscaNombre(this.forma.get('usua_tipo_usuario').value, this.forma.get('usua_persona').value?.toString().toUpperCase())
         .subscribe((data: any) => {
           console.log(data);
           this.forma.get('usua_nombre').setValue(data.Nombre);

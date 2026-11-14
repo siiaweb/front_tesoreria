@@ -31,78 +31,80 @@ export class ReceiptComponent implements OnInit {
     const usuario = sessionStorage.getItem('usuID');
     const resultIndicator = this.route.snapshot.queryParamMap.get('resultIndicator');
     this.resultIndicator = resultIndicator;
-
     if (!usuario) {
       console.error('Faltan datos para procesar el recibo:', {
         usuario
       });
       return;
     }
-    this.blockUI.start(this.resultIndicator?'cargando...<espere por favor>':'generando su recibo....<espere por favor>')
-    this._ps.getRecibosPagosOnline(usuario).pipe(
+    this.blockUI.start(this.resultIndicator ? 'cargando...<espere por favor>' : 'generando su recibo....<espere por favor>')
 
-      switchMap((recibos: Array<any>) => {
-        this.recibos = recibos;
 
-        if (!resultIndicator) {
-          return EMPTY;
-        }
-        const recibo = this.recibos.slice().find(
-          item => {
-            // console.log('item', item, item.resultIndicator === resultIndicator, item.estatus == 'P')
-            return item.successIndicator === resultIndicator && item.estatus == 'P'
-          }
-        );
+    this._ps.getRecibosPagosOnline(usuario, resultIndicator).pipe(
 
-        // alert('wait')
 
-        if (!recibo) {
-          this.blockUI.stop();
-          console.log('No se encontró un recibo pendiente para este resultIndicator.');
-          return EMPTY;
-        }
 
-        if (!referencia) {
-          this.blockUI.stop();
-          console.error('No existe MasterID en sessionStorage.');
-          return EMPTY;
-        }
-        return this._evo.insertarRespuestaConPdf(referencia, resultIndicator);
-      }),
-      catchError(error => {
-        console.error('Error al procesar el recibo:', error);
-
-        return throwError(error); // Hace que se ejecute el error del subscribe.
-      }),
-      finalize(() => {
-        this.blockUI.stop();
-      })
     ).subscribe({
-      next: response => {
 
+      next: recibos => {
+        this.recibos = recibos;
         this.blockUI.stop();
-        console.warn('cambiando',response)
-        const disposition = response.headers.get('Content-Disposition');
-        this.recibos = this.recibos.map((item: any) =>
-          item.successIndicator === resultIndicator
-            ? { ...item, estatus: 'A' }
-            : item
-        );
-        console.info('disposition',disposition)
-        const coincidencia = disposition?.match(/filename\*?=(?:UTF-8''|")?([^";]+)/i);
-        let nombre = coincidencia && coincidencia[1]
-          ? coincidencia[1].replace(/"/g, '')
-          : 'recibo.pdf';
-        try {
-          nombre = decodeURIComponent(nombre);
-        } catch {
-          // Conserva el nombre original si no tiene codificación URL válida.
-        }
+        this._evo.stopPolling();
         sessionStorage.removeItem("MasterID");
         sessionStorage.removeItem("shoppingCart");
         this._evo.clearHostedCheckoutSessionStorage();
-        // alert('test')
-        const blob = new Blob([response.body], { type: 'application/pdf' });
+        const recibo = this.recibos.slice().find(
+          item => {
+            // console.log('item', item, item.resultIndicator === resultIndicator, item.estatus == 'P')
+            return item.successIndicator === resultIndicator && resultIndicator!=null
+          }
+        );
+
+        if (recibo) {
+          console.log(recibo)
+          this.generarRecibo(recibo.foliopago, recibo.successIndicator,true);
+        }
+
+      },
+      error: async error => {
+        this.blockUIService.stop('global');
+        this.blockUI.stop();
+        if (this.resultIndicator) {
+          sessionStorage.removeItem("MasterID");
+          sessionStorage.removeItem("shoppingCart");
+          this._evo.clearHostedCheckoutSessionStorage();
+        }
+        void this.manejarErrorRecibo(error).then(result => {
+          window.location.reload();
+        });
+      },
+      complete: () => {
+        this.blockUI.stop();
+      }
+    });
+
+  }
+
+  generarRecibo(id: number, token: string, descargar: boolean) {
+    this.blockUI.start('generando..')
+    this._ps.getRecibo(id, token).pipe(
+      //  filter((event): event is HttpResponse<Blob> => event instanceof HttpResponse)
+    ).subscribe({
+      next: (response) => {
+        this.blockUI.stop();
+        if (descargar) {
+          const disposition = response.headers.get('Content-Disposition');
+          const coincidencia = disposition?.match(/filename\*?=(?:UTF-8''|")?([^";]+)/i);
+          let nombre = coincidencia && coincidencia[1]
+            ? coincidencia[1].replace(/"/g, '')
+            : 'recibo.pdf';
+          try {
+            nombre = decodeURIComponent(nombre);
+          } catch (e) {
+            console.log('e', e)
+            // Conserva el nombre original si no tiene codificación URL válida.
+          }
+          const blob = new Blob([response.body], { type: 'application/pdf' });
         if (!blob) {
           console.error('La respuesta no contiene el PDF.');
           return;
@@ -115,39 +117,12 @@ export class ReceiptComponent implements OnInit {
         document.body.appendChild(enlace);
         enlace.click();
         enlace.remove();
-
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-        this._evo.stopPolling();
-      },
-      error: async error => {
-        this.blockUIService.stop('global');
-        this.blockUI.stop();
-        if (this.resultIndicator) {
-          sessionStorage.removeItem("MasterID");
-          sessionStorage.removeItem("shoppingCart");
-          this._evo.clearHostedCheckoutSessionStorage();
+        } else {
+          const fileURL = URL.createObjectURL(response.body);
+          window.open(fileURL, '_blank');
+          setTimeout(() => URL.revokeObjectURL(fileURL), 60000);
         }
-        void this.manejarErrorRecibo(error).then(result=>{
-            window.location.reload();
-        });
-      },
-      complete: () => {
-        this.blockUI.stop();
-      }
-    });
 
-  }
-
-  generarRecibo(id: number, token: string) {
-    this.blockUI.start('generando..')
-    this._ps.getRecibo(id, token).pipe(
-      //  filter((event): event is HttpResponse<Blob> => event instanceof HttpResponse)
-    ).subscribe({
-      next: (response) => {
-        this.blockUI.stop();
-        const fileURL = URL.createObjectURL(response.body);
-        window.open(fileURL, '_blank');
-        setTimeout(() => URL.revokeObjectURL(fileURL), 60000);
         //  const fileURL = URL.createObjectURL(blob);
       },
       error: async error => {

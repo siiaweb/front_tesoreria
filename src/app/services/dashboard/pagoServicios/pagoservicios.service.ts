@@ -13,8 +13,13 @@ export class PagoServiciosService {
 
    }
 
-  getRecibosPagosOnline(usuario: string) {
+  getRecibosPagosOnline(usuario: string,resultIndicator:string) {
+    if(resultIndicator){
+    return this.http.get(`${this.urlEndPoint}/evo/recibos/${usuario}?resultIndicator=${resultIndicator}`)
+    } else{
     return this.http.get(`${this.urlEndPoint}/evo/recibos/${usuario}`)
+    }
+    
   }
 
  

@@ -141,7 +141,7 @@ export class EvoService {
     return this.getEvo(entity).pipe(
       map(response => {
         //this.blockUIService.stop('global');
-        console.warn('response', response)
+       
         sessionStorage.MasterID = response.referencia;
 
         //this.pago_referencia.setValue(response.referencia);

@@ -61,7 +61,7 @@ export class ReceiptComponent implements OnInit {
         );
 
         if (recibo) {
-          console.log(recibo)
+          //console.log(recibo)
           this.generarRecibo(recibo.foliopago, recibo.successIndicator,true);
         }
 
@@ -86,12 +86,12 @@ export class ReceiptComponent implements OnInit {
   }
 
   generarRecibo(id: number, token: string, descargar: boolean) {
-    this.blockUI.start('generando..')
+    this.blockUIService.start('global','generando pdf...')
     this._ps.getRecibo(id, token).pipe(
       //  filter((event): event is HttpResponse<Blob> => event instanceof HttpResponse)
     ).subscribe({
       next: (response) => {
-        this.blockUI.stop();
+        this.blockUIService.stop('global');
         if (descargar) {
           const disposition = response.headers.get('Content-Disposition');
           const coincidencia = disposition?.match(/filename\*?=(?:UTF-8''|")?([^";]+)/i);
@@ -126,10 +126,12 @@ export class ReceiptComponent implements OnInit {
         //  const fileURL = URL.createObjectURL(blob);
       },
       error: async error => {
+        this.blockUIService.stop('global');
         console.error('error', error)
         void this.manejarErrorRecibo(error)
       },
       complete: () => {
+        this.blockUIService.stop('global');
         this.blockUI.stop();
         console.log('complete...')
       }

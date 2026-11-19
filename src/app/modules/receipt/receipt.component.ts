@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { PagoServiciosService } from '../../services/dashboard/pagoServicios/pagoservicios.service';
 import { BlockUI, BlockUIService, NgBlockUI } from 'ng-block-ui';
 import { ActivatedRoute } from '@angular/router';
-import { catchError, finalize, switchMap } from 'rxjs/operators';
-import { EMPTY, throwError } from 'rxjs';
 import { EvoService } from 'src/app/services/dashboard/evo.service';
 import { erroresFormulario } from '../componentes-genericos/manejo-errores-forma/errores';
 
@@ -40,11 +38,7 @@ export class ReceiptComponent implements OnInit {
     this.blockUI.start(this.resultIndicator ? 'cargando...<espere por favor>' : 'generando su recibo....<espere por favor>')
 
 
-    this._ps.getRecibosPagosOnline(usuario, resultIndicator).pipe(
-
-
-
-    ).subscribe({
+    this._ps.getRecibosPagosOnline(usuario, resultIndicator).subscribe({
 
       next: recibos => {
         this.recibos = recibos;
@@ -56,7 +50,7 @@ export class ReceiptComponent implements OnInit {
         const recibo = this.recibos.slice().find(
           item => {
             // console.log('item', item, item.resultIndicator === resultIndicator, item.estatus == 'P')
-            return item.successIndicator === resultIndicator && resultIndicator!=null
+            return (item.successIndicator === resultIndicator && resultIndicator!=null) || item.descargar===true
           }
         );
 
@@ -67,6 +61,7 @@ export class ReceiptComponent implements OnInit {
 
       },
       error: async error => {
+        console.log('error en ',error)
         this.blockUIService.stop('global');
         this.blockUI.stop();
         if (this.resultIndicator) {
@@ -75,7 +70,7 @@ export class ReceiptComponent implements OnInit {
           this._evo.clearHostedCheckoutSessionStorage();
         }
         void this.manejarErrorRecibo(error).then(result => {
-          window.location.reload();
+          //window.location.reload();
         });
       },
       complete: () => {

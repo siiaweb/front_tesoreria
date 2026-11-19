@@ -4,13 +4,13 @@
 
 export const environment = {
   production: false,
-  rutaPublica: 'http://127.0.0.1:8090/api',
+  rutaPublica: 'http://127.0.0.1:8097/api',
   rutaPortal: 'http://127.0.0.1:4500/',
 
-  //rutaAPI: 'http://192.168.1.190:8090/api'
-  //rutaAPI: 'http://192.168.10.38:8090/api'
+  //rutaAPI: 'http://192.168.1.190:8097/api'
+  //rutaAPI: 'http://192.168.10.38:8097/api'
   //rutaAPI: 'https://tesoreria.ujed.mx/api'
-  rutaAPI: 'http://127.0.0.1:8090/api/portal',
+  rutaAPI: 'http://127.0.0.1:8097/api/portal',
   //rutaAlumno:'http://localhost:8085/SIIAWEB'
   rutaAlumno:'https://sistemas.ujed.mx/SIIA'
 };
